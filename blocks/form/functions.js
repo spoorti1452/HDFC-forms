@@ -310,9 +310,10 @@ function handleOtpValidated(globals) {
 
   stopOtpTimer();
 
+  // ✅ Instead of clearing → show stopped state
   if (timerField) {
     globals.functions.setProperty(timerField, {
-      value: '',
+      value: '00 secs',
     });
   }
 
