@@ -62,9 +62,6 @@ function maskMobileNumber(mobileNumber) {
 
 /**
  * Update attempts display
- * 3/3 after first generate
- * 2/3 after first resend
- * 1/3 after second resend
  * @param {scope} globals
  * @returns {string}
  */
@@ -121,7 +118,7 @@ function startOtpTimer(globals) {
 
     if (seconds >= 0) {
       globals.functions.setProperty(timerField, {
-        value: `${seconds} secs`,
+        value: `Resend OTP in: ${seconds} secs`,
       });
     }
 
@@ -133,16 +130,6 @@ function startOtpTimer(globals) {
         value: 'Time expired',
       });
 
-      /**
-       * If attempts left is more than 1,
-       * allow one more resend.
-       *
-       * Example flow:
-       * first generate -> 3/3
-       * first resend   -> 2/3
-       * second resend  -> 1/3
-       * then expire -> reset
-       */
       if (resendBtn && window.otpResendAttemptsLeft > 1) {
         globals.functions.setProperty(resendBtn, {
           enabled: true,
@@ -281,7 +268,6 @@ function handleOtpGenerated(globals) {
 
 /**
  * Call this from Resend OTP success handler
- * 3/3 -> 2/3 -> 1/3
  * @param {scope} globals
  * @returns {string}
  */
@@ -322,7 +308,6 @@ function handleOtpResentAction(globals) {
 
 /**
  * Call this when OTP validation succeeds
- * stops timer and resets attempts for next use
  * @param {scope} globals
  * @returns {string}
  */
@@ -354,6 +339,25 @@ function handleOtpValidated(globals) {
   return '';
 }
 
+/**
+ * Call this when OTP validation fails
+ * @param {scope} globals
+ * @returns {string}
+ */
+function handleOtpInvalid(globals) {
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
+  );
+
+  return '';
+}
+
 export {
   getFullName,
   days,
@@ -366,4 +370,5 @@ export {
   handleOtpGenerated,
   handleOtpResentAction,
   handleOtpValidated,
+  handleOtpInvalid,
 };
