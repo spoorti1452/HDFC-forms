@@ -27,13 +27,12 @@ function submitFormArrayToString(globals) {
  * Calculate the number of days between two dates.
  * @param {*} endDate
  * @param {*} startDate
- * @returns {number} returns the number of days between two dates
+ * @returns {number}
  */
 function days(endDate, startDate) {
   const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
   const end = typeof endDate === 'string' ? new Date(endDate) : endDate;
 
-  // return zero if dates are valid
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
     return 0;
   }
@@ -43,16 +42,15 @@ function days(endDate, startDate) {
 }
 
 /**
-* Masks the first 5 digits of the mobile number with *
-* @param {*} mobileNumber
-* @returns {string} returns the mobile number with first 5 digits masked
-*/
+ * Masks the first 5 digits of the mobile number with *
+ * @param {*} mobileNumber
+ * @returns {string}
+ */
 function maskMobileNumber(mobileNumber) {
   if (!mobileNumber) {
     return '';
   }
   const value = mobileNumber.toString();
-  // Mask first 5 digits and keep the rest
   return ` ${'*'.repeat(5)}${value.substring(5)}`;
 }
 
@@ -76,18 +74,18 @@ function updateOtpDisplay(seconds, globals) {
   const attemptsLeft = Math.max(0, 4 - (globals.otpAttemptCount || 0));
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.resendOTP,
+    globals.form.otp_verification.resendOTP,
     { value: `Resend OTP in: ${seconds} secs` }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.attempts,
+    globals.form.otp_verification.attempts,
     { value: `${attemptsLeft}/3 attempts left` }
   );
 }
 
 /**
- * Reset OTP flow after 3 attempts
+ * Reset OTP flow
  * @param {scope} globals
  */
 function resetOtpFlow(globals) {
@@ -95,42 +93,42 @@ function resetOtpFlow(globals) {
   globals.otpAttemptCount = 0;
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.otp_Value,
+    globals.form.otp_verification.otp_Value,
     { value: '' }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.resendOTP,
+    globals.form.otp_verification.resendOTP,
     { value: '' }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.attempts,
+    globals.form.otp_verification.attempts,
     { value: '' }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.generatedOtp,
+    globals.form.generatedOtp,
     { value: '' }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.otpValid,
+    globals.form.otp_verification.otpValid,
     { value: '' }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.submit_otp,
+    globals.form.otp_verification.submit_otp,
     { enabled: false }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.view_loan_eligibility,
+    globals.form.view_loan_eligibility,
     { enabled: true }
   );
 
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification,
+    globals.form.otp_verification,
     { visible: false }
   );
 }
@@ -154,19 +152,19 @@ function startOtpTimer(globals) {
 
       if (globals.otpAttemptCount < 3) {
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.resendOTP,
+          globals.form.otp_verification.resendOTP,
           { value: 'Generating new OTP...' }
         );
 
         generateOtpHandler(globals);
       } else {
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.resendOTP,
+          globals.form.otp_verification.resendOTP,
           { value: 'Maximum OTP attempts reached' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.attempts,
+          globals.form.otp_verification.attempts,
           { value: '0/3 attempts left' }
         );
 
@@ -179,12 +177,12 @@ function startOtpTimer(globals) {
 }
 
 /**
- * Generate OTP and start timer
+ * Generate OTP
  * @param {scope} globals
  */
 function generateOtpHandler(globals) {
   globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.otpValid,
+    globals.form.otp_verification.otpValid,
     { value: 'Generate OTP clicked' }
   );
 
@@ -192,8 +190,8 @@ function generateOtpHandler(globals) {
     globals.otpAttemptCount = 0;
   }
 
-  const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
-  const dob = globals.form.personal_loan_offer.date_of_birth?.value;
+  const mobileNo = globals.form.aadhaar_linked_mobile_number?.value;
+  const dob = globals.form.date_of_birth?.value;
 
   fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
     method: 'POST',
@@ -210,7 +208,7 @@ function generateOtpHandler(globals) {
     .then((response) => response.json())
     .then((result) => {
       globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
+        globals.form.otp_verification.otpValid,
         { value: JSON.stringify(result) }
       );
 
@@ -218,64 +216,64 @@ function generateOtpHandler(globals) {
         globals.otpAttemptCount += 1;
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.generatedOtp,
+          globals.form.generatedOtp,
           { value: result?.responseString?.otpValue || '' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.attempts,
+          globals.form.otp_verification.attempts,
           { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification,
+          globals.form.otp_verification,
           { visible: true }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.otp_Value,
+          globals.form.otp_verification.otp_Value,
           { value: '' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.otpValid,
+          globals.form.otp_verification.otpValid,
           { value: '' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.submit_otp,
+          globals.form.otp_verification.submit_otp,
           { enabled: true }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.view_loan_eligibility,
+          globals.form.view_loan_eligibility,
           { enabled: false }
         );
 
         startOtpTimer(globals);
       } else {
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.otpValid,
+          globals.form.otp_verification.otpValid,
           { value: 'OTP generation failed' }
         );
       }
     })
     .catch((error) => {
       globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
+        globals.form.otp_verification.otpValid,
         { value: `Error while generating OTP: ${error.message}` }
       );
     });
 }
 
 /**
- * Validate entered OTP
+ * Validate OTP
  * @param {scope} globals
  */
 function validateOtpHandler(globals) {
-  const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
-  const dob = globals.form.personal_loan_offer.date_of_birth?.value;
-  const otpValue = globals.form.personal_loan_offer.otp_verification.otp_Value?.value;
+  const mobileNo = globals.form.aadhaar_linked_mobile_number?.value;
+  const dob = globals.form.date_of_birth?.value;
+  const otpValue = globals.form.otp_verification.otp_Value?.value;
 
   fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
     method: 'POST',
@@ -296,35 +294,35 @@ function validateOtpHandler(globals) {
         clearOtpTimer(globals);
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.otpValid,
+          globals.form.otp_verification.otpValid,
           { value: 'OTP validated successfully' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.resendOTP,
+          globals.form.otp_verification.resendOTP,
           { value: '' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.attempts,
+          globals.form.otp_verification.attempts,
           { value: '' }
         );
 
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.view_loan_eligibility,
+          globals.form.view_loan_eligibility,
           { enabled: true }
         );
       } else {
         globals.functions.setProperty(
-          globals.form.personal_loan_offer.otp_verification.otpValid,
+          globals.form.otp_verification.otpValid,
           { value: 'Invalid OTP' }
         );
       }
     })
-    .catch(() => {
+    .catch((error) => {
       globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: 'Error while validating OTP' }
+        globals.form.otp_verification.otpValid,
+        { value: `Error while validating OTP: ${error.message}` }
       );
     });
 }
