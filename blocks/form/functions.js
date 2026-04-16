@@ -190,8 +190,12 @@ function generateOtpHandler(globals) {
     globals.otpAttemptCount = 0;
   }
 
-  const mobileNo = globals.form.aadhaar_linked_mobile_number?.value;
-  const dob = globals.form.date_of_birth?.value;
+  const formData = globals.functions.exportData();
+
+  const mobileNo = formData.aadhaar_linked_mobile_number || '';
+  const dob = formData.date_of_birth || '';
+
+  console.log('Generate OTP payload values:', { mobileNo, dob, formData });
 
   fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
     method: 'POST',
@@ -205,13 +209,17 @@ function generateOtpHandler(globals) {
       },
     }),
   })
-    .then((response) => response.json())
-    .then((result) => {
-      globals.functions.setProperty(
-        globals.form.otp_verification.otpValid,
-        { value: JSON.stringify(result) }
-      );
+    .then(async (response) => {
+      const result = await response.json();
+      console.log('Generate OTP response:', result);
 
+      if (!response.ok) {
+        throw new Error(result?.message || 'Generate OTP API failed');
+      }
+
+      return result;
+    })
+    .then((result) => {
       if (result?.status?.responseCode === '0' && result?.responseString?.otpSent === 'Y') {
         globals.otpAttemptCount += 1;
 
@@ -259,6 +267,7 @@ function generateOtpHandler(globals) {
       }
     })
     .catch((error) => {
+      console.error('Generate OTP error:', error);
       globals.functions.setProperty(
         globals.form.otp_verification.otpValid,
         { value: `Error while generating OTP: ${error.message}` }
@@ -266,14 +275,14 @@ function generateOtpHandler(globals) {
     });
 }
 
-/**
- * Validate OTP
- * @param {scope} globals
- */
 function validateOtpHandler(globals) {
-  const mobileNo = globals.form.aadhaar_linked_mobile_number?.value;
-  const dob = globals.form.date_of_birth?.value;
-  const otpValue = globals.form.otp_verification.otp_Value?.value;
+  const formData = globals.functions.exportData();
+
+  const mobileNo = formData.aadhaar_linked_mobile_number || '';
+  const dob = formData.date_of_birth || '';
+  const otpValue = formData.otp_Value || '';
+
+  console.log('Validate OTP payload values:', { mobileNo, dob, otpValue, formData });
 
   fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
     method: 'POST',
@@ -288,7 +297,16 @@ function validateOtpHandler(globals) {
       },
     }),
   })
-    .then((response) => response.json())
+    .then(async (response) => {
+      const result = await response.json();
+      console.log('Validate OTP response:', result);
+
+      if (!response.ok) {
+        throw new Error(result?.message || 'Validate OTP API failed');
+      }
+
+      return result;
+    })
     .then((result) => {
       if (result?.status?.responseCode === '0' && result?.responseString?.otpValid === 'Y') {
         clearOtpTimer(globals);
@@ -320,13 +338,13 @@ function validateOtpHandler(globals) {
       }
     })
     .catch((error) => {
+      console.error('Validate OTP error:', error);
       globals.functions.setProperty(
         globals.form.otp_verification.otpValid,
         { value: `Error while validating OTP: ${error.message}` }
       );
     });
 }
-
 // eslint-disable-next-line import/prefer-default-export
 export {
   getFullName,
