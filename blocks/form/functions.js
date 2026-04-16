@@ -93,7 +93,7 @@ function resetOtpFlow(globals) {
   globals.otpAttemptCount = 0;
 
   globals.functions.setProperty(
-    globals.form.generatedOtp,
+    globals.form.personal_loan_offer.generatedOtp,
     { value: '' }
   );
 
@@ -128,7 +128,7 @@ function resetOtpFlow(globals) {
   );
 
   globals.functions.setProperty(
-    globals.form.view_loan_eligibility,
+    globals.form.personal_loan_offer.view_loan_eligibility,
     { enabled: true }
   );
 
