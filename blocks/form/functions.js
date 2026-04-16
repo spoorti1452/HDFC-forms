@@ -191,7 +191,7 @@ async function generateOtpHandler(globals) {
     const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
     const dob = globals.form.personal_loan_offer.date_of_birth?.value;
 
-    const response = await fetch('http://localhost:3000/api/initiateCustomerIdentification', {
+    const response = await fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ async function validateOtpHandler(globals) {
     const dob = globals.form.personal_loan_offer.date_of_birth?.value;
     const otpValue = globals.form.personal_loan_offer.otp_verification.otp_Value?.value;
 
-    const response = await fetch('http://localhost:3000/api/validateOtp', {
+    const response = await fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
