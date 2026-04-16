@@ -226,7 +226,7 @@ function handleOtpGenerated(globals) {
 }
 
 /**
- * Call this from Resend OTP success handler
+ * Internal resend handler
  * @param {scope} globals
  */
 function handleOtpResent(globals) {
@@ -253,7 +253,7 @@ function handleOtpResent(globals) {
 
   globals.functions.setProperty(
     globals.form.otp_verification.otpValid,
-    { value: '' }
+    { value: `Resend count ${globals.otpAttemptCount}` }
   );
 
   globals.functions.setProperty(
@@ -265,8 +265,7 @@ function handleOtpResent(globals) {
 }
 
 /**
- * Wrapper for Resend OTP success handler
- * Use this in rule editor if handleOtpResent is not reflecting.
+ * Use this in rule editor for Resend OTP success
  * @param {scope} globals
  */
 function handleOtpResentAction(globals) {
