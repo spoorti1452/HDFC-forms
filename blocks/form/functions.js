@@ -145,7 +145,7 @@ function startOtpTimer(globals) {
   let seconds = 30;
   updateOtpDisplay(seconds, globals);
 
-  globals.otpIntervalRef = setInterval(async () => {
+  globals.otpIntervalRef = setInterval(() => {
     seconds -= 1;
     updateOtpDisplay(seconds, globals);
 
@@ -158,7 +158,7 @@ function startOtpTimer(globals) {
           { value: 'Generating new OTP...' }
         );
 
-        await generateOtpHandler(globals);
+        generateOtpHandler(globals);
       } else {
         globals.functions.setProperty(
           globals.form.personal_loan_offer.otp_verification.resendOTP,
@@ -182,143 +182,141 @@ function startOtpTimer(globals) {
  * Generate OTP and start timer
  * @param {scope} globals
  */
-async function generateOtpHandler(globals) {
-  try {
-    if (!globals.otpAttemptCount) {
-      globals.otpAttemptCount = 0;
-    }
-
-    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
-    const dob = globals.form.personal_loan_offer.date_of_birth?.value;
-
-    const response = await fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        requestString: {
-          mobileNo,
-          identifierValue: dob,
-        },
-      }),
-    });
-
-    const result = await response.json();
-
-    if (result?.status?.responseCode === '0' && result?.responseString?.otpSent === 'Y') {
-      globals.otpAttemptCount += 1;
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.generatedOtp,
-        { value: result?.responseString?.otpValue || '' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.attempts,
-        { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification,
-        { visible: true }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otp_Value,
-        { value: '' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: '' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.submit_otp,
-        { enabled: true }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.view_loan_eligibility,
-        { enabled: false }
-      );
-
-      startOtpTimer(globals);
-    } else {
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: 'OTP generation failed' }
-      );
-    }
-  } catch (error) {
-    globals.functions.setProperty(
-      globals.form.personal_loan_offer.otp_verification.otpValid,
-      { value: 'Error while generating OTP' }
-    );
+function generateOtpHandler(globals) {
+  if (!globals.otpAttemptCount) {
+    globals.otpAttemptCount = 0;
   }
+
+  const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
+  const dob = globals.form.personal_loan_offer.date_of_birth?.value;
+
+  fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requestString: {
+        mobileNo,
+        identifierValue: dob,
+      },
+    }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result?.status?.responseCode === '0' && result?.responseString?.otpSent === 'Y') {
+        globals.otpAttemptCount += 1;
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.generatedOtp,
+          { value: result?.responseString?.otpValue || '' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.attempts,
+          { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification,
+          { visible: true }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.otp_Value,
+          { value: '' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.otpValid,
+          { value: '' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.submit_otp,
+          { enabled: true }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.view_loan_eligibility,
+          { enabled: false }
+        );
+
+        startOtpTimer(globals);
+      } else {
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.otpValid,
+          { value: 'OTP generation failed' }
+        );
+      }
+    })
+    .catch(() => {
+      globals.functions.setProperty(
+        globals.form.personal_loan_offer.otp_verification.otpValid,
+        { value: 'Error while generating OTP' }
+      );
+    });
 }
 
 /**
  * Validate entered OTP
  * @param {scope} globals
  */
-async function validateOtpHandler(globals) {
-  try {
-    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
-    const dob = globals.form.personal_loan_offer.date_of_birth?.value;
-    const otpValue = globals.form.personal_loan_offer.otp_verification.otp_Value?.value;
+function validateOtpHandler(globals) {
+  const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
+  const dob = globals.form.personal_loan_offer.date_of_birth?.value;
+  const otpValue = globals.form.personal_loan_offer.otp_verification.otp_Value?.value;
 
-    const response = await fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requestString: {
+        mobileNo,
+        identifierValue: dob,
+        otpValue,
       },
-      body: JSON.stringify({
-        requestString: {
-          mobileNo,
-          identifierValue: dob,
-          otpValue,
-        },
-      }),
+    }),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result?.status?.responseCode === '0' && result?.responseString?.otpValid === 'Y') {
+        clearOtpTimer(globals);
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.otpValid,
+          { value: 'OTP validated successfully' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.resendOTP,
+          { value: '' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.attempts,
+          { value: '' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.view_loan_eligibility,
+          { enabled: true }
+        );
+      } else {
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.otpValid,
+          { value: 'Invalid OTP' }
+        );
+      }
+    })
+    .catch(() => {
+      globals.functions.setProperty(
+        globals.form.personal_loan_offer.otp_verification.otpValid,
+        { value: 'Error while validating OTP' }
+      );
     });
-
-    const result = await response.json();
-
-    if (result?.status?.responseCode === '0' && result?.responseString?.otpValid === 'Y') {
-      clearOtpTimer(globals);
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: 'OTP validated successfully' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.resendOTP,
-        { value: '' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.attempts,
-        { value: '' }
-      );
-
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.view_loan_eligibility,
-        { enabled: true }
-      );
-    } else {
-      globals.functions.setProperty(
-        globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: 'Invalid OTP' }
-      );
-    }
-  } catch (error) {
-    globals.functions.setProperty(
-      globals.form.personal_loan_offer.otp_verification.otpValid,
-      { value: 'Error while validating OTP' }
-    );
-  }
 }
 
 // eslint-disable-next-line import/prefer-default-export
