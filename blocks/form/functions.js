@@ -265,6 +265,15 @@ function handleOtpResent(globals) {
 }
 
 /**
+ * Wrapper for Resend OTP success handler
+ * Use this in rule editor if handleOtpResent is not reflecting.
+ * @param {scope} globals
+ */
+function handleOtpResentAction(globals) {
+  handleOtpResent(globals);
+}
+
+/**
  * Call this when OTP validation succeeds
  * @param {scope} globals
  */
@@ -293,5 +302,6 @@ export {
   startOtpTimer,
   handleOtpGenerated,
   handleOtpResent,
+  handleOtpResentAction,
   handleOtpValidated,
 };
