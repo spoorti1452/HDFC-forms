@@ -87,16 +87,16 @@ function updateAttemptsInfo(globals) {
  * @returns {string}
  */
 function toggleSubmitButton(globals) {
-  const otpValue = (globals.form.otp_verification.otp_Value?.value || '').trim();
+  const otpField = globals.form.otp_verification.otp_Value;
+  const otpValue = otpField && otpField.value ? String(otpField.value).trim() : '';
 
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
     { enabled: otpValue.length > 0 }
   );
 
-  return '';
+  return true;
 }
-
 /**
  * Start 30 sec timer
  * @param {scope} globals
