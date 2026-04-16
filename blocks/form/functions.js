@@ -92,10 +92,10 @@ function toggleSubmitButton(globals) {
 
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
-    { enabled: otpValue.length > 0 }
+    { enabled: otpValue.length === 6 }
   );
 
-  return true;
+  return otpValue;
 }
 /**
  * Start 30 sec timer
