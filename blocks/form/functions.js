@@ -345,15 +345,49 @@ function handleOtpValidated(globals) {
  * @returns {string}
  */
 function handleOtpInvalid(globals) {
+  // decrease attempts on invalid OTP
+  if (typeof window.otpResendAttemptsLeft !== 'number') {
+    window.otpResendAttemptsLeft = 3;
+  }
+
+  if (window.otpResendAttemptsLeft > 0) {
+    window.otpResendAttemptsLeft -= 1;
+  }
+
+  // update UI
+  updateAttemptsInfo(globals);
+
+  // keep submit enabled so user can retry
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
     { enabled: true }
   );
 
+  // optional: disable resend until timer finishes
   globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
   );
+
+  // clear entered OTP (better UX)
+  globals.functions.setProperty(
+    globals.form.otp_verification.otp_Value,
+    { value: '' }
+  );
+
+  /**
+   * If attempts finished → reset flow
+   */
+  if (window.otpResendAttemptsLeft <= 0) {
+    globals.functions.setProperty(
+      globals.form.otp_verification.attempts,
+      { value: '0/3 attempts left' }
+    );
+
+    setTimeout(() => {
+      resetOtpFlow(globals);
+    }, 1500);
+  }
 
   return '';
 }
