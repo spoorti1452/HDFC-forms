@@ -66,7 +66,7 @@ function clearOtpTimer(globals) {
 }
 
 /**
- * Update timer text and attempts text
+ * Update timer and attempts display
  * @param {number} seconds
  * @param {scope} globals
  */
@@ -85,7 +85,7 @@ function updateOtpDisplay(seconds, globals) {
 }
 
 /**
- * Reset OTP flow
+ * Reset OTP flow after attempts finish
  * @param {scope} globals
  */
 function resetOtpFlow(globals) {
@@ -134,7 +134,7 @@ function resetOtpFlow(globals) {
 }
 
 /**
- * Start OTP timer
+ * Start OTP timer after successful OTP generation
  * @param {scope} globals
  */
 function startOtpTimer(globals) {
@@ -150,13 +150,16 @@ function startOtpTimer(globals) {
     if (seconds <= 0) {
       clearOtpTimer(globals);
 
-      if (globals.otpAttemptCount < 3) {
+      if ((globals.otpAttemptCount || 0) < 3) {
         globals.functions.setProperty(
           globals.form.otp_verification.resendOTP,
-          { value: 'Generating new OTP...' }
+          { value: 'Please click Generate OTP again' }
         );
 
-        generateOtpHandler(globals);
+        globals.functions.setProperty(
+          globals.form.view_loan_eligibility,
+          { enabled: true }
+        );
       } else {
         globals.functions.setProperty(
           globals.form.otp_verification.resendOTP,
@@ -177,174 +180,72 @@ function startOtpTimer(globals) {
 }
 
 /**
- * Generate OTP
+ * Call this from Generate OTP success handler
  * @param {scope} globals
  */
-function generateOtpHandler(globals) {
-  globals.functions.setProperty(
-    globals.form.otp_verification.otpValid,
-    { value: 'Generate OTP clicked' }
-  );
-
+function handleOtpGenerated(globals) {
   if (!globals.otpAttemptCount) {
     globals.otpAttemptCount = 0;
   }
 
-  const formData = globals.functions.exportData();
+  globals.otpAttemptCount += 1;
 
-  const mobileNo = formData.aadhaar_linked_mobile_number || '';
-  const dob = formData.date_of_birth || '';
+  globals.functions.setProperty(
+    globals.form.otp_verification,
+    { visible: true }
+  );
 
-  console.log('Generate OTP payload values:', { mobileNo, dob, formData });
+  globals.functions.setProperty(
+    globals.form.otp_verification.otp_Value,
+    { value: '' }
+  );
 
-  fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/initiateCustomerIdentification', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      requestString: {
-        mobileNo,
-        identifierValue: dob,
-      },
-    }),
-  })
-    .then(async (response) => {
-      const result = await response.json();
-      console.log('Generate OTP response:', result);
+  globals.functions.setProperty(
+    globals.form.otp_verification.otpValid,
+    { value: '' }
+  );
 
-      if (!response.ok) {
-        throw new Error(result?.message || 'Generate OTP API failed');
-      }
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
 
-      return result;
-    })
-    .then((result) => {
-      if (result?.status?.responseCode === '0' && result?.responseString?.otpSent === 'Y') {
-        globals.otpAttemptCount += 1;
+  globals.functions.setProperty(
+    globals.form.view_loan_eligibility,
+    { enabled: false }
+  );
 
-        globals.functions.setProperty(
-          globals.form.generatedOtp,
-          { value: result?.responseString?.otpValue || '' }
-        );
+  globals.functions.setProperty(
+    globals.form.otp_verification.attempts,
+    { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
+  );
 
-        globals.functions.setProperty(
-          globals.form.otp_verification.attempts,
-          { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification,
-          { visible: true }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.otp_Value,
-          { value: '' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.otpValid,
-          { value: '' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.submit_otp,
-          { enabled: true }
-        );
-
-        globals.functions.setProperty(
-          globals.form.view_loan_eligibility,
-          { enabled: false }
-        );
-
-        startOtpTimer(globals);
-      } else {
-        globals.functions.setProperty(
-          globals.form.otp_verification.otpValid,
-          { value: 'OTP generation failed' }
-        );
-      }
-    })
-    .catch((error) => {
-      console.error('Generate OTP error:', error);
-      globals.functions.setProperty(
-        globals.form.otp_verification.otpValid,
-        { value: `Error while generating OTP: ${error.message}` }
-      );
-    });
+  startOtpTimer(globals);
 }
 
-function validateOtpHandler(globals) {
-  const formData = globals.functions.exportData();
+/**
+ * Call this when OTP validation is successful
+ * @param {scope} globals
+ */
+function handleOtpValidated(globals) {
+  clearOtpTimer(globals);
 
-  const mobileNo = formData.aadhaar_linked_mobile_number || '';
-  const dob = formData.date_of_birth || '';
-  const otpValue = formData.otp_Value || '';
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP,
+    { value: '' }
+  );
 
-  console.log('Validate OTP payload values:', { mobileNo, dob, otpValue, formData });
+  globals.functions.setProperty(
+    globals.form.otp_verification.attempts,
+    { value: '' }
+  );
 
-  fetch('https://ricotta-overcook-abrasive.ngrok-free.dev/api/validateOtp', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      requestString: {
-        mobileNo,
-        identifierValue: dob,
-        otpValue,
-      },
-    }),
-  })
-    .then(async (response) => {
-      const result = await response.json();
-      console.log('Validate OTP response:', result);
-
-      if (!response.ok) {
-        throw new Error(result?.message || 'Validate OTP API failed');
-      }
-
-      return result;
-    })
-    .then((result) => {
-      if (result?.status?.responseCode === '0' && result?.responseString?.otpValid === 'Y') {
-        clearOtpTimer(globals);
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.otpValid,
-          { value: 'OTP validated successfully' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.resendOTP,
-          { value: '' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.otp_verification.attempts,
-          { value: '' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.view_loan_eligibility,
-          { enabled: true }
-        );
-      } else {
-        globals.functions.setProperty(
-          globals.form.otp_verification.otpValid,
-          { value: 'Invalid OTP' }
-        );
-      }
-    })
-    .catch((error) => {
-      console.error('Validate OTP error:', error);
-      globals.functions.setProperty(
-        globals.form.otp_verification.otpValid,
-        { value: `Error while validating OTP: ${error.message}` }
-      );
-    });
+  globals.functions.setProperty(
+    globals.form.view_loan_eligibility,
+    { enabled: true }
+  );
 }
+
 // eslint-disable-next-line import/prefer-default-export
 export {
   getFullName,
@@ -355,6 +256,6 @@ export {
   updateOtpDisplay,
   resetOtpFlow,
   startOtpTimer,
-  generateOtpHandler,
-  validateOtpHandler,
+  handleOtpGenerated,
+  handleOtpValidated,
 };
