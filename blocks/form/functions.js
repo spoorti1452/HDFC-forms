@@ -55,6 +55,29 @@ function maskMobileNumber(mobileNumber) {
 }
 
 /**
+ * Read OTP attempt count from hidden field
+ * @param {scope} globals
+ * @returns {number}
+ */
+function getOtpAttemptCount(globals) {
+  const raw = globals.form.otp_verification.otpAttemptCount?.value;
+  const count = parseInt(raw, 10);
+  return Number.isNaN(count) ? 0 : count;
+}
+
+/**
+ * Save OTP attempt count to hidden field
+ * @param {number} count
+ * @param {scope} globals
+ */
+function setOtpAttemptCount(count, globals) {
+  globals.functions.setProperty(
+    globals.form.otp_verification.otpAttemptCount,
+    { value: String(count) }
+  );
+}
+
+/**
  * Clear OTP timer
  * @param {scope} globals
  */
@@ -71,7 +94,8 @@ function clearOtpTimer(globals) {
  * @param {scope} globals
  */
 function updateOtpDisplay(seconds, globals) {
-  const attemptsLeft = Math.max(0, 4 - (globals.otpAttemptCount || 0));
+  const attemptCount = getOtpAttemptCount(globals);
+  const attemptsLeft = Math.max(0, 4 - attemptCount);
 
   globals.functions.setProperty(
     globals.form.otp_verification.resendOTP,
@@ -90,7 +114,7 @@ function updateOtpDisplay(seconds, globals) {
  */
 function resetOtpFlow(globals) {
   clearOtpTimer(globals);
-  globals.otpAttemptCount = 0;
+  setOtpAttemptCount(0, globals);
 
   globals.functions.setProperty(
     globals.form.personal_loan_offer.generatedOtp,
@@ -166,7 +190,9 @@ function startOtpTimer(globals) {
         { value: 'Time expired' }
       );
 
-      if ((globals.otpAttemptCount || 0) < 3) {
+      const attemptCount = getOtpAttemptCount(globals);
+
+      if (attemptCount < 3) {
         globals.functions.setProperty(
           globals.form.otp_verification.resendOTP_btn,
           { enabled: true }
@@ -195,7 +221,7 @@ function startOtpTimer(globals) {
  * @param {scope} globals
  */
 function handleOtpGenerated(globals) {
-  globals.otpAttemptCount = 1;
+  setOtpAttemptCount(1, globals);
 
   globals.functions.setProperty(
     globals.form.otp_verification,
@@ -230,11 +256,10 @@ function handleOtpGenerated(globals) {
  * @param {scope} globals
  */
 function handleOtpResent(globals) {
-  if (!globals.otpAttemptCount) {
-    globals.otpAttemptCount = 1;
-  } else {
-    globals.otpAttemptCount += 1;
-  }
+  const currentCount = getOtpAttemptCount(globals);
+  const nextCount = currentCount + 1;
+
+  setOtpAttemptCount(nextCount, globals);
 
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
@@ -258,7 +283,7 @@ function handleOtpResent(globals) {
 
   globals.functions.setProperty(
     globals.form.otp_verification.attempts,
-    { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
+    { value: `${Math.max(0, 4 - nextCount)}/3 attempts left` }
   );
 
   startOtpTimer(globals);
@@ -295,6 +320,8 @@ export {
   days,
   submitFormArrayToString,
   maskMobileNumber,
+  getOtpAttemptCount,
+  setOtpAttemptCount,
   clearOtpTimer,
   updateOtpDisplay,
   resetOtpFlow,
