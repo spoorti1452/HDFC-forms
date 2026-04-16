@@ -82,6 +82,22 @@ function updateAttemptsInfo(globals) {
 }
 
 /**
+ * Enable/disable submit button based on otp field value
+ * @param {scope} globals
+ * @returns {string}
+ */
+function toggleSubmitButton(globals) {
+  const otpValue = (globals.form.otp_verification.otp_Value?.value || '').trim();
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: otpValue.length > 0 }
+  );
+
+  return '';
+}
+
+/**
  * Start 30 sec timer
  * @param {scope} globals
  * @returns {string}
@@ -110,7 +126,7 @@ function startOtpTimer(globals) {
   }
 
   globals.functions.setProperty(timerField, {
-    value: `Resend OTP in: ${seconds} secs`,
+    value: `${seconds} secs`,
   });
 
   window.otpTimerInterval = setInterval(() => {
@@ -118,7 +134,7 @@ function startOtpTimer(globals) {
 
     if (seconds >= 0) {
       globals.functions.setProperty(timerField, {
-        value: `Resend OTP in: ${seconds} secs`,
+        value: `${seconds} secs`,
       });
     }
 
@@ -141,9 +157,12 @@ function startOtpTimer(globals) {
 
         globals.functions.setProperty(
           globals.form.otp_verification.attempts,
-          {
-            value: '0/3 attempts left',
-          }
+          { value: '0/3 attempts left' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.otp_verification.submit_otp,
+          { enabled: false }
         );
 
         setTimeout(() => {
@@ -241,11 +260,6 @@ function handleOtpGenerated(globals) {
   );
 
   globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
-
-  globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
   );
@@ -261,6 +275,7 @@ function handleOtpGenerated(globals) {
   );
 
   updateAttemptsInfo(globals);
+  toggleSubmitButton(globals);
   startOtpTimer(globals);
 
   return '';
@@ -281,11 +296,6 @@ function handleOtpResentAction(globals) {
   }
 
   globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
-
-  globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
   );
@@ -301,6 +311,7 @@ function handleOtpResentAction(globals) {
   );
 
   updateAttemptsInfo(globals);
+  toggleSubmitButton(globals);
   startOtpTimer(globals);
 
   return '';
@@ -317,8 +328,6 @@ function handleOtpValidated(globals) {
 
   stopOtpTimer();
 
-  window.otpResendAttemptsLeft = 3;
-
   if (timerField) {
     globals.functions.setProperty(timerField, {
       value: '',
@@ -332,8 +341,8 @@ function handleOtpValidated(globals) {
   }
 
   globals.functions.setProperty(
-    globals.form.otp_verification.attempts,
-    { value: '' }
+    globals.form.otp_verification.submit_otp,
+    { enabled: false }
   );
 
   return '';
@@ -341,11 +350,11 @@ function handleOtpValidated(globals) {
 
 /**
  * Call this when OTP validation fails
+ * Decrease attempts and disable submit until user re-enters OTP
  * @param {scope} globals
  * @returns {string}
  */
 function handleOtpInvalid(globals) {
-  // decrease attempts on invalid OTP
   if (typeof window.otpResendAttemptsLeft !== 'number') {
     window.otpResendAttemptsLeft = 3;
   }
@@ -354,30 +363,23 @@ function handleOtpInvalid(globals) {
     window.otpResendAttemptsLeft -= 1;
   }
 
-  // update UI
-  updateAttemptsInfo(globals);
-
-  // keep submit enabled so user can retry
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
-
-  // optional: disable resend until timer finishes
-  globals.functions.setProperty(
-    globals.form.otp_verification.resendOTP_btn,
-    { enabled: false }
-  );
-
-  // clear entered OTP (better UX)
   globals.functions.setProperty(
     globals.form.otp_verification.otp_Value,
     { value: '' }
   );
 
-  /**
-   * If attempts finished → reset flow
-   */
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: false }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
+  );
+
+  updateAttemptsInfo(globals);
+
   if (window.otpResendAttemptsLeft <= 0) {
     globals.functions.setProperty(
       globals.form.otp_verification.attempts,
@@ -398,6 +400,7 @@ export {
   submitFormArrayToString,
   maskMobileNumber,
   updateAttemptsInfo,
+  toggleSubmitButton,
   startOtpTimer,
   stopOtpTimer,
   resetOtpFlow,
