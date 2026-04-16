@@ -121,7 +121,7 @@ function startOtpTimer(globals) {
 
     if (seconds >= 0) {
       globals.functions.setProperty(timerField, {
-        value: `Resend OTP in: ${seconds} secs`,
+        value: `${seconds} secs`,
       });
     }
 
