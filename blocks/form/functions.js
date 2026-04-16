@@ -66,7 +66,7 @@ function clearOtpTimer(globals) {
 }
 
 /**
- * Update timer and attempts display
+ * Update timer and attempts text
  * @param {number} seconds
  * @param {scope} globals
  */
@@ -85,12 +85,17 @@ function updateOtpDisplay(seconds, globals) {
 }
 
 /**
- * Reset OTP flow after attempts finish
+ * Reset OTP flow after max attempts
  * @param {scope} globals
  */
 function resetOtpFlow(globals) {
   clearOtpTimer(globals);
   globals.otpAttemptCount = 0;
+
+  globals.functions.setProperty(
+    globals.form.generatedOtp,
+    { value: '' }
+  );
 
   globals.functions.setProperty(
     globals.form.otp_verification.otp_Value,
@@ -108,17 +113,17 @@ function resetOtpFlow(globals) {
   );
 
   globals.functions.setProperty(
-    globals.form.generatedOtp,
-    { value: '' }
-  );
-
-  globals.functions.setProperty(
     globals.form.otp_verification.otpValid,
     { value: '' }
   );
 
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
+    { enabled: false }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
   );
 
@@ -134,13 +139,19 @@ function resetOtpFlow(globals) {
 }
 
 /**
- * Start OTP timer after successful OTP generation
+ * Start timer after OTP generation/resend
  * @param {scope} globals
  */
 function startOtpTimer(globals) {
   clearOtpTimer(globals);
 
   let seconds = 30;
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
+  );
+
   updateOtpDisplay(seconds, globals);
 
   globals.otpIntervalRef = setInterval(() => {
@@ -150,25 +161,25 @@ function startOtpTimer(globals) {
     if (seconds <= 0) {
       clearOtpTimer(globals);
 
+      globals.functions.setProperty(
+        globals.form.otp_verification.resendOTP,
+        { value: 'Time expired' }
+      );
+
       if ((globals.otpAttemptCount || 0) < 3) {
         globals.functions.setProperty(
-          globals.form.otp_verification.resendOTP,
-          { value: 'Please click Generate OTP again' }
-        );
-
-        globals.functions.setProperty(
-          globals.form.view_loan_eligibility,
+          globals.form.otp_verification.resendOTP_btn,
           { enabled: true }
         );
       } else {
         globals.functions.setProperty(
-          globals.form.otp_verification.resendOTP,
-          { value: 'Maximum OTP attempts reached' }
+          globals.form.otp_verification.attempts,
+          { value: '0/3 attempts left' }
         );
 
         globals.functions.setProperty(
-          globals.form.otp_verification.attempts,
-          { value: '0/3 attempts left' }
+          globals.form.otp_verification.resendOTP_btn,
+          { enabled: false }
         );
 
         setTimeout(() => {
@@ -180,33 +191,81 @@ function startOtpTimer(globals) {
 }
 
 /**
- * Call this from Generate OTP success handler
+ * Call this from first Generate OTP success handler
  * @param {scope} globals
  */
 function handleOtpGenerated(globals) {
-  console.log('handleOtpGenerated called');
+  globals.otpAttemptCount = 1;
 
   globals.functions.setProperty(
-    globals.form.otp_verification.resendOTP,
-    { value: 'Timer function called' }
+    globals.form.otp_verification,
+    { visible: true }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.otpValid,
+    { value: '' }
   );
 
   globals.functions.setProperty(
     globals.form.otp_verification.attempts,
-    { value: 'Debug attempts' }
+    { value: '3/3 attempts left' }
   );
-
-  if (!globals.otpAttemptCount) {
-    globals.otpAttemptCount = 0;
-  }
-
-  globals.otpAttemptCount += 1;
 
   startOtpTimer(globals);
 }
 
 /**
- * Call this when OTP validation is successful
+ * Call this from Resend OTP success handler
+ * @param {scope} globals
+ */
+function handleOtpResent(globals) {
+  if (!globals.otpAttemptCount) {
+    globals.otpAttemptCount = 1;
+  } else {
+    globals.otpAttemptCount += 1;
+  }
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.otp_Value,
+    { value: '' }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.otpValid,
+    { value: '' }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.attempts,
+    { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
+  );
+
+  startOtpTimer(globals);
+}
+
+/**
+ * Call this when OTP validation succeeds
  * @param {scope} globals
  */
 function handleOtpValidated(globals) {
@@ -218,17 +277,11 @@ function handleOtpValidated(globals) {
   );
 
   globals.functions.setProperty(
-    globals.form.otp_verification.attempts,
-    { value: '' }
-  );
-
-  globals.functions.setProperty(
-    globals.form.view_loan_eligibility,
-    { enabled: true }
+    globals.form.otp_verification.resendOTP_btn,
+    { enabled: false }
   );
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export {
   getFullName,
   days,
@@ -239,5 +292,6 @@ export {
   resetOtpFlow,
   startOtpTimer,
   handleOtpGenerated,
+  handleOtpResent,
   handleOtpValidated,
 };
