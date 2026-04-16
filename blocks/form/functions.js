@@ -68,6 +68,25 @@ function clearOtpTimer(globals) {
 }
 
 /**
+ * Update timer text and attempts text
+ * @param {number} seconds
+ * @param {scope} globals
+ */
+function updateOtpDisplay(seconds, globals) {
+  const attemptsLeft = Math.max(0, 4 - (globals.otpAttemptCount || 0));
+
+  globals.functions.setProperty(
+    globals.form.personal_loan_offer.otp_verification.resendOTP,
+    { value: `Resend OTP in: ${seconds} secs` }
+  );
+
+  globals.functions.setProperty(
+    globals.form.personal_loan_offer.otp_verification.attempts,
+    { value: `${attemptsLeft}/3 attempts left` }
+  );
+}
+
+/**
  * Reset OTP flow after 3 attempts
  * @param {scope} globals
  */
@@ -82,6 +101,11 @@ function resetOtpFlow(globals) {
 
   globals.functions.setProperty(
     globals.form.personal_loan_offer.otp_verification.resendOTP,
+    { value: '' }
+  );
+
+  globals.functions.setProperty(
+    globals.form.personal_loan_offer.otp_verification.attempts,
     { value: '' }
   );
 
@@ -119,19 +143,11 @@ function startOtpTimer(globals) {
   clearOtpTimer(globals);
 
   let seconds = 30;
-
-  globals.functions.setProperty(
-    globals.form.personal_loan_offer.otp_verification.resendOTP,
-    { value: `Resend OTP in ${seconds} secs` }
-  );
+  updateOtpDisplay(seconds, globals);
 
   globals.otpIntervalRef = setInterval(async () => {
     seconds -= 1;
-
-    globals.functions.setProperty(
-      globals.form.personal_loan_offer.otp_verification.resendOTP,
-      { value: `Resend OTP in ${seconds} secs` }
-    );
+    updateOtpDisplay(seconds, globals);
 
     if (seconds <= 0) {
       clearOtpTimer(globals);
@@ -147,6 +163,11 @@ function startOtpTimer(globals) {
         globals.functions.setProperty(
           globals.form.personal_loan_offer.otp_verification.resendOTP,
           { value: 'Maximum OTP attempts reached' }
+        );
+
+        globals.functions.setProperty(
+          globals.form.personal_loan_offer.otp_verification.attempts,
+          { value: '0/3 attempts left' }
         );
 
         setTimeout(() => {
@@ -167,9 +188,7 @@ async function generateOtpHandler(globals) {
       globals.otpAttemptCount = 0;
     }
 
-    // IMPORTANT:
-    // Replace aadhaar_linked_mobile with your exact mobile field name
-    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile?.value;
+    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
     const dob = globals.form.personal_loan_offer.date_of_birth?.value;
 
     const response = await fetch('http://localhost:3000/api/initiateCustomerIdentification', {
@@ -193,6 +212,11 @@ async function generateOtpHandler(globals) {
       globals.functions.setProperty(
         globals.form.personal_loan_offer.generatedOtp,
         { value: result?.responseString?.otpValue || '' }
+      );
+
+      globals.functions.setProperty(
+        globals.form.personal_loan_offer.otp_verification.attempts,
+        { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
       );
 
       globals.functions.setProperty(
@@ -241,9 +265,7 @@ async function generateOtpHandler(globals) {
  */
 async function validateOtpHandler(globals) {
   try {
-    // IMPORTANT:
-    // Replace aadhaar_linked_mobile with your exact mobile field name
-    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value
+    const mobileNo = globals.form.personal_loan_offer.aadhaar_linked_mobile_number?.value;
     const dob = globals.form.personal_loan_offer.date_of_birth?.value;
     const otpValue = globals.form.personal_loan_offer.otp_verification.otp_Value?.value;
 
@@ -277,11 +299,14 @@ async function validateOtpHandler(globals) {
       );
 
       globals.functions.setProperty(
+        globals.form.personal_loan_offer.otp_verification.attempts,
+        { value: '' }
+      );
+
+      globals.functions.setProperty(
         globals.form.personal_loan_offer.view_loan_eligibility,
         { enabled: true }
       );
-
-      // if needed, continue next journey here
     } else {
       globals.functions.setProperty(
         globals.form.personal_loan_offer.otp_verification.otpValid,
@@ -298,5 +323,14 @@ async function validateOtpHandler(globals) {
 
 // eslint-disable-next-line import/prefer-default-export
 export {
-  getFullName, days, submitFormArrayToString, maskMobileNumber, clearOtpTimer, resetOtpFlow, startOtpTimer, generateOtpHandler, validateOtpHandler,
+  getFullName,
+  days,
+  submitFormArrayToString,
+  maskMobileNumber,
+  clearOtpTimer,
+  updateOtpDisplay,
+  resetOtpFlow,
+  startOtpTimer,
+  generateOtpHandler,
+  validateOtpHandler,
 };
