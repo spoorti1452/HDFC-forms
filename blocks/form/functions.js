@@ -253,7 +253,7 @@ function handleOtpResent(globals) {
 
   globals.functions.setProperty(
     globals.form.otp_verification.otpValid,
-    { value: `Resend count ${globals.otpAttemptCount}` }
+    { value: '' }
   );
 
   globals.functions.setProperty(
