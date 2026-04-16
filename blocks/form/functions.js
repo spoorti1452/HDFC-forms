@@ -228,6 +228,17 @@ function resetOtpFlow(globals) {
 function handleOtpGenerated(globals) {
   window.otpResendAttemptsLeft = 3;
 
+  // 👉 GET OTP VALUE
+  const otp =
+    globals.form.personal_loan_offer.generatedOtp?.value || '';
+
+  // 👉 SHOW ALERT
+  if (otp) {
+    alert("Generated OTP is: " + otp);
+  } else {
+    alert("OTP generated successfully");
+  }
+
   globals.functions.setProperty(
     globals.form.otp_verification,
     { visible: true }
@@ -258,7 +269,6 @@ function handleOtpGenerated(globals) {
 
   return '';
 }
-
 /**
  * Call this from Resend OTP success handler
  * @param {scope} globals
