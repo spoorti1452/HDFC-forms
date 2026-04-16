@@ -184,41 +184,23 @@ function startOtpTimer(globals) {
  * @param {scope} globals
  */
 function handleOtpGenerated(globals) {
+  console.log('handleOtpGenerated called');
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.resendOTP,
+    { value: 'Timer function called' }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.attempts,
+    { value: 'Debug attempts' }
+  );
+
   if (!globals.otpAttemptCount) {
     globals.otpAttemptCount = 0;
   }
 
   globals.otpAttemptCount += 1;
-
-  globals.functions.setProperty(
-    globals.form.otp_verification,
-    { visible: true }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.otp_Value,
-    { value: '' }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.otpValid,
-    { value: '' }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
-
-  globals.functions.setProperty(
-    globals.form.view_loan_eligibility,
-    { enabled: false }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.attempts,
-    { value: `${Math.max(0, 4 - globals.otpAttemptCount)}/3 attempts left` }
-  );
 
   startOtpTimer(globals);
 }
