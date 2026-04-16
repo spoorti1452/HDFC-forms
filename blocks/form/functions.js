@@ -183,6 +183,11 @@ function startOtpTimer(globals) {
  * @param {scope} globals
  */
 function generateOtpHandler(globals) {
+  globals.functions.setProperty(
+    globals.form.personal_loan_offer.otp_verification.otpValid,
+    { value: 'Generate OTP clicked' }
+  );
+
   if (!globals.otpAttemptCount) {
     globals.otpAttemptCount = 0;
   }
@@ -204,6 +209,11 @@ function generateOtpHandler(globals) {
   })
     .then((response) => response.json())
     .then((result) => {
+      globals.functions.setProperty(
+        globals.form.personal_loan_offer.otp_verification.otpValid,
+        { value: JSON.stringify(result) }
+      );
+
       if (result?.status?.responseCode === '0' && result?.responseString?.otpSent === 'Y') {
         globals.otpAttemptCount += 1;
 
@@ -250,10 +260,10 @@ function generateOtpHandler(globals) {
         );
       }
     })
-    .catch(() => {
+    .catch((error) => {
       globals.functions.setProperty(
         globals.form.personal_loan_offer.otp_verification.otpValid,
-        { value: 'Error while generating OTP' }
+        { value: `Error while generating OTP: ${error.message}` }
       );
     });
 }
