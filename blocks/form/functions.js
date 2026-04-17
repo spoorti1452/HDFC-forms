@@ -228,9 +228,13 @@ function resetOtpFlow(globals) {
 function handleOtpGenerated(globals) {
   window.otpResendAttemptsLeft = 3;
 
-  // wait briefly so API-mapped value is available before reading it
   setTimeout(() => {
-    const otp = globals.form.personal_loan_offer.generatedOtp?.value;
+    const data = globals.functions.exportData();
+
+    const otp =
+      data.generatedOtp ||
+      data.personal_loan_offer?.generatedOtp ||
+      '';
 
     if (otp) {
       alert(String(otp));   // only OTP
