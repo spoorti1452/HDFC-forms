@@ -109,6 +109,12 @@ function startOtpTimer(globals) {
     });
   }
 
+  // Submit should always stay enabled
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
+
   globals.functions.setProperty(timerField, {
     value: `${seconds} secs`,
   });
@@ -130,7 +136,13 @@ function startOtpTimer(globals) {
         value: 'Time expired',
       });
 
-      if (resendBtn && window.otpResendAttemptsLeft > 1) {
+      // Submit should always stay enabled
+      globals.functions.setProperty(
+        globals.form.otp_verification.submit_otp,
+        { enabled: true }
+      );
+
+      if (resendBtn && window.otpResendAttemptsLeft > 0) {
         globals.functions.setProperty(resendBtn, {
           enabled: true,
         });
@@ -207,16 +219,24 @@ function resetOtpFlow(globals) {
     { enabled: false }
   );
 
+  // Submit should always be enabled
+  globals.functions.setProperty(
+    globals.form.otp_verification.submit_otp,
+    { enabled: true }
+  );
+
   globals.functions.setProperty(
     globals.form.personal_loan_offer.view_loan_eligibility,
     { enabled: true }
   );
 
+  // show previous panel
   globals.functions.setProperty(
     globals.form.personal_loan_offer,
     { visible: true }
   );
 
+  // hide otp panel
   globals.functions.setProperty(
     globals.form.otp_verification,
     { visible: false }
@@ -250,6 +270,7 @@ function handleOtpGenerated(globals) {
       { enabled: false }
     );
 
+    // Submit always enabled
     globals.functions.setProperty(
       globals.form.otp_verification.submit_otp,
       { enabled: true }
@@ -289,7 +310,7 @@ function handleOtpResentAction(globals) {
     window.otpResendAttemptsLeft = 3;
   }
 
-  if (window.otpResendAttemptsLeft > 1) {
+  if (window.otpResendAttemptsLeft > 0) {
     window.otpResendAttemptsLeft -= 1;
   }
 
@@ -305,6 +326,7 @@ function handleOtpResentAction(globals) {
       { enabled: false }
     );
 
+    // Submit always enabled
     globals.functions.setProperty(
       globals.form.otp_verification.submit_otp,
       { enabled: true }
@@ -357,6 +379,7 @@ function handleOtpValidated(globals) {
     });
   }
 
+  // Submit always enabled
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
     { enabled: true }
@@ -367,7 +390,6 @@ function handleOtpValidated(globals) {
 
 /**
  * Call this when OTP validation fails
- * Decrease attempts and keep submit enabled
  * @param {scope} globals
  * @returns {string}
  */
@@ -396,11 +418,19 @@ function handleOtpInvalid(globals) {
     { value: 'Invalid OTP' }
   );
 
+  // keep entered OTP or clear it if you want
+  // globals.functions.setProperty(
+  //   globals.form.otp_verification.otp_Value,
+  //   { value: '' }
+  // );
+
+  // Submit always enabled
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
     { enabled: true }
   );
 
+  // Resend enabled after invalid OTP
   if (resendBtn) {
     globals.functions.setProperty(resendBtn, {
       enabled: true,
@@ -420,11 +450,6 @@ function handleOtpInvalid(globals) {
         enabled: false,
       });
     }
-
-    globals.functions.setProperty(
-      globals.form.otp_verification.submit_otp,
-      { enabled: false }
-    );
 
     setTimeout(() => {
       resetOtpFlow(globals);
