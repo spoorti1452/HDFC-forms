@@ -267,78 +267,81 @@ header nav .nav-tools {
   grid-area: tools;
 }
 
-/* ===== HDFC STYLE HEADER OVERRIDE ===== */
+/* ======================================================================================== */
 
-header .nav-wrapper {
-  background-color: #0b1e3f; /* dark blue */
-  height: 72px;
+header.header-wrapper {
+  position: relative;
+  width: 100%;
+  background: #071d49;
+  min-height: 72px;
+  z-index: 99;
+}
+
+/* main header block */
+header.header-wrapper .header.block {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 72px;
   display: flex;
   align-items: center;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
-/* center nav vertically */
-header nav {
-  height: 72px;
-  align-items: center;
-  position: relative;
-}
-
-/* ===== LOGO (LEFT) ===== */
-header .nav-brand {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* hide existing img if any */
-header .nav-brand img {
-  display: none;
-}
-
-/* inject logo via CSS */
-header .nav-brand::before {
+/* left logo */
+header.header-wrapper .header.block::before {
   content: "";
   display: block;
-  width: 120px;
-  height: 32px;
+  width: 132px;
+  height: 34px;
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg");
-  background-size: contain;
   background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
 }
 
-/* ===== RIGHT BADGE ===== */
-header nav::after {
-  content: "100% Digital";
+/* right badge */
+header.header-wrapper .header.block::after {
+  content: "100% secure";
   position: absolute;
   right: 24px;
   top: 50%;
   transform: translateY(-50%);
-  background: #1bbf73;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #35c98b;
   color: #fff;
   font-size: 12px;
   font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 20px;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
-/* ===== REMOVE UNWANTED ITEMS (optional cleanup) ===== */
-header nav .nav-sections {
-  display: none !important;
-}
-
-header nav .nav-tools {
-  display: none !important;
-}
-
-/* ===== MOBILE ADJUST ===== */
-@media (width < 900px) {
-  header nav::after {
-    right: 16px;
-    font-size: 11px;
-    padding: 5px 10px;
+/* mobile */
+@media (max-width: 767px) {
+  header.header-wrapper {
+    min-height: 64px;
   }
 
-  header .nav-brand::before {
-    width: 100px;
+  header.header-wrapper .header.block {
+    min-height: 64px;
+    padding: 0 16px;
+  }
+
+  header.header-wrapper .header.block::before {
+    width: 110px;
+    height: 30px;
+  }
+
+  header.header-wrapper .header.block::after {
+    right: 16px;
+    height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 }
