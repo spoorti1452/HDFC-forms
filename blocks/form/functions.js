@@ -228,46 +228,41 @@ function resetOtpFlow(globals) {
 function handleOtpGenerated(globals) {
   window.otpResendAttemptsLeft = 3;
 
+  // optional delay to ensure value is mapped
   setTimeout(() => {
-    const data = globals.functions.exportData();
+    const otp = globals.form.personal_loan_offer.generatedOtp?.value;
 
-    const otp =
-      data.generatedOtp ||
-      data.personal_loan_offer?.generatedOtp ||
-      '';
-
+    // 👉 (optional) auto-fill OTP field instead of alert
     if (otp) {
-      alert(String(otp));   // only OTP
+      globals.functions.setProperty(
+        globals.form.otp_verification.otp_Value,
+        { value: otp }
+      );
     }
+
+    globals.functions.setProperty(
+      globals.form.otp_verification,
+      { visible: true }
+    );
+
+    globals.functions.setProperty(
+      globals.form.otp_verification.resendOTP_btn,
+      { enabled: false }
+    );
+
+    globals.functions.setProperty(
+      globals.form.otp_verification.submit_otp,
+      { enabled: true }
+    );
+
+    globals.functions.setProperty(
+      globals.form.otp_verification.otpValid,
+      { value: '' }
+    );
+
+    updateAttemptsInfo(globals);
+    startOtpTimer(globals);
   }, 300);
-
-  globals.functions.setProperty(
-    globals.form.otp_verification,
-    { visible: true }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.resendOTP_btn,
-    { enabled: false }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.otpValid,
-    { value: '' }
-  );
-
-  globals.functions.setProperty(
-    globals.form.otp_verification.otp_Value,
-    { value: '' }
-  );
-
-  updateAttemptsInfo(globals);
-  startOtpTimer(globals);
 
   return '';
 }
@@ -284,20 +279,6 @@ function handleOtpResentAction(globals) {
   if (window.otpResendAttemptsLeft > 1) {
     window.otpResendAttemptsLeft -= 1;
   }
-
-  // 👉 GET OTP AFTER RESEND (same logic as before)
-  setTimeout(() => {
-    const data = globals.functions.exportData();
-
-    const otp =
-      data.generatedOtp ||
-      data.personal_loan_offer?.generatedOtp ||
-      '';
-
-    if (otp) {
-      alert(String(otp));   // only OTP
-    }
-  }, 300);
 
   globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
