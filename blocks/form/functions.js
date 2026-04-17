@@ -7,8 +7,8 @@ window.otpResendAttemptsLeft =
 /**
  * Get Full Name
  * @name getFullName Concats first name and last name
- * @param {string} firstname in Stringformat
- * @param {string} lastname in Stringformat
+ * @param {string} firstname
+ * @param {string} lastname
  * @return {string}
  */
 function getFullName(firstname, lastname) {
@@ -61,6 +61,21 @@ function maskMobileNumber(mobileNumber) {
 }
 
 /**
+ * Force submit button enabled
+ * @param {scope} globals
+ * @returns {string}
+ */
+function enableSubmitButton(globals) {
+  if (globals.form.otp_verification.submit_otp) {
+    globals.functions.setProperty(
+      globals.form.otp_verification.submit_otp,
+      { enabled: true }
+    );
+  }
+  return '';
+}
+
+/**
  * Update attempts display
  * @param {scope} globals
  * @returns {string}
@@ -109,11 +124,7 @@ function startOtpTimer(globals) {
     });
   }
 
-  // Submit should always stay enabled
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
+  enableSubmitButton(globals);
 
   globals.functions.setProperty(timerField, {
     value: `${seconds} secs`,
@@ -136,11 +147,7 @@ function startOtpTimer(globals) {
         value: 'Time expired',
       });
 
-      // Submit should always stay enabled
-      globals.functions.setProperty(
-        globals.form.otp_verification.submit_otp,
-        { enabled: true }
-      );
+      enableSubmitButton(globals);
 
       if (resendBtn && window.otpResendAttemptsLeft > 0) {
         globals.functions.setProperty(resendBtn, {
@@ -219,24 +226,18 @@ function resetOtpFlow(globals) {
     { enabled: false }
   );
 
-  // Submit should always be enabled
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
+  enableSubmitButton(globals);
 
   globals.functions.setProperty(
     globals.form.personal_loan_offer.view_loan_eligibility,
     { enabled: true }
   );
 
-  // show previous panel
   globals.functions.setProperty(
     globals.form.personal_loan_offer,
     { visible: true }
   );
 
-  // hide otp panel
   globals.functions.setProperty(
     globals.form.otp_verification,
     { visible: false }
@@ -270,11 +271,7 @@ function handleOtpGenerated(globals) {
       { enabled: false }
     );
 
-    // Submit always enabled
-    globals.functions.setProperty(
-      globals.form.otp_verification.submit_otp,
-      { enabled: true }
-    );
+    enableSubmitButton(globals);
 
     globals.functions.setProperty(
       globals.form.otp_verification.otpValid,
@@ -295,6 +292,7 @@ function handleOtpGenerated(globals) {
 
     updateAttemptsInfo(globals);
     startOtpTimer(globals);
+    enableSubmitButton(globals);
   }, 300);
 
   return '';
@@ -326,11 +324,7 @@ function handleOtpResentAction(globals) {
       { enabled: false }
     );
 
-    // Submit always enabled
-    globals.functions.setProperty(
-      globals.form.otp_verification.submit_otp,
-      { enabled: true }
-    );
+    enableSubmitButton(globals);
 
     globals.functions.setProperty(
       globals.form.otp_verification.otpValid,
@@ -351,6 +345,7 @@ function handleOtpResentAction(globals) {
 
     updateAttemptsInfo(globals);
     startOtpTimer(globals);
+    enableSubmitButton(globals);
   }, 300);
 
   return '';
@@ -379,10 +374,11 @@ function handleOtpValidated(globals) {
     });
   }
 
-  // Submit always enabled
+  enableSubmitButton(globals);
+
   globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
+    globals.form.otp_verification.otpValid,
+    { value: 'OTP validated successfully' }
   );
 
   return '';
@@ -407,26 +403,24 @@ function handleOtpInvalid(globals) {
 
   stopOtpTimer();
 
-  // show stopped timer text, not invalid message
   if (timerField) {
     globals.functions.setProperty(timerField, {
       value: '00 secs',
     });
   }
 
-  // show invalid message only here
   globals.functions.setProperty(
     globals.form.otp_verification.otpValid,
     { value: 'Invalid OTP' }
   );
 
-  // keep submit enabled
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
+  if (globals.form.otp_verification.submit_otp) {
+    globals.functions.setProperty(
+      globals.form.otp_verification.submit_otp,
+      { enabled: false }
+    );
+  }
 
-  // enable resend
   if (resendBtn) {
     globals.functions.setProperty(resendBtn, {
       enabled: true,
@@ -460,6 +454,7 @@ export {
   days,
   submitFormArrayToString,
   maskMobileNumber,
+  enableSubmitButton,
   updateAttemptsInfo,
   startOtpTimer,
   stopOtpTimer,
