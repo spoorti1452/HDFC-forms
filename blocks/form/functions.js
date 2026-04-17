@@ -407,30 +407,26 @@ function handleOtpInvalid(globals) {
 
   stopOtpTimer();
 
+  // show stopped timer text, not invalid message
   if (timerField) {
     globals.functions.setProperty(timerField, {
-      value: 'Invalid OTP',
+      value: '00 secs',
     });
   }
 
+  // show invalid message only here
   globals.functions.setProperty(
     globals.form.otp_verification.otpValid,
     { value: 'Invalid OTP' }
   );
 
-  // keep entered OTP or clear it if you want
-  // globals.functions.setProperty(
-  //   globals.form.otp_verification.otp_Value,
-  //   { value: '' }
-  // );
-
-  // Submit always enabled
+  // keep submit enabled
   globals.functions.setProperty(
     globals.form.otp_verification.submit_otp,
     { enabled: true }
   );
 
-  // Resend enabled after invalid OTP
+  // enable resend
   if (resendBtn) {
     globals.functions.setProperty(resendBtn, {
       enabled: true,
