@@ -82,7 +82,7 @@ function updateAttemptsInfo(globals) {
 }
 
 /**
- * Start 30 sec timer
+ * Start 5 sec timer
  * @param {scope} globals
  * @returns {string}
  */
@@ -90,7 +90,7 @@ function startOtpTimer(globals) {
   const timerField = globals.form.otp_verification.resendOTP;
   const resendBtn = globals.form.otp_verification.resendOTP_btn;
 
-  let seconds = 30;
+  let seconds = 5;
 
   if (!timerField) {
     return '';
@@ -213,6 +213,11 @@ function resetOtpFlow(globals) {
   );
 
   globals.functions.setProperty(
+    globals.form.personal_loan_offer,
+    { visible: true }
+  );
+
+  globals.functions.setProperty(
     globals.form.otp_verification,
     { visible: false }
   );
@@ -260,6 +265,11 @@ function handleOtpGenerated(globals) {
         globals.form.otp_verification.otp_Value,
         { value: String(otp) }
       );
+    } else {
+      globals.functions.setProperty(
+        globals.form.otp_verification.otp_Value,
+        { value: '' }
+      );
     }
 
     updateAttemptsInfo(globals);
@@ -268,6 +278,7 @@ function handleOtpGenerated(globals) {
 
   return '';
 }
+
 /**
  * Call this from Resend OTP success handler
  * @param {scope} globals
@@ -309,6 +320,11 @@ function handleOtpResentAction(globals) {
         globals.form.otp_verification.otp_Value,
         { value: String(otp) }
       );
+    } else {
+      globals.functions.setProperty(
+        globals.form.otp_verification.otp_Value,
+        { value: '' }
+      );
     }
 
     updateAttemptsInfo(globals);
@@ -317,6 +333,7 @@ function handleOtpResentAction(globals) {
 
   return '';
 }
+
 /**
  * Call this when OTP validation succeeds
  * @param {scope} globals
@@ -328,7 +345,6 @@ function handleOtpValidated(globals) {
 
   stopOtpTimer();
 
-  // ✅ Instead of clearing → show stopped state
   if (timerField) {
     globals.functions.setProperty(timerField, {
       value: '00 secs',
@@ -377,6 +393,11 @@ function handleOtpInvalid(globals) {
   globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
+  );
+
+  globals.functions.setProperty(
+    globals.form.otp_verification.otpValid,
+    { value: '' }
   );
 
   updateAttemptsInfo(globals);
