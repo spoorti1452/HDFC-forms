@@ -285,6 +285,20 @@ function handleOtpResentAction(globals) {
     window.otpResendAttemptsLeft -= 1;
   }
 
+  // 👉 GET OTP AFTER RESEND (same logic as before)
+  setTimeout(() => {
+    const data = globals.functions.exportData();
+
+    const otp =
+      data.generatedOtp ||
+      data.personal_loan_offer?.generatedOtp ||
+      '';
+
+    if (otp) {
+      alert(String(otp));   // only OTP
+    }
+  }, 300);
+
   globals.functions.setProperty(
     globals.form.otp_verification.resendOTP_btn,
     { enabled: false }
