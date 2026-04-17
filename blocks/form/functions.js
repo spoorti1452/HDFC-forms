@@ -228,17 +228,12 @@ function resetOtpFlow(globals) {
 function handleOtpGenerated(globals) {
   window.otpResendAttemptsLeft = 3;
 
-  // optional delay to ensure value is mapped
   setTimeout(() => {
-    const otp = globals.form.personal_loan_offer.generatedOtp?.value;
-
-    // 👉 (optional) auto-fill OTP field instead of alert
-    if (otp) {
-      globals.functions.setProperty(
-        globals.form.otp_verification.otp_Value,
-        { value: otp }
-      );
-    }
+    const data = globals.functions.exportData();
+    const otp =
+      data.generatedOtp ||
+      data.personal_loan_offer?.generatedOtp ||
+      '';
 
     globals.functions.setProperty(
       globals.form.otp_verification,
@@ -260,6 +255,13 @@ function handleOtpGenerated(globals) {
       { value: '' }
     );
 
+    if (otp) {
+      globals.functions.setProperty(
+        globals.form.otp_verification.otp_Value,
+        { value: String(otp) }
+      );
+    }
+
     updateAttemptsInfo(globals);
     startOtpTimer(globals);
   }, 300);
@@ -280,32 +282,41 @@ function handleOtpResentAction(globals) {
     window.otpResendAttemptsLeft -= 1;
   }
 
-  globals.functions.setProperty(
-    globals.form.otp_verification.resendOTP_btn,
-    { enabled: false }
-  );
+  setTimeout(() => {
+    const data = globals.functions.exportData();
+    const otp =
+      data.generatedOtp ||
+      data.personal_loan_offer?.generatedOtp ||
+      '';
 
-  globals.functions.setProperty(
-    globals.form.otp_verification.submit_otp,
-    { enabled: true }
-  );
+    globals.functions.setProperty(
+      globals.form.otp_verification.resendOTP_btn,
+      { enabled: false }
+    );
 
-  globals.functions.setProperty(
-    globals.form.otp_verification.otp_Value,
-    { value: '' }
-  );
+    globals.functions.setProperty(
+      globals.form.otp_verification.submit_otp,
+      { enabled: true }
+    );
 
-  globals.functions.setProperty(
-    globals.form.otp_verification.otpValid,
-    { value: '' }
-  );
+    globals.functions.setProperty(
+      globals.form.otp_verification.otpValid,
+      { value: '' }
+    );
 
-  updateAttemptsInfo(globals);
-  startOtpTimer(globals);
+    if (otp) {
+      globals.functions.setProperty(
+        globals.form.otp_verification.otp_Value,
+        { value: String(otp) }
+      );
+    }
+
+    updateAttemptsInfo(globals);
+    startOtpTimer(globals);
+  }, 300);
 
   return '';
 }
-
 /**
  * Call this when OTP validation succeeds
  * @param {scope} globals
