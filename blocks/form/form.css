@@ -792,3 +792,39 @@ main div.form-wrapper {
 main .form form select[multiple] {
     height: calc(42px + 50px);
 }
+
+/* Wrapper positioning */
+.field-aadhaar-linked-mobile-number {
+  position: relative;
+}
+
+/* Add flag +91 using pseudo element */
+.field-aadhaar-linked-mobile-number::before {
+  content: "+91";
+  position: absolute;
+  left: 45px;               /* space after flag */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #333;
+  pointer-events: none;
+}
+
+/* Add Indian flag as background */
+.field-aadhaar-linked-mobile-number input {
+  padding-left: 80px !important; /* make space for flag +91 */
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+
+  background-image: url("https://flagcdn.com/w20/in.png");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+  background-size: 20px 14px;
+}
+
+/* Optional: placeholder styling */
+.field-aadhaar-linked-mobile-number input::placeholder {
+  color: #888;
+}
