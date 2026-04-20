@@ -795,36 +795,46 @@ main .form form select[multiple] {
 
 /*====================================================================================*/
 
-/* Wrapper */
-.field-aadhaar-linked-mobile-number {
-  position: relative;
-}
-
 /* Input field */
 .field-aadhaar-linked-mobile-number input {
-  padding-left: 110px !important; /* more space for flag +91 + arrow */
+  padding-left: 110px !important;
   height: 48px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  font-size: 14px;
 
-  /* Flag */
-  background-image: url("https://flagcdn.com/w20/in.png");
-  background-repeat: no-repeat;
-  background-position: 14px center;
-  background-size: 20px 14px;
+  font-size: 13px; /* slightly smaller text */
+
+  /* Flag + divider */
+  background-image: 
+    url("https://flagcdn.com/w20/in.png"),
+    linear-gradient(#ccc, #ccc);
+
+  background-repeat: no-repeat, no-repeat;
+
+  background-position: 
+    14px center,   /* flag */
+    95px center;   /* divider */
+
+  background-size: 
+    20px 14px,
+    1px 24px;
 }
 
-/* +91 text */
+/* Placeholder smaller so full sentence fits */
+.field-aadhaar-linked-mobile-number input::placeholder {
+  font-size: 12px;
+  color: #888;
+}
+
+/* +91 alignment fix (move slightly down) */
 .field-aadhaar-linked-mobile-number::before {
   content: "+91";
   position: absolute;
   left: 42px;
-  top: 50%;
+  top: 55%;              /* 👈 was 50%, now slightly lower */
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
-  pointer-events: none;
 }
 
 /* Dropdown arrow */
@@ -832,26 +842,8 @@ main .form form select[multiple] {
   content: "▾";
   position: absolute;
   left: 75px;
-  top: 50%;
+  top: 55%;              /* match +91 */
   transform: translateY(-50%);
   font-size: 12px;
   color: #666;
-  pointer-events: none;
-}
-
-/* Divider line */
-.field-aadhaar-linked-mobile-number input {
-  background-image: 
-    url("https://flagcdn.com/w20/in.png"),
-    linear-gradient(#ccc, #ccc);
-    
-  background-repeat: no-repeat, no-repeat;
-  
-  background-position: 
-    14px center,   /* flag */
-    95px center;   /* divider */
-    
-  background-size: 
-    20px 14px,
-    1px 24px;
 }
