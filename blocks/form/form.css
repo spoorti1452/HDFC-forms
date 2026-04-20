@@ -795,16 +795,19 @@ main .form form select[multiple] {
 
 /*====================================================================================*/
 
-/* Input field */
+/* Make inner wrapper relative (IMPORTANT FIX) */
+.field-aadhaar-linked-mobile-number .text-wrapper {
+  position: relative;
+}
+
+/* Input styling */
 .field-aadhaar-linked-mobile-number input {
   padding-left: 110px !important;
   height: 48px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 13px;
 
-  font-size: 13px; /* slightly smaller text */
-
-  /* Flag + divider */
   background-image: 
     url("https://flagcdn.com/w20/in.png"),
     linear-gradient(#ccc, #ccc);
@@ -812,38 +815,40 @@ main .form form select[multiple] {
   background-repeat: no-repeat, no-repeat;
 
   background-position: 
-    14px center,   /* flag */
-    95px center;   /* divider */
+    14px center,
+    95px center;
 
   background-size: 
     20px 14px,
     1px 24px;
 }
 
-/* Placeholder smaller so full sentence fits */
-.field-aadhaar-linked-mobile-number input::placeholder {
-  font-size: 12px;
-  color: #888;
-}
-
-/* +91 alignment fix (move slightly down) */
-.field-aadhaar-linked-mobile-number::before {
+/* +91 aligned correctly */
+.field-aadhaar-linked-mobile-number .text-wrapper::before {
   content: "+91";
   position: absolute;
   left: 42px;
-  top: 55%;              /* 👈 was 50%, now slightly lower */
+  top: 50%;
   transform: translateY(-50%);
   font-size: 13px;
   color: #333;
+  pointer-events: none;
 }
 
 /* Dropdown arrow */
-.field-aadhaar-linked-mobile-number::after {
+.field-aadhaar-linked-mobile-number .text-wrapper::after {
   content: "▾";
   position: absolute;
   left: 75px;
-  top: 55%;              /* match +91 */
+  top: 50%;
   transform: translateY(-50%);
   font-size: 12px;
   color: #666;
+  pointer-events: none;
+}
+
+/* Placeholder */
+.field-aadhaar-linked-mobile-number input::placeholder {
+  font-size: 12px;
+  color: #888;
 }
