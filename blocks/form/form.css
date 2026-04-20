@@ -794,49 +794,34 @@ main .form form select[multiple] {
 }
 
 /*====================================================================================*/
-/* wrapper */
-.field-aadhaar-linked-mobile-number {
-  position: relative;
-}
-
-/* input box */
-.field-aadhaar-linked-mobile-number input {
+.text-wrapper.field-aadhaar-linked-mobile-number input {
   height: 48px;
   box-sizing: border-box;
-  padding-left: 140px !important;  /* adjust space for flag +91 */
+  padding-left: 120px !important;
+  padding-right: 16px;
   border: 1px solid #aeb4bb;
   border-radius: 8px;
   font-size: 13px;
 
   background-image:
     url("https://flagcdn.com/w20/in.png"),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="16" viewBox="0 0 36 16"><text x="0" y="12" font-size="13" font-family="Arial, sans-serif" fill="%23222">+91</text></svg>'),
     linear-gradient(#d6d6d6, #d6d6d6);
 
-  background-repeat: no-repeat, no-repeat;
+  background-repeat: no-repeat, no-repeat, no-repeat;
 
   background-position:
     20px center,   /* flag */
-    120px center;  /* divider */
+    52px center,   /* +91 */
+    100px center;  /* divider */
 
   background-size:
     24px 16px,
-    1px 34px;
+    32px 14px,
+    1px 30px;
 }
 
-/* +91 text */
-.field-aadhaar-linked-mobile-number::before {
-  content: "+91";
-  position: absolute;
-  left: 55px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  color: #222;
-  pointer-events: none;
-}
-
-/* placeholder */
-.field-aadhaar-linked-mobile-number input::placeholder {
+.text-wrapper.field-aadhaar-linked-mobile-number input::placeholder {
   font-size: 12px;
   color: #7a7a7a;
 }
