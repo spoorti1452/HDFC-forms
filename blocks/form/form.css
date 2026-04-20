@@ -795,32 +795,63 @@ main .form form select[multiple] {
 
 /*====================================================================================*/
 
-/* Make wrapper relative */
+/* Wrapper */
 .field-aadhaar-linked-mobile-number {
   position: relative;
 }
 
-/* Target the actual input */
+/* Input field */
 .field-aadhaar-linked-mobile-number input {
-  padding-left: 90px !important; /* space for flag +91 */
-  height: 44px;
-  border-radius: 6px;
+  padding-left: 110px !important; /* more space for flag +91 + arrow */
+  height: 48px;
+  border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 14px;
 
+  /* Flag */
   background-image: url("https://flagcdn.com/w20/in.png");
   background-repeat: no-repeat;
-  background-position: 12px center;
+  background-position: 14px center;
   background-size: 20px 14px;
 }
 
-/* Place +91 properly inside input */
+/* +91 text */
 .field-aadhaar-linked-mobile-number::before {
   content: "+91";
   position: absolute;
-  left: 40px;                 /* right after flag */
-  top: 25px;                  /* vertically align with input */
+  left: 42px;
+  top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
   color: #333;
   pointer-events: none;
+}
+
+/* Dropdown arrow */
+.field-aadhaar-linked-mobile-number::after {
+  content: "▾";
+  position: absolute;
+  left: 75px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #666;
+  pointer-events: none;
+}
+
+/* Divider line */
+.field-aadhaar-linked-mobile-number input {
+  background-image: 
+    url("https://flagcdn.com/w20/in.png"),
+    linear-gradient(#ccc, #ccc);
+    
+  background-repeat: no-repeat, no-repeat;
+  
+  background-position: 
+    14px center,   /* flag */
+    95px center;   /* divider */
+    
+  background-size: 
+    20px 14px,
+    1px 24px;
 }
