@@ -818,7 +818,7 @@ main .form form select[multiple] {
   content: "+91";
   position: absolute;
   left: 40px;                 /* right after flag */
-  top: 20px;                  /* vertically align with input */
+  top: 25px;                  /* vertically align with input */
   transform: translateY(-50%);
   font-size: 14px;
   color: #333;
