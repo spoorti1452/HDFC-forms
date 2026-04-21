@@ -844,8 +844,8 @@ main .form form select[multiple] {
   margin-top: 8px;
 
   display: inline-block;
-  max-width: 300px;   /* 👈 control width here */
-  width: auto;        /* 👈 shrink to content */
+  max-width: 300px;   
+  width: auto;       
 }
 
 .plain-text-wrapper.field-income-note p {
@@ -857,4 +857,42 @@ main .form form select[multiple] {
 
 .plain-text-wrapper b{
     color: #035fe6;
+}
+
+/*=====================================================================*/
+/* OTP input box */
+.field-otp-value input {
+  height: 48px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 16px;
+
+  border: 1px solid #aeb4bb;
+  border-radius: 8px;
+  background-color: #fff;
+
+  font-size: 16px;            /* bigger for OTP */
+  letter-spacing: 6px;        /* spacing between digits */
+  text-align: left;           /* or center if you want */
+
+  outline: none;
+}
+
+/* Focus state (important for OTP UX) */
+.field-otp-value input:focus {
+  border-color: #2a6df4;      /* blue highlight */
+  box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.1);
+}
+
+/* Label styling */
+.field-otp-value .field-label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+/* Optional: required star spacing */
+.field-otp-value .field-label::after {
+  margin-left: 4px;
 }
