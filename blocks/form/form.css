@@ -861,21 +861,22 @@ main .form form select[multiple] {
 
 /*=====================================================================*/
 
-/* ===== OTP FIELD (reduce size) ===== */
+/* ===== OTP FIELD (increase size) ===== */
 .field-otp-value {
-  max-width: 260px;   /* container width */
+  max-width: 340px;   /* 👈 increased width */
+  margin-bottom: 4px; /* 👈 reduce gap below */
 }
 
 .field-otp-value input {
   width: 100%;
-  height: 40px;
+  height: 42px;
   font-size: 18px;
   letter-spacing: 18px;
   padding: 0 12px;
   box-sizing: border-box;
 }
 
-/* ===== REMOVE INPUT LOOK ===== */
+/* ===== REMOVE INPUT BOX STYLE ===== */
 .field-resendotp input,
 .field-attempts input {
   border: none !important;
@@ -892,33 +893,27 @@ main .form form select[multiple] {
   display: none;
 }
 
-/* ===== ALIGN BOTH BELOW OTP FIELD ===== */
+/* ===== PERFECT ALIGNMENT BELOW OTP ===== */
 .field-resendotp,
 .field-attempts {
   display: inline-block;
   width: 50%;
-  margin-top: 6px;
+  margin-top: 0;        /* 👈 remove gap */
+  padding-top: 2px;
 }
 
-/* left side */
+/* left */
 .field-resendotp {
   text-align: left;
 }
 
-/* right side */
+/* right */
 .field-attempts {
   text-align: right;
 }
 
-/* ===== FIX AEM GRID BREAK ===== */
+/* ===== REMOVE EXTRA SPACE FROM AEM WRAPPERS ===== */
 .field-resendotp,
 .field-attempts {
-  float: left;
-}
-
-/* clear float */
-.field-attempts::after {
-  content: "";
-  display: block;
-  clear: both;
+  margin-bottom: 0 !important;
 }
