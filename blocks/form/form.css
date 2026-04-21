@@ -860,41 +860,50 @@ main .form form select[multiple] {
 }
 
 /*=====================================================================*/
-/* OTP container alignment */
+/* OTP wrapper width */
 .field-otp-value {
-  max-width: 280px;   /* overall width like reference */
+  max-width: 290px;
 }
 
-/* OTP input styled as 6 boxes */
+/* OTP input */
 .field-otp-value input {
-  height: 48px;
+  height: 40px;
   width: 100%;
   box-sizing: border-box;
-  padding: 0 12px;
-
-  border: 1px solid #d0d5dd;
+  padding: 0 14px;
+  border: 1px solid #d7dbe2;
   border-radius: 8px;
   background-color: #fff;
 
   font-size: 18px;
-  letter-spacing: 32px;     /* 👈 creates box spacing */
+  font-family: Arial, sans-serif;
+  letter-spacing: 22px;
+  color: #5b6470;
   text-align: left;
-
-  font-family: monospace;   /* equal spacing digits */
-
   outline: none;
 
-  /* Create box effect using gradient */
+  /* subtle separator dots */
   background-image:
-    linear-gradient(to right, 
-      #e5e7eb 1px, transparent 1px);
-  background-size: calc(100% / 6) 100%;  /* 6 boxes */
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
+
+  background-repeat: no-repeat;
+  background-size: 6px 6px;
+  background-position:
+    68px center,
+    108px center,
+    148px center,
+    188px center,
+    228px center;
 }
 
 /* Focus */
 .field-otp-value input:focus {
   border-color: #2a6df4;
-  box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.1);
+  box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.08);
 }
 
 /* Label */
