@@ -861,46 +861,59 @@ main .form form select[multiple] {
 
 /*=====================================================================*/
 
-.field-otp-value {
-  max-width: 290px;
-}
-
+/* ===== OTP FIELD (keep compact) ===== */
 .field-otp-value input {
+  max-width: 260px;
   height: 40px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 14px;
-
-  border: 1px solid #d7dbe2;
-  border-radius: 8px;
-  background-color: #fff;
-
   font-size: 18px;
-  letter-spacing: 22px;
-  color: #5b6470;
-  outline: none;
-
-  /* EXACT 5 dots */
-  background-image:
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
-
-  background-repeat: no-repeat;
-
-  background-size: 6px 6px;
-
-  background-position:
-    60px center,
-    100px center,
-    140px center,
-    180px center,
-    220px center;
+  letter-spacing: 20px;
+  text-align: left;
 }
 
-/* Focus */
-.field-otp-value input:focus {
-  border-color: #2a6df4;
-  box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.08);
+/* ===== REMOVE BOX STYLE from resend + attempts ===== */
+.field-resendotp input,
+.field-attempts input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: auto !important;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ===== HIDE LABELS (since text is dynamic) ===== */
+.field-resendotp .field-label,
+.field-attempts .field-label {
+  display: none;
+}
+
+/* ===== INLINE LAYOUT ===== */
+.field-resendotp,
+.field-attempts {
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* spacing between them */
+.field-attempts {
+  float: right;
+  text-align: right;
+}
+
+/* ===== RESEND TEXT STYLE ===== */
+.field-resendotp input {
+  color: #6b7280;
+}
+
+/* ===== ATTEMPTS STYLE ===== */
+.field-attempts input {
+  color: #6b7280;
+}
+
+/* ===== CLEAR FLOAT (important for AEM layout) ===== */
+.field-resendotp::after {
+  content: "";
+  display: block;
+  clear: both;
 }
