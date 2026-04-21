@@ -863,6 +863,7 @@ main .form form select[multiple] {
 /* OTP input box */
 .field-otp-value input {
   height: 48px;
+  max-width: 300px;          /* 👈 reduced width */
   width: 100%;
   box-sizing: border-box;
   padding: 0 16px;
@@ -871,16 +872,19 @@ main .form form select[multiple] {
   border-radius: 8px;
   background-color: #fff;
 
-  font-size: 16px;            /* bigger for OTP */
-  letter-spacing: 6px;        /* spacing between digits */
-  text-align: left;           /* or center if you want */
+  font-size: 16px;
+  letter-spacing: 8px;       /* slightly improved spacing */
+  text-align: center;        /* 👈 better for OTP */
 
   outline: none;
+
+  display: block;
+  margin-top: 6px;           /* spacing from label */
 }
 
-/* Focus state (important for OTP UX) */
+/* Focus state */
 .field-otp-value input:focus {
-  border-color: #2a6df4;      /* blue highlight */
+  border-color: #2a6df4;
   box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.1);
 }
 
@@ -892,7 +896,7 @@ main .form form select[multiple] {
   display: inline-block;
 }
 
-/* Optional: required star spacing */
+/* Required star spacing */
 .field-otp-value .field-label::after {
   margin-left: 4px;
 }
