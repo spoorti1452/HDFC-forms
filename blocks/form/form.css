@@ -860,13 +860,14 @@ main .form form select[multiple] {
 }
 
 /*=====================================================================*/
-
 /* ===== OTP FIELD (increase size) ===== */
 .field-otp-value {
-  max-width: 500px;   /* 👈 increased width */
-  margin-bottom: 2px; /* 👈 reduce gap below */
+  max-width: 500px;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
+/* OTP input */
 .field-otp-value input {
   width: 100%;
   height: 42px;
@@ -874,6 +875,7 @@ main .form form select[multiple] {
   letter-spacing: 18px;
   padding: 0 12px;
   box-sizing: border-box;
+  margin-bottom: 0 !important;
 }
 
 /* ===== REMOVE INPUT BOX STYLE ===== */
@@ -893,13 +895,14 @@ main .form form select[multiple] {
   display: none;
 }
 
-/* ===== PERFECT ALIGNMENT BELOW OTP ===== */
+/* ===== ALIGN DIRECTLY BELOW OTP ===== */
 .field-resendotp,
 .field-attempts {
   display: inline-block;
   width: 50%;
-  margin-top: 0;        /* 👈 remove gap */
-  padding-top: 2px;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 /* left */
@@ -912,8 +915,22 @@ main .form form select[multiple] {
   text-align: right;
 }
 
-/* ===== REMOVE EXTRA SPACE FROM AEM WRAPPERS ===== */
-.field-resendotp,
-.field-attempts {
+/* ===== REMOVE AEM DEFAULT WRAPPER SPACING ===== */
+.field-otp-value.field-wrapper,
+.field-resendotp.field-wrapper,
+.field-attempts.field-wrapper {
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ===== EXTRA SAFETY (kill any hidden gap) ===== */
+.field-otp-value + .field-resendotp,
+.field-otp-value + .field-wrapper.field-resendotp {
+  margin-top: 0 !important;
+}
+
+.field-resendotp + .field-attempts {
+  margin-top: 0 !important;
 }
