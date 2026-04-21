@@ -860,17 +860,17 @@ main .form form select[multiple] {
 }
 
 /*=====================================================================*/
-/* OTP wrapper width */
+
 .field-otp-value {
   max-width: 290px;
 }
 
-/* OTP input */
 .field-otp-value input {
   height: 40px;
   width: 100%;
   box-sizing: border-box;
   padding: 0 14px;
+
   border: 1px solid #d7dbe2;
   border-radius: 8px;
   background-color: #fff;
@@ -882,34 +882,15 @@ main .form form select[multiple] {
   text-align: left;
   outline: none;
 
-  /* subtle separator dots */
-  background-image:
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
-    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
-
-  background-repeat: no-repeat;
-  background-size: 6px 6px;
-  background-position:
-    68px center,
-    108px center,
-    148px center,
-    188px center,
-    228px center;
+  /* repeating dots (fix) */
+  background-image: radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
+  background-repeat: repeat-x;
+  background-size: 40px 6px;   /* controls spacing */
+  background-position: 60px center; /* first dot position */
 }
 
 /* Focus */
 .field-otp-value input:focus {
   border-color: #2a6df4;
   box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.08);
-}
-
-/* Label */
-.field-otp-value .field-label {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 6px;
-  display: inline-block;
 }
