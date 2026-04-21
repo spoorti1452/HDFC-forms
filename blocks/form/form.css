@@ -794,34 +794,67 @@ main .form form select[multiple] {
 }
 
 /*====================================================================================*/
-.text-wrapper.field-aadhaar-linked-mobile-number input {
+.text-wrapper.field-aadhaar-linked-mobile-number input,
+.date-wrapper.field-date-of-birth input {
   height: 48px;
   box-sizing: border-box;
-  padding-left: 120px !important;
-  padding-right: 16px;
+  width: 100%;
   border: 1px solid #aeb4bb;
   border-radius: 8px;
   font-size: 13px;
-
-  background-image:
-    url("https://flagcdn.com/w20/in.png"),
-    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="16" viewBox="0 0 36 16"><text x="0" y="12" font-size="13" font-family="Arial, sans-serif" fill="%23222">+91</text></svg>'),
-    linear-gradient(#d6d6d6, #d6d6d6);
-
-  background-repeat: no-repeat, no-repeat, no-repeat;
-
-  background-position:
-    20px center,   /* flag */
-    52px center,   /* +91 */
-    100px center;  /* divider */
-
-  background-size:
-    24px 16px,
-    32px 14px,
-    1px 30px;
+  color: #5f6670;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
 }
 
-.text-wrapper.field-aadhaar-linked-mobile-number input::placeholder {
+.text-wrapper.field-aadhaar-linked-mobile-number input::placeholder,
+.date-wrapper.field-date-of-birth input::placeholder {
   font-size: 12px;
   color: #7a7a7a;
+  opacity: 1;
+}
+
+.text-wrapper.field-aadhaar-linked-mobile-number input {
+  padding-left: 120px !important;
+  padding-right: 16px;
+  background-image:
+    url("https://flagcdn.com/w20/in.png"),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="16" viewBox="0 0 36 16"><text x="0" y="12" font-size="15"  font-family="Arial, sans-serif" fill="%23222">+91</text></svg>'),
+    linear-gradient(#d6d6d6, #d6d6d6);
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: 20px center, 52px center, 100px center;
+  background-size: 24px 16px, 32px 14px, 1px 30px;
+}
+
+.date-wrapper.field-date-of-birth input {
+  padding-left: 16px !important;
+  padding-right: 16px;
+  background: #fff;
+}
+
+/*=====================================================================*/
+.plain-text-wrapper.field-income-note {
+  background: #fff8e6;
+  border: 1px solid #f5d28c;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 8px;
+
+  display: inline-block;
+  max-width: 300px;   /* 👈 control width here */
+  width: auto;        /* 👈 shrink to content */
+}
+
+.plain-text-wrapper.field-income-note p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #6b5b2c;
+}
+
+.plain-text-wrapper b{
+    color: #035fe6;
 }
