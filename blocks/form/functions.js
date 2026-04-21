@@ -126,8 +126,9 @@ function startOtpTimer(globals) {
 
   enableSubmitButton(globals);
 
+  // 👇 Initial value
   globals.functions.setProperty(timerField, {
-    value: `${seconds} secs`,
+    value: `Resend OTP in : ${seconds} secs`,
   });
 
   window.otpTimerInterval = setInterval(() => {
@@ -135,7 +136,7 @@ function startOtpTimer(globals) {
 
     if (seconds >= 0) {
       globals.functions.setProperty(timerField, {
-        value: `${seconds} secs`,
+        value: `Resend OTP in : ${seconds} secs`,
       });
     }
 
@@ -144,7 +145,7 @@ function startOtpTimer(globals) {
       window.otpTimerInterval = null;
 
       globals.functions.setProperty(timerField, {
-        value: 'Time expired',
+        value: 'Resend OTP',
       });
 
       enableSubmitButton(globals);
@@ -172,7 +173,6 @@ function startOtpTimer(globals) {
 
   return '';
 }
-
 /**
  * Stop timer manually
  * @returns {string}
