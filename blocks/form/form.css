@@ -860,43 +860,47 @@ main .form form select[multiple] {
 }
 
 /*=====================================================================*/
-/* OTP input box */
+/* OTP container alignment */
+.field-otp-value {
+  max-width: 280px;   /* overall width like reference */
+}
+
+/* OTP input styled as 6 boxes */
 .field-otp-value input {
   height: 48px;
-  max-width: 300px;          /* 👈 reduced width */
   width: 100%;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 0 12px;
 
-  border: 1px solid #aeb4bb;
+  border: 1px solid #d0d5dd;
   border-radius: 8px;
   background-color: #fff;
 
-  font-size: 16px;
-  letter-spacing: 8px;       /* slightly improved spacing */
-  text-align: center;        /* 👈 better for OTP */
+  font-size: 18px;
+  letter-spacing: 32px;     /* 👈 creates box spacing */
+  text-align: left;
+
+  font-family: monospace;   /* equal spacing digits */
 
   outline: none;
 
-  display: block;
-  margin-top: 6px;           /* spacing from label */
+  /* Create box effect using gradient */
+  background-image:
+    linear-gradient(to right, 
+      #e5e7eb 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;  /* 6 boxes */
 }
 
-/* Focus state */
+/* Focus */
 .field-otp-value input:focus {
   border-color: #2a6df4;
   box-shadow: 0 0 0 2px rgba(42, 109, 244, 0.1);
 }
 
-/* Label styling */
+/* Label */
 .field-otp-value .field-label {
   font-size: 14px;
   color: #333;
   margin-bottom: 6px;
   display: inline-block;
-}
-
-/* Required star spacing */
-.field-otp-value .field-label::after {
-  margin-left: 4px;
 }
