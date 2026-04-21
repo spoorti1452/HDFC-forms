@@ -863,8 +863,8 @@ main .form form select[multiple] {
 
 /* ===== OTP FIELD (increase size) ===== */
 .field-otp-value {
-  max-width: 420px;   /* 👈 increased width */
-  margin-bottom: 4px; /* 👈 reduce gap below */
+  max-width: 500px;   /* 👈 increased width */
+  margin-bottom: 2px; /* 👈 reduce gap below */
 }
 
 .field-otp-value input {
