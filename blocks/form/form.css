@@ -876,17 +876,28 @@ main .form form select[multiple] {
   background-color: #fff;
 
   font-size: 18px;
-  font-family: Arial, sans-serif;
   letter-spacing: 22px;
   color: #5b6470;
-  text-align: left;
   outline: none;
 
-  /* repeating dots (fix) */
-  background-image: radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
-  background-repeat: repeat-x;
-  background-size: 40px 6px;   /* controls spacing */
-  background-position: 60px center; /* first dot position */
+  /* EXACT 5 dots */
+  background-image:
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px),
+    radial-gradient(circle, #d9dde5 1.2px, transparent 1.3px);
+
+  background-repeat: no-repeat;
+
+  background-size: 6px 6px;
+
+  background-position:
+    60px center,
+    100px center,
+    140px center,
+    180px center,
+    220px center;
 }
 
 /* Focus */
