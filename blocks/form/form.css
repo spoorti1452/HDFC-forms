@@ -818,8 +818,8 @@ main .form form select[multiple] {
 }
 
 .text-wrapper.field-aadhaar-linked-mobile-number input {
-  padding-left: 120px !important;
-  padding-right: 16px;
+  padding-left: 107px !important;
+  padding-right: -50px;
   background-image:
     url("https://flagcdn.com/w20/in.png"),
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="16" viewBox="0 0 36 16"><text x="0" y="12" font-size="15"  font-family="Arial, sans-serif" fill="%23222">+91</text></svg>'),
@@ -860,7 +860,6 @@ main .form form select[multiple] {
 }
 
 /*=====================================================================*/
-/* ===== OTP FIELD (increase size) ===== */
 .field-otp-value {
   max-width: 500px;
   margin-bottom: 0 !important;
@@ -878,7 +877,6 @@ main .form form select[multiple] {
   margin-bottom: 0 !important;
 }
 
-/* ===== REMOVE INPUT BOX STYLE ===== */
 .field-resendotp input,
 .field-attempts input {
   border: none !important;
@@ -889,13 +887,11 @@ main .form form select[multiple] {
   color: #6b7280;
 }
 
-/* ===== HIDE LABELS ===== */
 .field-resendotp .field-label,
 .field-attempts .field-label {
   display: none;
 }
 
-/* ===== ALIGN DIRECTLY BELOW OTP ===== */
 .field-resendotp,
 .field-attempts {
   display: inline-block;
@@ -905,17 +901,14 @@ main .form form select[multiple] {
   margin-bottom: 0 !important;
 }
 
-/* left */
 .field-resendotp {
   text-align: left;
 }
 
-/* right */
 .field-attempts {
   text-align: right;
 }
 
-/* ===== REMOVE AEM DEFAULT WRAPPER SPACING ===== */
 .field-otp-value.field-wrapper,
 .field-resendotp.field-wrapper,
 .field-attempts.field-wrapper {
@@ -925,7 +918,6 @@ main .form form select[multiple] {
   padding-bottom: 0 !important;
 }
 
-/* ===== EXTRA SAFETY (kill any hidden gap) ===== */
 .field-otp-value + .field-resendotp,
 .field-otp-value + .field-wrapper.field-resendotp {
   margin-top: 0 !important;
