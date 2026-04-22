@@ -812,7 +812,7 @@ main .form form select[multiple] {
 
 .text-wrapper.field-aadhaar-linked-mobile-number input::placeholder,
 .date-wrapper.field-date-of-birth input::placeholder {
-  font-size: 12px;
+  font-size: 15px;
   color: #7a7a7a;
   opacity: 1;
 }
