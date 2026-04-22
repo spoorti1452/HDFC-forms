@@ -58,3 +58,192 @@ main .form fieldset.accordion  fieldset.accordion-collapse {
 main .form fieldset.accordion {
     row-gap: 0;
 }
+
+/*================================================================================*/
+.form fieldset.panel-wrapper.field-personal-details {
+  margin-top: 24px !important;
+}
+
+/* your card styles (keep as is) */
+.form fieldset.panel-wrapper.field-loan-details,
+.form fieldset.panel-wrapper.field-personal-details {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  border: 1px solid #e3e8f4;
+  border-radius: 18px;
+  background: #f7f9ff;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* header */
+.form fieldset.panel-wrapper.field-loan-details > legend,
+.form fieldset.panel-wrapper.field-personal-details > legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 22px;
+  margin: 0;
+  min-height: 56px;
+  background: #dfe6f2 !important;;
+  border: 0;
+  color: #1f2d3d;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* content area layout */
+.form fieldset.panel-wrapper.field-loan-details.accordion-collapse,
+.form fieldset.panel-wrapper.field-personal-details.accordion-collapse {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 18px;
+  background-color: #e9eef6 !important;
+}
+
+/* header full width inside grid */
+.form fieldset.panel-wrapper.field-loan-details.accordion-collapse > legend,
+.form fieldset.panel-wrapper.field-personal-details.accordion-collapse > legend {
+  grid-column: 1 / -1;
+}
+
+/* direct child fields */
+.form fieldset.panel-wrapper.field-loan-details > .field-wrapper,
+.form fieldset.panel-wrapper.field-personal-details > .field-wrapper {
+  position: relative;
+  min-width: 0;
+  margin: 20px 22px 18px;
+  padding: 0 0 0 12px;
+  box-sizing: border-box;
+}
+
+/* blue marker */
+.form fieldset.panel-wrapper.field-loan-details > .field-wrapper::before,
+.form fieldset.panel-wrapper.field-personal-details > .field-wrapper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 3px;
+  height: 50px;
+  border-radius: 2px;
+  background: #8eaaff;
+}
+
+/* labels */
+.form fieldset.panel-wrapper.field-loan-details > .field-wrapper > label,
+.form fieldset.panel-wrapper.field-personal-details > .field-wrapper > label {
+  display: block;
+  margin: 0 0 4px;
+  color: #8b95a8;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+/* values */
+.form fieldset.panel-wrapper.field-loan-details input,
+.form fieldset.panel-wrapper.field-loan-details select,
+.form fieldset.panel-wrapper.field-loan-details textarea,
+.form fieldset.panel-wrapper.field-personal-details input,
+.form fieldset.panel-wrapper.field-personal-details select,
+.form fieldset.panel-wrapper.field-personal-details textarea {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  color: #1f2d3d;
+  font-size: 15px !important;  /* slightly bigger */
+  font-weight: 600 !important; /* bold like reference */
+  line-height: 1.4;
+}
+
+/* full width rows in personal details */
+.form fieldset.panel-wrapper.field-personal-details > .field-current-address,
+.form fieldset.panel-wrapper.field-personal-details > .field-residence-type {
+  grid-column: 1 / -1;
+}
+
+/* divider before address */
+.form fieldset.panel-wrapper.field-personal-details > .field-current-address {
+  border-top: 1px dashed #d9dfeb;
+  padding-top: 14px;
+  margin-top: 6px;
+}
+
+/* links */
+.form fieldset.panel-wrapper.field-loan-details a,
+.form fieldset.panel-wrapper.field-personal-details a {
+  color: #2f63ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.form fieldset.panel-wrapper.field-loan-details a:hover,
+.form fieldset.panel-wrapper.field-personal-details a:hover {
+  text-decoration: underline;
+}
+
+/* hide helper/error */
+.form fieldset.panel-wrapper.field-loan-details .field-description,
+.form fieldset.panel-wrapper.field-loan-details .field-error,
+.form fieldset.panel-wrapper.field-personal-details .field-description,
+.form fieldset.panel-wrapper.field-personal-details .field-error {
+  display: none !important;
+}
+
+/* neutralize AEM col width */
+.form fieldset.panel-wrapper.field-loan-details > .col-3,
+.form fieldset.panel-wrapper.field-loan-details > .col-12,
+.form fieldset.panel-wrapper.field-personal-details > .col-3,
+.form fieldset.panel-wrapper.field-personal-details > .col-12 {
+  width: auto !important;
+  max-width: none !important;
+  flex: unset !important;
+}
+
+/* tablet */
+@media (max-width: 991px) {
+  .form fieldset.panel-wrapper.field-loan-details.accordion-collapse,
+  .form fieldset.panel-wrapper.field-personal-details.accordion-collapse {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form fieldset.panel-wrapper.field-loan-details.accordion-collapse > legend,
+  .form fieldset.panel-wrapper.field-personal-details.accordion-collapse > legend {
+    grid-column: 1 / -1;
+  }
+}
+
+/* mobile */
+@media (max-width: 640px) {
+  .form fieldset.panel-wrapper.field-loan-details.accordion-collapse,
+  .form fieldset.panel-wrapper.field-personal-details.accordion-collapse {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+    row-gap: 14px;
+  }
+
+  .form fieldset.panel-wrapper.field-loan-details > legend,
+  .form fieldset.panel-wrapper.field-personal-details > legend {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+
+  .form fieldset.panel-wrapper.field-loan-details input,
+  .form fieldset.panel-wrapper.field-personal-details input {
+    font-size: 14px;
+  }
+}
