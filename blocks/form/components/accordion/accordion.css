@@ -64,7 +64,6 @@ main .form fieldset.accordion {
   margin-top: 24px !important;
 }
 
-/* your card styles (keep as is) */
 .form fieldset.panel-wrapper.field-loan-details,
 .form fieldset.panel-wrapper.field-personal-details {
   width: 100%;

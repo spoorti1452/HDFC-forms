@@ -1,3 +1,4 @@
+import { initRangeEnhancer } from './range-enhancer.js';
 function updateBubble(input, element) {
   const step = input.step || 1;
   const max = input.max || 0;
@@ -44,7 +45,12 @@ export default async function decorate(fieldDiv, fieldJson) {
   div.appendChild(rangeMaxEl);
   input.addEventListener('input', (e) => {
     updateBubble(e.target, div);
+    initRangeEnhancer(fieldDiv);
+    initRangeEnhancer(fieldDiv);
   });
   updateBubble(input, div);
+  initRangeEnhancer(fieldDiv);
   return fieldDiv;
+
 }
+
