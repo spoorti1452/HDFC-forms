@@ -65,7 +65,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
 .field-offer-panel .number-wrapper > label.field-label {
   display: block !important;
   margin: 0 0 10px !important;
-  font-size: 15px !important;
+  font-size: 18px !important;
   line-height: 1.2 !important;
   font-weight: 700 !important;
   color: #1f2b3d !important;
@@ -75,39 +75,39 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   position: relative !important;
   padding-top: 34px !important;
   padding-bottom: 42px !important;
-  --progress: calc((var(--current-steps) / var(--total-steps)) * 100%);
   overflow: visible !important;
+  --progress: calc((var(--current-steps) / var(--total-steps)) * 100%);
 }
 
+/* bubble */
 .field-offer-panel .range-widget-wrapper .range-bubble {
   position: absolute !important;
   top: 0 !important;
   left: var(--progress) !important;
   transform: translateX(-50%) !important;
   z-index: 3 !important;
+
   width: auto !important;
-  min-width: 96px !important;
-  max-width: max-content !important;
+  min-width: 104px !important;
   height: 34px !important;
   padding: 0 14px !important;
+
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+
   border: 1px solid #d9dee7 !important;
   border-radius: 12px !important;
   background: #f7f8fa !important;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06) !important;
   box-sizing: border-box !important;
-  white-space: nowrap !important;
+
   color: #5d6675 !important;
   font-size: 12px !important;
   font-weight: 700 !important;
   line-height: 1 !important;
   text-align: center !important;
-}
-
-.field-offer-panel .field-loanamount .range-bubble {
-  min-width: 104px !important;
+  white-space: nowrap !important;
 }
 
 .field-offer-panel .field-loantenure .range-bubble {
@@ -120,6 +120,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   content: none !important;
 }
 
+/* input */
 .field-offer-panel .range-widget-wrapper input[type="range"] {
   -webkit-appearance: none !important;
   appearance: none !important;
@@ -128,10 +129,12 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   margin: 28px 0 0 !important;
   background: transparent !important;
   outline: none !important;
+  color: transparent !important;
   position: relative !important;
   z-index: 2 !important;
 }
 
+/* webkit track */
 .field-offer-panel .range-widget-wrapper input[type="range"]::-webkit-slider-runnable-track {
   height: 6px !important;
   border-radius: 999px !important;
@@ -144,6 +147,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   ) !important;
 }
 
+/* webkit thumb */
 .field-offer-panel .range-widget-wrapper input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   appearance: none !important;
@@ -159,6 +163,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   z-index: 4 !important;
 }
 
+/* firefox */
 .field-offer-panel .range-widget-wrapper input[type="range"]::-moz-range-track {
   height: 6px !important;
   border-radius: 999px !important;
@@ -181,12 +186,13 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   cursor: pointer !important;
 }
 
+/* hide default min/max */
 .field-offer-panel .range-widget-wrapper .range-min,
 .field-offer-panel .range-widget-wrapper .range-max {
   display: none !important;
 }
 
-/* ===== CUSTOM TICKS ===== */
+/* custom ticks */
 .field-offer-panel .range-widget-wrapper .custom-range-tick {
   position: absolute !important;
   top: 80px !important;
@@ -205,19 +211,10 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   color: #2f5de0 !important;
 }
 
-/* first tick */
 .field-offer-panel .range-widget-wrapper .custom-range-tick:first-of-type {
-  left: 0 !important;
   transform: translateX(0) !important;
 }
 
-/* middle ticks */
-.field-offer-panel .range-widget-wrapper .custom-range-tick:not(:first-of-type):not(:last-of-type) {
-  transform: translateX(-50%) !important;
-}
-
-/* last tick - pull slightly inside */
 .field-offer-panel .range-widget-wrapper .custom-range-tick:last-of-type {
-  left: calc(100% - 6px) !important;
   transform: translateX(-100%) !important;
 }

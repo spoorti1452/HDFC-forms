@@ -1,34 +1,70 @@
 const rangeConfigs = {
   loanAmount: {
     ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
+    defaultValue: 1500000,
     formatBubble: (value) => `₹${Number(value).toLocaleString('en-IN')}`,
-    formatTick: (value) => {
-      if (value === 50000) return '50K';
-      return `${value / 100000}L`;
-    },
+    formatTick: (value) => (value === 50000 ? '50K' : `${value / 100000}L`),
   },
   loanTenure: {
     ticks: [12, 24, 36, 48, 60, 72, 84],
-    formatBubble: (value) => `${value} months`,
+    defaultValue: 48,
+    formatBubble: (value) => `${Math.round(value)} months`,
     formatTick: (value) => `${value}m`,
   },
 };
 
-function getNearestIndex(ticks, actualValue) {
-  return ticks.reduce((nearest, tick, index) => {
-    return Math.abs(tick - actualValue) < Math.abs(ticks[nearest] - actualValue)
-      ? index
-      : nearest;
-  }, 0);
+function getActualValueFromSlider(input, config) {
+  const sliderValue = Number(input.value);
+  const lowerIndex = Math.floor(sliderValue);
+  const upperIndex = Math.ceil(sliderValue);
+
+  if (lowerIndex === upperIndex) {
+    return config.ticks[lowerIndex];
+  }
+
+  const lowerValue = config.ticks[lowerIndex];
+  const upperValue = config.ticks[upperIndex];
+  const percentage = sliderValue - lowerIndex;
+
+  return lowerValue + ((upperValue - lowerValue) * percentage);
 }
 
-function formatBubble(input, wrapper, fieldType) {
+function getSliderValueFromActual(actualValue, config) {
+  const ticks = config.ticks;
+
+  if (actualValue <= ticks[0]) return 0;
+  if (actualValue >= ticks[ticks.length - 1]) return ticks.length - 1;
+
+  for (let i = 0; i < ticks.length - 1; i += 1) {
+    if (actualValue >= ticks[i] && actualValue <= ticks[i + 1]) {
+      const percentage = (actualValue - ticks[i]) / (ticks[i + 1] - ticks[i]);
+      return i + percentage;
+    }
+  }
+
+  return 0;
+}
+
+function formatActualValue(actualValue, fieldType) {
+  if (fieldType === 'loanAmount') {
+    return Math.round(actualValue / 1000) * 1000;
+  }
+
+  if (fieldType === 'loanTenure') {
+    return Math.round(actualValue);
+  }
+
+  return actualValue;
+}
+
+function updateBubbleText(input, wrapper, fieldType) {
   const config = rangeConfigs[fieldType];
   const bubble = wrapper.querySelector('.range-bubble');
+
   if (!config || !bubble) return;
 
-  const index = Number(input.value);
-  const actualValue = config.ticks[index];
+  const rawActualValue = getActualValueFromSlider(input, config);
+  const actualValue = formatActualValue(rawActualValue, fieldType);
 
   input.dataset.actualValue = actualValue;
   bubble.innerText = config.formatBubble(actualValue);
@@ -44,8 +80,6 @@ function addCustomTicks(wrapper, input, fieldType) {
     const tick = document.createElement('span');
     tick.className = 'custom-range-tick';
     tick.innerText = config.formatTick(tickValue);
-
-    /* equal spacing */
     tick.style.left = `${(index / (config.ticks.length - 1)) * 100}%`;
 
     tick.addEventListener('click', () => {
@@ -59,7 +93,7 @@ function addCustomTicks(wrapper, input, fieldType) {
 }
 
 function enhanceRangeField(field, fieldType) {
-  if (!field || field.dataset.rangeEnhanced === 'true') return;
+  if (!field) return;
 
   const input = field.querySelector('input[type="range"]');
   const wrapper = field.querySelector('.range-widget-wrapper');
@@ -67,26 +101,20 @@ function enhanceRangeField(field, fieldType) {
 
   if (!input || !wrapper || !config) return;
 
-  const originalValue = Number(input.value || input.max || config.ticks[0]);
-  const nearestIndex = getNearestIndex(config.ticks, originalValue);
+  if (field.dataset.rangeEnhanced !== 'true') {
+    const originalActualValue = Number(input.value || config.defaultValue);
+    const sliderValue = getSliderValueFromActual(originalActualValue, config);
 
-  input.min = 0;
-  input.max = config.ticks.length - 1;
-  input.step = 1;
-  input.value = nearestIndex;
+    input.min = 0;
+    input.max = config.ticks.length - 1;
+    input.step = 0.01;
+    input.value = sliderValue;
 
-  field.dataset.rangeEnhanced = 'true';
+    addCustomTicks(wrapper, input, fieldType);
+    field.dataset.rangeEnhanced = 'true';
+  }
 
-  addCustomTicks(wrapper, input, fieldType);
-  formatBubble(input, wrapper, fieldType);
-
-  input.addEventListener('input', () => {
-    formatBubble(input, wrapper, fieldType);
-  });
-
-  input.addEventListener('change', () => {
-    formatBubble(input, wrapper, fieldType);
-  });
+  updateBubbleText(input, wrapper, fieldType);
 }
 
 export function initRangeEnhancer(fieldDiv) {
