@@ -794,47 +794,50 @@ main .form form select[multiple] {
 }
 
 /*====================================================================================*/
+/* Aadhaar mobile + DOB input base */
 .text-wrapper.field-aadhaar-linked-mobile-number input,
 .date-wrapper.field-date-of-birth input {
-  height: 48px;
-  box-sizing: border-box;
-  width: 100%;
-  border: 1px solid #aeb4bb;
-  border-radius: 8px;
-  font-size: 13px;
-  color: #5f6670;
-  background-color: #fff;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  outline: none;
+  height: 48px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border: 1px solid #aeb4bb !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  color: #5f6670 !important;
+  background-color: #fff !important;
+  outline: none !important;
 }
 
+/* Placeholder */
 .text-wrapper.field-aadhaar-linked-mobile-number input::placeholder,
 .date-wrapper.field-date-of-birth input::placeholder {
-  font-size: 13px;
-  color: #7a7a7a;
-  opacity: 1;
+  font-size: 13px !important;
+  color: #7a7a7a !important;
+  opacity: 1 !important;
 }
 
+/* Mobile input with flag + +91 + divider */
 .text-wrapper.field-aadhaar-linked-mobile-number input {
-  padding-left: 107px !important;
-  padding-right: -50px;
+  padding-left: 112px !important;
+  padding-right: 16px !important;
+
+  background-color: #fff !important;
   background-image:
-    url("https://flagcdn.com/w20/in.png"),
-    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="36" height="16" viewBox="0 0 36 16"><text x="0" y="12" font-size="15"  font-family="Arial, sans-serif" fill="%23222">+91</text></svg>'),
-    linear-gradient(#d6d6d6, #d6d6d6);
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: 20px center, 52px center, 100px center;
-  background-size: 24px 16px, 32px 14px, 1px 30px;
+    url("https://flagcdn.com/w40/in.png"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='16' viewBox='0 0 36 16'%3E%3Ctext x='0' y='12' font-size='15' font-family='Arial, sans-serif' fill='%23222'%3E%2B91%3C/text%3E%3C/svg%3E"),
+    linear-gradient(#d6d6d6, #d6d6d6) !important;
+
+  background-repeat: no-repeat, no-repeat, no-repeat !important;
+  background-position: 18px center, 52px center, 98px center !important;
+  background-size: 24px 16px, 34px 16px, 1px 30px !important;
 }
 
+/* DOB input */
 .date-wrapper.field-date-of-birth input {
   padding-left: 16px !important;
-  padding-right: 16px;
-  background: #fff;
+  padding-right: 16px !important;
+  background: #fff !important;
 }
-
 /*=====================================================================*/
 .plain-text-wrapper.field-income-note {
   background: #fff8e6;
