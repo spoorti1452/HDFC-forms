@@ -65,7 +65,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
 .field-offer-panel .number-wrapper > label.field-label {
   display: block !important;
   margin: 0 0 10px !important;
-  font-size: 18px !important;
+  font-size: 15px !important;
   line-height: 1.2 !important;
   font-weight: 700 !important;
   color: #1f2b3d !important;
