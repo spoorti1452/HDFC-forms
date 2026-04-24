@@ -937,6 +937,103 @@ main .form form select[multiple] {
   line-height: 1.4;
   margin-bottom: 20px;
 }
+
+/*=========================offer page text=========================================*/
+
+/* Remove emoji from outer p */
+.field-offer-text > p::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Title text */
+.field-offer-text > p {
+  margin: 0 0 18px;
+}
+
+/* Add emoji only to inner p */
+.field-offer-text > p > p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2f3742;
+}
+
+.field-offer-text > p > p::before {
+  content: "🎉 ";
+}
+
+/* Loan Offer Card */
+.field-offer-loan {
+  position: relative;
+  max-width: 704px;
+  min-height: 58px;
+  padding: 14px 20px 14px 82px;
+  border-radius: 14px;
+  background: #eefdff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+/* Money icon */
+.field-offer-loan::before {
+  content: "💰";
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 35px;
+}
+
+/* Label */
+.field-offer-loan .field-label {
+  display: inline;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0c2742;
+}
+
+/* Input */
+.field-offer-loan input[name="offer_loan"] {
+  display: inline-block;
+  width: 120px;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  margin-left: 4px;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0c2742;
+}
+
+.field-offer-loan input[name="offer_loan"]:focus {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+/* Keep everything vertically centered */
+.field-offer-loan {
+  display: flex;
+  align-items: center;
+}
+
+/* Fix label alignment */
+.field-offer-loan .field-label {
+  line-height: 1.4;
+}
+
+/* Fix input jumping issue */
+.field-offer-loan input[name="offer_loan"] {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.4;
+  height: 20px;              /* stabilize height */
+  position: relative;
+  top: 4px;                  /* fine-tune alignment */
+}
 /*===============================================================================*/
 /*======offer panel ============*/
 
@@ -978,7 +1075,7 @@ main .form form select[multiple] {
 
 .field-avail-xpress-personal-loan-of .field-label {
   display: block !important;
-  font-size: 11px !important;
+  font-size: 16px !important;
   line-height: 1.2 !important;
   font-weight: 700 !important;
   color: #22364a !important;
@@ -1027,7 +1124,7 @@ main .form form select[multiple] {
     "emi rate"
     "taxes .";
   column-gap: 26px !important;
-  row-gap: 14px !important;
+  row-gap: 16px !important;
   align-items: start !important;
   margin-top: 0 !important;
   font-size: initial !important;
@@ -1076,7 +1173,7 @@ main .form form select[multiple] {
   display: block !important;
   margin: 0 0 4px !important;
   padding: 0 0 0 12px !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   line-height: 1.2 !important;
   font-weight: 600 !important;
   color: #7f8791 !important;

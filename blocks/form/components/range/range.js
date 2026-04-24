@@ -46,7 +46,6 @@ export default async function decorate(fieldDiv, fieldJson) {
   input.addEventListener('input', (e) => {
     updateBubble(e.target, div);
     initRangeEnhancer(fieldDiv);
-    initRangeEnhancer(fieldDiv);
   });
   updateBubble(input, div);
   initRangeEnhancer(fieldDiv);
