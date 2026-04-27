@@ -1,118 +1,153 @@
-export default async function decorate(fieldDiv) {
+/* =========================
+   CONFIG
+========================= */
+const rangeConfigs = {
+  loanAmount: {
+    ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
+    defaultIndex: 3, // 600000
+    formatBubble: (value) =>
+      `₹${Number(value).toLocaleString('en-IN')}`,
+    formatTick: (value) =>
+      value === 50000 ? '50K' : `${value / 100000}L`,
+  },
+
+  loanTenure: {
+    ticks: [12, 24, 36, 48, 60, 72, 84],
+    defaultIndex: 3, // 48
+    formatBubble: (value) => `${value} months`,
+    formatTick: (value) => `${value}m`,
+  },
+};
+
+/* =========================
+   UPDATE UI + AEM FIELD
+========================= */
+function updateUI(input, wrapper, fieldType) {
+  const config = rangeConfigs[fieldType];
+  if (!config) return;
+
+  const bubble = wrapper.querySelector('.range-bubble');
+  const index = Number(input.value);
+  const actual = config.ticks[index];
+
+  /* ===== UPDATE CSS PROGRESS ===== */
+  wrapper.style.setProperty('--current-steps', index);
+  wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
+
+  /* ===== UPDATE BUBBLE ===== */
+  if (bubble) {
+    bubble.innerText = config.formatBubble(actual);
+  }
+
+  /* ===== UPDATE AEM FIELD ===== */
+  const fieldWrapper = input.closest('.field-wrapper');
+  const fieldModel = fieldWrapper?.model;
+
+  if (fieldModel) {
+    const globals =
+      fieldModel?.form?.context ||
+      fieldModel?._form?.context;
+
+    if (globals?.functions) {
+      globals.functions.setProperty(fieldModel, {
+        value: actual,
+      });
+
+      // 🔥 CRITICAL → triggers calculateEMI
+      globals.functions.dispatchEvent(fieldModel, 'valueCommit');
+    }
+  }
+}
+
+/* =========================
+   ADD CUSTOM TICKS
+========================= */
+function addTicks(wrapper, input, fieldType) {
+  const config = rangeConfigs[fieldType];
+  if (!config) return;
+
+  config.ticks.forEach((val, idx) => {
+    const tick = document.createElement('span');
+    tick.className = 'custom-range-tick';
+    tick.innerText = config.formatTick(val);
+
+    tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
+
+    tick.addEventListener('click', () => {
+      input.value = idx;
+
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    wrapper.appendChild(tick);
+  });
+}
+
+/* =========================
+   MAIN DECORATE
+========================= */
+export default function decorate(fieldDiv) {
   const input = fieldDiv.querySelector('input');
   if (!input) return fieldDiv;
 
   input.type = 'range';
 
-  /* =========================
-     CONFIG (INLINE)
-  ========================= */
-  const isLoanAmount = fieldDiv.classList.contains('field-loanamount');
-  const isTenure = fieldDiv.classList.contains('field-loantenure');
-
-  const config = isLoanAmount
-    ? {
-        ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-        format: (v) => `₹${v.toLocaleString('en-IN')}`,
-        labels: ['50K', '2L', '4L', '6L', '8L', '10L', '15L'],
-      }
-    : {
-        ticks: [12, 24, 36, 48, 60, 72, 84],
-        format: (v) => `${v} months`,
-        labels: ['12m', '24m', '36m', '48m', '60m', '72m', '84m'],
-      };
-
-  /* =========================
-     WRAPPER
-  ========================= */
+  /* ===== CREATE WRAPPER ===== */
   const wrapper = document.createElement('div');
-  wrapper.className = 'range-widget-wrapper';
+  wrapper.className = 'range-widget-wrapper decorated';
 
   input.after(wrapper);
 
   const bubble = document.createElement('span');
   bubble.className = 'range-bubble';
 
-  wrapper.appendChild(input);
   wrapper.appendChild(bubble);
+  wrapper.appendChild(input);
 
   /* =========================
-     SET RANGE
+     IDENTIFY FIELD TYPE
   ========================= */
+  let fieldType = null;
+
+  if (fieldDiv.classList.contains('field-loanamount')) {
+    fieldType = 'loanAmount';
+  }
+
+  if (fieldDiv.classList.contains('field-loantenure')) {
+    fieldType = 'loanTenure';
+  }
+
+  if (!fieldType) return fieldDiv;
+
+  const config = rangeConfigs[fieldType];
+
+  /* ===== SET RANGE ===== */
   input.min = 0;
   input.max = config.ticks.length - 1;
   input.step = 1;
 
-  /* =========================
-     ADD LABELS
-  ========================= */
-  config.labels.forEach((label, i) => {
-    const tick = document.createElement('span');
-    tick.className = 'custom-range-tick';
-    tick.innerText = label;
-    tick.style.left = `${(i / (config.labels.length - 1)) * 100}%`;
+  /* ===== DEFAULT POSITION ===== */
+  input.value = config.defaultIndex;
 
-    tick.onclick = () => {
-      input.value = i;
-      update();
-    };
+  /* ===== INITIAL CSS ===== */
+  wrapper.style.setProperty('--current-steps', input.value);
+  wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
-    wrapper.appendChild(tick);
+  /* ===== ADD TICKS ===== */
+  addTicks(wrapper, input, fieldType);
+
+  /* ===== EVENTS ===== */
+  input.addEventListener('input', () => {
+    updateUI(input, wrapper, fieldType);
   });
 
-  /* =========================
-     UPDATE FUNCTION
-  ========================= */
-  function update() {
-    const index = Number(input.value);
-    const value = config.ticks[index];
+  input.addEventListener('change', () => {
+    updateUI(input, wrapper, fieldType);
+  });
 
-    // bubble text
-    bubble.innerText = config.format(value);
-
-    // bubble position
-    const percent = index / (config.ticks.length - 1);
-    bubble.style.left = `calc(${percent * 100}% - 20px)`;
-
-    // 🔥 THIS FIXES SLIDER FILL
-    input.style.background = `
-      linear-gradient(to right, #f59e0b 0%, 
-      #f59e0b ${percent * 100}%, 
-      #e5e7eb ${percent * 100}%, 
-      #e5e7eb 100%)
-    `;
-
-    /* =========================
-       UPDATE EDS FIELD
-    ========================= */
-    const fieldWrapper = input.closest('.field-wrapper');
-    const fieldModel = fieldWrapper?.model;
-
-    if (fieldModel) {
-      const globals =
-        fieldModel?.form?.context ||
-        fieldModel?._form?.context;
-
-      if (globals?.functions) {
-        globals.functions.setProperty(fieldModel, {
-          value: value,
-        });
-
-        globals.functions.dispatchEvent(fieldModel, 'valueCommit');
-      }
-    }
-  }
-
-  /* =========================
-     EVENTS
-  ========================= */
-  input.addEventListener('input', update);
-
-  /* =========================
-     INIT
-  ========================= */
-  input.value = 3; // default mid
-  update();
+  /* ===== INITIAL RENDER ===== */
+  updateUI(input, wrapper, fieldType);
 
   return fieldDiv;
 }
