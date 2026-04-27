@@ -250,24 +250,41 @@ function getActualValue(field) {
 /**
  * Clean EMI function for your form
  */
-function calculateEMI() {
-  const globals = this;
+function calculateEMI(globals = {}) {
+  if (!globals?.form || !globals?.functions) return '';
 
-  const loanField = globals.form?.offer_panel?.loanAmount;
-  const tenureField = globals.form?.offer_panel?.loanTenure;
+  /* ===== CORRECT FIELD PATHS (BASED ON YOUR DOM) ===== */
+
+  const loanField =
+    globals.form?.offer_Panel?.loanAmount;
+
+  const tenureField =
+    globals.form?.offer_Panel?.loanTenure;
 
   const emiField =
-    globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.emi_Amount;
+    globals.form?.loan_offer
+      ?.loan_offer_summary
+      ?.offer_details_grid
+      ?.emi_Amount;
 
   const loanDisplayField =
-    globals.form?.loan_offer?.loan_offer_summary?.avail_XPRESS_Personal_Loan_of;
+    globals.form?.loan_offer
+      ?.loan_offer_summary
+      ?.avail_XPRESS_Personal_Loan_of;
 
   const roiField =
-    globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.rate_of_Interest;
+    globals.form?.loan_offer
+      ?.loan_offer_summary
+      ?.offer_details_grid
+      ?.rate_of_Interest;
 
   const taxField =
-    globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.taxes;
+    globals.form?.loan_offer
+      ?.loan_offer_summary
+      ?.offer_details_grid
+      ?.taxes;
 
+  /* ===== GET VALUE FROM SLIDER ===== */
   function getValue(field) {
     if (!field) return 0;
 
@@ -280,6 +297,7 @@ function calculateEMI() {
     return Number(field.value) || 0;
   }
 
+  /* ===== SET VALUE ===== */
   function setValue(field, value) {
     if (!field) return;
 
@@ -301,6 +319,7 @@ function calculateEMI() {
 
   const emiRounded = Math.round(emi);
 
+  /* ===== UPDATE UI ===== */
   setValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
   setValue(loanDisplayField, `₹${P.toLocaleString('en-IN')}`);
   setValue(roiField, '10.97%');
