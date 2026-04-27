@@ -253,40 +253,36 @@ function getActualValue(field) {
 function calculateEMI(globals) {
   const form = globals.form;
 
-  console.log("FORM STRUCTURE:", form);
-
   /* =========================
-     FIND FIELDS SAFELY
+     DIRECT FIELD ACCESS
   ========================= */
 
-  let loanAmount = 0;
-  let loanTenure = 0;
+  const loanAmountField =
+    form?.offer_display_page?.offer_panel?.loanAmount;
 
-  // 🔥 search dynamically instead of wrong path
-  function findField(obj, key) {
-    if (!obj || typeof obj !== 'object') return null;
+  const loanTenureField =
+    form?.offer_display_page?.offer_panel?.loanTenure;
 
-    if (obj[key]) return obj[key];
+  const emiField =
+    form?.offer_display_page?.offer_panel?.loan_offer
+      ?.loan_offer_summary?.offer_details_grid?.emi_Amount;
 
-    for (const k in obj) {
-      const res = findField(obj[k], key);
-      if (res) return res;
-    }
+  const rateField =
+    form?.offer_display_page?.offer_panel?.loan_offer
+      ?.loan_offer_summary?.offer_details_grid?.rate_of_Interest;
 
-    return null;
-  }
+  const taxField =
+    form?.offer_display_page?.offer_panel?.loan_offer
+      ?.loan_offer_summary?.offer_details_grid?.taxes;
 
-  const loanAmountField = findField(form, 'loanAmount');
-  const loanTenureField = findField(form, 'loanTenure');
+  /* =========================
+     GET VALUES
+  ========================= */
 
-  console.log("loanAmountField:", loanAmountField);
-  console.log("loanTenureField:", loanTenureField);
-
-  loanAmount = Number(loanAmountField?.value || 0);
-  loanTenure = Number(loanTenureField?.value || 0);
+  const loanAmount = Number(loanAmountField?.value || 0);
+  const loanTenure = Number(loanTenureField?.value || 0);
 
   if (!loanAmount || !loanTenure) {
-    console.log("❌ Missing values");
     return '';
   }
 
@@ -304,14 +300,8 @@ function calculateEMI(globals) {
   );
 
   /* =========================
-     SET OUTPUT FIELDS
+     SET VALUES
   ========================= */
-
-  const emiField = findField(form, 'emi_Amount');
-  const rateField = findField(form, 'rate_of_Interest');
-  const taxField = findField(form, 'taxes');
-
-  console.log("emiField:", emiField);
 
   if (emiField) {
     globals.functions.setProperty(emiField, {
