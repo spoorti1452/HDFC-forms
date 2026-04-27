@@ -449,11 +449,16 @@ function handleOtpInvalid(globals) {
   return '';
 }
 
-/**
- * Calculate EMI based on Loan Amount & Tenure
- * @param {scope} globals
- * @returns {string}
- */
+function getActualValue(field) {
+  if (!field) return 0;
+
+  const input = field.element?.querySelector('input');
+
+  if (!input) return Number(field.value) || 0;
+
+  return Number(input.dataset.actualValue || input.value);
+}
+
 function calculateEMI(globals) {
   const loanAmountField = globals.form.offer_Panel.loanAmount;
   const tenureField = globals.form.offer_Panel.loanTenure;
@@ -470,19 +475,8 @@ function calculateEMI(globals) {
   const taxField =
     globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes;
 
-  // 🔴 safety check (VERY IMPORTANT)
-  if (!loanAmountField || !tenureField) {
-    console.log("Fields not found");
-    return "";
-  }
-
-  const P = Number(
-  loanAmountField?.element?.querySelector('input')?.dataset?.actualValue
-);
-
-const n = Number(
-  tenureField?.element?.querySelector('input')?.dataset?.actualValue
-);
+  const P = getActualValue(loanAmountField);
+  const n = getActualValue(tenureField);
 
   if (!P || !n) return "";
 
@@ -496,23 +490,24 @@ const n = Number(
   const emiRounded = Math.round(emi);
 
   globals.functions.setProperty(emiField, {
-    value: `₹${emiRounded.toLocaleString("en-IN")}`,
+    value: `₹${emiRounded.toLocaleString('en-IN')}`
   });
 
   globals.functions.setProperty(totalLoanField, {
-    value: `₹${P.toLocaleString("en-IN")}`,
+    value: `₹${P.toLocaleString('en-IN')}`
   });
 
   globals.functions.setProperty(roiField, {
-    value: "10.97%",
+    value: "10.97%"
   });
 
   globals.functions.setProperty(taxField, {
-    value: "₹4,000",
+    value: "₹4,000"
   });
 
   return "";
 }
+
 export {
   getFullName,
   days,
