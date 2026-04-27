@@ -449,6 +449,57 @@ function handleOtpInvalid(globals) {
   return '';
 }
 
+/**
+ * Calculate EMI based on Loan Amount & Tenure
+ * @param {scope} globals
+ * @returns {string}
+ */
+function calculateEMI(globals) {
+  const loanAmountField = globals.form.offer_panel.loanAmount;
+  const tenureField = globals.form.offer_panel.loanTenure;
+
+  const emiField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount;
+  const totalLoanField = globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of;
+  const roiField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest;
+  const taxField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes;
+
+  if (!loanAmountField || !tenureField) return "";
+
+  const P = Number(loanAmountField.value); // Loan Amount
+  const n = Number(tenureField.value);     // Tenure in months
+
+  const annualRate = 10.97;
+  const r = annualRate / (12 * 100); // Monthly rate
+
+  if (!P || !n) return "";
+
+  const emi =
+    (P * r * Math.pow(1 + r, n)) /
+    (Math.pow(1 + r, n) - 1);
+
+  const emiRounded = Math.round(emi);
+
+  // ✅ Update EMI
+  globals.functions.setProperty(emiField, {
+    value: `₹${emiRounded.toLocaleString()}`
+  });
+
+  // ✅ Update Loan Amount (right panel)
+  globals.functions.setProperty(totalLoanField, {
+    value: `₹${P.toLocaleString()}`
+  });
+
+  // ✅ Static values (as per your design)
+  globals.functions.setProperty(roiField, {
+    value: "10.97%"
+  });
+
+  globals.functions.setProperty(taxField, {
+    value: "₹4,000"
+  });
+
+  return "";
+}
 export {
   getFullName,
   days,
@@ -463,4 +514,5 @@ export {
   handleOtpResentAction,
   handleOtpValidated,
   handleOtpInvalid,
+  calculateEMI,
 };
