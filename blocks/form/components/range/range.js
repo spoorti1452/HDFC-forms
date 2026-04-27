@@ -58,12 +58,14 @@ function updateUI(input, wrapper, fieldType) {
   if (!config) return;
 
   const bubble = wrapper.querySelector('.range-bubble');
+  const index = Math.round(Number(input.value)); // 🔥 snap index
+  const actual = config.ticks[index];
 
-  const sliderValue = Number(input.value);
-  const actual = Math.round(getActualFromSlider(sliderValue, config));
+  /* ===== FORCE SNAP ===== */
+  input.value = index;
 
-  /* ===== CSS PROGRESS ===== */
-  wrapper.style.setProperty('--current-steps', sliderValue);
+  /* ===== CSS ===== */
+  wrapper.style.setProperty('--current-steps', index);
   wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
   /* ===== BUBBLE ===== */
@@ -73,7 +75,7 @@ function updateUI(input, wrapper, fieldType) {
 
   input.dataset.actualValue = actual;
 
-  /* ===== AEM FIELD ===== */
+  /* ===== AEM UPDATE ===== */
   const fieldWrapper = input.closest('.field-wrapper');
   const fieldModel = fieldWrapper?.model;
 
@@ -91,7 +93,6 @@ function updateUI(input, wrapper, fieldType) {
     }
   }
 }
-
 /* =========================
    ADD TICKS
 ========================= */
