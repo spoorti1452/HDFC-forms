@@ -46,13 +46,15 @@ function updateBubbleAndField(input, wrapper, type) {
     config.ticks.length - 1
   );
 
-  /* ===== BUBBLE ===== */
+  /* ===== UPDATE BUBBLE ===== */
   bubble.innerText = config.formatBubble(actual);
 
   /* ===== STORE VALUE ===== */
   input.dataset.actualValue = actual;
 
-  /* ===== UPDATE EDS FIELD ===== */
+  /* =========================
+     🔥 UPDATE EDS FIELD + TRIGGER VALUE COMMIT
+  ========================= */
   const fieldWrapper = input.closest('.field-wrapper');
   const fieldModel = fieldWrapper?.model;
 
@@ -62,9 +64,15 @@ function updateBubbleAndField(input, wrapper, type) {
       fieldModel?._form?.context;
 
     if (globals && globals.functions) {
+      // ✅ Update field value
       globals.functions.setProperty(fieldModel, {
         value: actual,
       });
+
+      // 🔥 IMPORTANT: trigger Value Commit (required in your setup)
+      if (globals.functions.dispatchEvent) {
+        globals.functions.dispatchEvent(fieldModel, 'valueCommit');
+      }
     }
   }
 }
@@ -76,7 +84,8 @@ function addTicks(wrapper, input, type) {
   const config = rangeConfigs[type];
   if (!config) return;
 
-  wrapper.querySelectorAll('.custom-range-tick').forEach(el => el.remove());
+  // remove existing ticks
+  wrapper.querySelectorAll('.custom-range-tick').forEach((el) => el.remove());
 
   config.ticks.forEach((val, idx) => {
     const tick = document.createElement('span');
@@ -95,7 +104,7 @@ function addTicks(wrapper, input, type) {
 }
 
 /* =========================
-   MAIN
+   MAIN ENHANCER
 ========================= */
 function enhance(fieldDiv, type) {
   const input = fieldDiv.querySelector('input[type="range"]');
@@ -104,15 +113,19 @@ function enhance(fieldDiv, type) {
 
   if (!input || !wrapper || !config) return;
 
+  // prevent duplicate init
   if (input.dataset.enhanced === 'true') return;
   input.dataset.enhanced = 'true';
 
+  /* ===== SET RANGE ===== */
   input.min = 0;
   input.max = config.ticks.length - 1;
   input.step = 1;
 
+  /* ===== ADD TICKS ===== */
   addTicks(wrapper, input, type);
 
+  /* ===== SET DEFAULT ===== */
   const defaultIndex =
     config.ticks.indexOf(config.defaultValue) >= 0
       ? config.ticks.indexOf(config.defaultValue)
@@ -120,12 +133,14 @@ function enhance(fieldDiv, type) {
 
   input.value = defaultIndex;
 
+  /* ===== INIT CSS ===== */
   wrapper.style.setProperty('--current-steps', defaultIndex);
   wrapper.style.setProperty(
     '--total-steps',
     config.ticks.length - 1
   );
 
+  /* ===== EVENTS ===== */
   input.addEventListener('input', () => {
     requestAnimationFrame(() => {
       updateBubbleAndField(input, wrapper, type);
@@ -136,6 +151,7 @@ function enhance(fieldDiv, type) {
     updateBubbleAndField(input, wrapper, type);
   });
 
+  /* ===== INITIAL RENDER ===== */
   updateBubbleAndField(input, wrapper, type);
 }
 
