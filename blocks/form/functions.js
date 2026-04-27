@@ -248,7 +248,9 @@ function getActualValue(field) {
   return Number(field.value) || 0;
 }
 
-function calculateEMI(globals) {
+function calculateEMI() {
+  const globals = this;
+
   const loanAmountField = globals.form?.offer_panel?.loanAmount;
   const tenureField = globals.form?.offer_panel?.loanTenure;
 
@@ -264,6 +266,25 @@ function calculateEMI(globals) {
   const taxField =
     globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.taxes;
 
+  function getActualValue(field) {
+    if (!field) return 0;
+
+    const input = field.element?.querySelector('input');
+    if (input && input.dataset.actualValue) {
+      return Number(input.dataset.actualValue);
+    }
+
+    return Number(field.value) || 0;
+  }
+
+  function setFieldValue(field, value) {
+    if (!field) return;
+
+    globals.functions.setProperty(field, {
+      value: value,
+    });
+  }
+
   const P = getActualValue(loanAmountField);
   const n = getActualValue(tenureField);
 
@@ -277,11 +298,10 @@ function calculateEMI(globals) {
 
   const emiRounded = Math.round(emi);
 
-  /* ✅ set values using helper */
-  setFieldValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`, globals);
-  setFieldValue(totalLoanField, `₹${P.toLocaleString('en-IN')}`, globals);
-  setFieldValue(roiField, '10.97%', globals);
-  setFieldValue(taxField, '₹4,000', globals);
+  setFieldValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
+  setFieldValue(totalLoanField, `₹${P.toLocaleString('en-IN')}`);
+  setFieldValue(roiField, '10.97%');
+  setFieldValue(taxField, '₹4,000');
 
   return '';
 }
