@@ -1,38 +1,30 @@
-/* =========================
-   CONFIG
-========================= */
-const rangeConfigs = {
-  loanAmount: {
-    ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-    defaultValue: 400000,
-    formatBubble: (v) => `₹${Number(v).toLocaleString('en-IN')}`,
-    formatTick: (v) => (v === 50000 ? '50K' : `${v / 100000}L`),
-  },
-
-  loanTenure: {
-    ticks: [12, 24, 36, 48, 60, 72, 84],
-    defaultValue: 36,
-    formatBubble: (v) => `${v} months`,
-    formatTick: (v) => `${v}m`,
-  },
-};
-
-/* =========================
-   HELPERS
-========================= */
-function getActualValue(index, config) {
-  return config.ticks[index] || config.ticks[0];
-}
-
-/* =========================
-   MAIN DECORATE
-========================= */
-export default function decorate(fieldDiv) {
+export default async function decorate(fieldDiv) {
   const input = fieldDiv.querySelector('input');
   if (!input) return fieldDiv;
 
   input.type = 'range';
 
+  /* =========================
+     CONFIG (INLINE)
+  ========================= */
+  const isLoanAmount = fieldDiv.classList.contains('field-loanamount');
+  const isTenure = fieldDiv.classList.contains('field-loantenure');
+
+  const config = isLoanAmount
+    ? {
+        ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
+        format: (v) => `₹${v.toLocaleString('en-IN')}`,
+        labels: ['50K', '2L', '4L', '6L', '8L', '10L', '15L'],
+      }
+    : {
+        ticks: [12, 24, 36, 48, 60, 72, 84],
+        format: (v) => `${v} months`,
+        labels: ['12m', '24m', '36m', '48m', '60m', '72m', '84m'],
+      };
+
+  /* =========================
+     WRAPPER
+  ========================= */
   const wrapper = document.createElement('div');
   wrapper.className = 'range-widget-wrapper';
 
@@ -41,45 +33,28 @@ export default function decorate(fieldDiv) {
   const bubble = document.createElement('span');
   bubble.className = 'range-bubble';
 
-  wrapper.appendChild(bubble);
   wrapper.appendChild(input);
+  wrapper.appendChild(bubble);
 
   /* =========================
-     IDENTIFY TYPE
-  ========================= */
-  let type = null;
-
-  if (fieldDiv.classList.contains('field-loanamount')) {
-    type = 'loanAmount';
-  }
-
-  if (fieldDiv.classList.contains('field-loantenure')) {
-    type = 'loanTenure';
-  }
-
-  const config = rangeConfigs[type];
-  if (!config) return fieldDiv;
-
-  /* =========================
-     RANGE SETUP
+     SET RANGE
   ========================= */
   input.min = 0;
   input.max = config.ticks.length - 1;
   input.step = 1;
 
   /* =========================
-     ADD TICKS
+     ADD LABELS
   ========================= */
-  config.ticks.forEach((val, idx) => {
+  config.labels.forEach((label, i) => {
     const tick = document.createElement('span');
     tick.className = 'custom-range-tick';
-    tick.innerText = config.formatTick(val);
-
-    tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
+    tick.innerText = label;
+    tick.style.left = `${(i / (config.labels.length - 1)) * 100}%`;
 
     tick.onclick = () => {
-      input.value = idx;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.value = i;
+      update();
     };
 
     wrapper.appendChild(tick);
@@ -90,20 +65,25 @@ export default function decorate(fieldDiv) {
   ========================= */
   function update() {
     const index = Number(input.value);
-    const actual = getActualValue(index, config);
+    const value = config.ticks[index];
 
-    /* bubble */
-    bubble.innerText = config.formatBubble(actual);
+    // bubble text
+    bubble.innerText = config.format(value);
 
-    /* progress */
-    wrapper.style.setProperty('--current-steps', index);
-    wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
+    // bubble position
+    const percent = index / (config.ticks.length - 1);
+    bubble.style.left = `calc(${percent * 100}% - 20px)`;
 
-    /* store */
-    input.dataset.actualValue = actual;
+    // 🔥 THIS FIXES SLIDER FILL
+    input.style.background = `
+      linear-gradient(to right, #f59e0b 0%, 
+      #f59e0b ${percent * 100}%, 
+      #e5e7eb ${percent * 100}%, 
+      #e5e7eb 100%)
+    `;
 
     /* =========================
-       🔥 UPDATE EDS MODEL
+       UPDATE EDS FIELD
     ========================= */
     const fieldWrapper = input.closest('.field-wrapper');
     const fieldModel = fieldWrapper?.model;
@@ -113,10 +93,12 @@ export default function decorate(fieldDiv) {
         fieldModel?.form?.context ||
         fieldModel?._form?.context;
 
-      if (globals && globals.functions) {
-        // double setProperty = guaranteed trigger
-        globals.functions.setProperty(fieldModel, { value: actual });
-        globals.functions.setProperty(fieldModel, { value: actual });
+      if (globals?.functions) {
+        globals.functions.setProperty(fieldModel, {
+          value: value,
+        });
+
+        globals.functions.dispatchEvent(fieldModel, 'valueCommit');
       }
     }
   }
@@ -124,22 +106,12 @@ export default function decorate(fieldDiv) {
   /* =========================
      EVENTS
   ========================= */
-  input.addEventListener('input', () => {
-    requestAnimationFrame(update);
-  });
-
-  input.addEventListener('change', update);
+  input.addEventListener('input', update);
 
   /* =========================
-     DEFAULT
+     INIT
   ========================= */
-  const defaultIndex =
-    config.ticks.indexOf(config.defaultValue) >= 0
-      ? config.ticks.indexOf(config.defaultValue)
-      : 0;
-
-  input.value = defaultIndex;
-
+  input.value = 3; // default mid
   update();
 
   return fieldDiv;

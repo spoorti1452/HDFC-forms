@@ -250,95 +250,42 @@ function getActualValue(field) {
 /**
  * Clean EMI function for your form
  */
-/**
- * @param {scope} globals
- * @returns {string}
- */
-function calculateEMI(globals = {}) {
-  /* =========================
-     SAFETY CHECK
-  ========================= */
-  if (!globals?.form || !globals?.functions) {
-    console.log("❌ Globals not available");
-    return '';
-  }
+function calculateEMI(globals) {
+  const form = globals.form;
+
+  console.log("FORM STRUCTURE:", form);
 
   /* =========================
-     🔍 DEBUG START
+     FIND FIELDS SAFELY
   ========================= */
-  console.log("===== DEBUG START =====");
 
-  console.log("FORM KEYS:", Object.keys(globals.form));
+  let loanAmount = 0;
+  let loanTenure = 0;
 
-  console.log("offer_Panel:", globals.form.offer_Panel);
-  console.log("loanAmount field:", globals.form.offer_Panel?.loanAmount);
-  console.log("loanTenure field:", globals.form.offer_Panel?.loanTenure);
+  // 🔥 search dynamically instead of wrong path
+  function findField(obj, key) {
+    if (!obj || typeof obj !== 'object') return null;
 
-  console.log("loan_offer:", globals.form.loan_offer);
-  console.log("summary:", globals.form.loan_offer?.loan_offer_summary);
-  console.log(
-    "grid:",
-    globals.form.loan_offer?.loan_offer_summary?.offer_details_grid
-  );
-  console.log(
-    "emi field:",
-    globals.form.loan_offer?.loan_offer_summary?.offer_details_grid?.emi_Amount
-  );
+    if (obj[key]) return obj[key];
 
-  console.log("===== DEBUG END =====");
-
-  /* =========================
-     GET FIELD REFERENCES
-  ========================= */
-  const loanField = globals.form.offer_Panel?.loanAmount;
-  const tenureField = globals.form.offer_Panel?.loanTenure;
-
-  const emiField =
-    globals.form.loan_offer
-      ?.loan_offer_summary
-      ?.offer_details_grid
-      ?.emi_Amount;
-
-  const roiField =
-    globals.form.loan_offer
-      ?.loan_offer_summary
-      ?.offer_details_grid
-      ?.rate_of_Interest;
-
-  const taxField =
-    globals.form.loan_offer
-      ?.loan_offer_summary
-      ?.offer_details_grid
-      ?.taxes;
-
-  const loanDisplayField =
-    globals.form.loan_offer
-      ?.loan_offer_summary
-      ?.avail_XPRESS_Personal_Loan_of;
-
-  /* =========================
-     VALUE GETTER (IMPORTANT)
-  ========================= */
-  function getValue(field) {
-    if (!field) return 0;
-
-    const input = field.element?.querySelector('input');
-
-    // 🔥 take value from slider dataset
-    if (input && input.dataset.actualValue) {
-      return Number(input.dataset.actualValue);
+    for (const k in obj) {
+      const res = findField(obj[k], key);
+      if (res) return res;
     }
 
-    return Number(field.value) || 0;
+    return null;
   }
 
-  const P = getValue(loanField);
-  const n = getValue(tenureField);
+  const loanAmountField = findField(form, 'loanAmount');
+  const loanTenureField = findField(form, 'loanTenure');
 
-  console.log("Loan Value:", P);
-  console.log("Tenure Value:", n);
+  console.log("loanAmountField:", loanAmountField);
+  console.log("loanTenureField:", loanTenureField);
 
-  if (!P || !n) {
+  loanAmount = Number(loanAmountField?.value || 0);
+  loanTenure = Number(loanTenureField?.value || 0);
+
+  if (!loanAmount || !loanTenure) {
     console.log("❌ Missing values");
     return '';
   }
@@ -346,32 +293,43 @@ function calculateEMI(globals = {}) {
   /* =========================
      EMI CALCULATION
   ========================= */
+
   const annualRate = 10.97;
-  const r = annualRate / (12 * 100);
+  const monthlyRate = annualRate / 12 / 100;
 
-  const emi =
-    (P * r * Math.pow(1 + r, n)) /
-    (Math.pow(1 + r, n) - 1);
+  const factor = Math.pow(1 + monthlyRate, loanTenure);
 
-  const emiRounded = Math.round(emi);
-
-  console.log("EMI:", emiRounded);
+  const emi = Math.round(
+    (loanAmount * monthlyRate * factor) / (factor - 1)
+  );
 
   /* =========================
-     SET VALUES
+     SET OUTPUT FIELDS
   ========================= */
-  function setValue(field, value) {
-    if (!field) return;
 
-    globals.functions.setProperty(field, {
-      value: value,
+  const emiField = findField(form, 'emi_Amount');
+  const rateField = findField(form, 'rate_of_Interest');
+  const taxField = findField(form, 'taxes');
+
+  console.log("emiField:", emiField);
+
+  if (emiField) {
+    globals.functions.setProperty(emiField, {
+      value: `₹${emi.toLocaleString('en-IN')}`,
     });
   }
 
-  setValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
-  setValue(roiField, `${annualRate}%`);
-  setValue(taxField, '₹4,000');
-  setValue(loanDisplayField, `₹${P.toLocaleString('en-IN')}`);
+  if (rateField) {
+    globals.functions.setProperty(rateField, {
+      value: `${annualRate}%`,
+    });
+  }
+
+  if (taxField) {
+    globals.functions.setProperty(taxField, {
+      value: '₹4000',
+    });
+  }
 
   return '';
 }
