@@ -253,10 +253,6 @@ function getActualValue(field) {
 function calculateEMI(globals) {
   const form = globals.form;
 
-  /* =========================
-     DIRECT FIELD ACCESS
-  ========================= */
-
   const loanAmountField =
     form?.offer_display_page?.offer_panel?.loanAmount;
 
@@ -276,20 +272,17 @@ function calculateEMI(globals) {
       ?.loan_offer_summary?.offer_details_grid?.taxes;
 
   /* =========================
-     GET VALUES
+     DEFAULT VALUES (🔥 IMPORTANT)
   ========================= */
+  let loanAmount = Number(loanAmountField?.value || 0);
+  let loanTenure = Number(loanTenureField?.value || 0);
 
-  const loanAmount = Number(loanAmountField?.value || 0);
-  const loanTenure = Number(loanTenureField?.value || 0);
-
-  if (!loanAmount || !loanTenure) {
-    return '';
-  }
+  if (!loanAmount) loanAmount = 600000; // default 6L
+  if (!loanTenure) loanTenure = 48;     // default 48 months
 
   /* =========================
      EMI CALCULATION
   ========================= */
-
   const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
 
@@ -302,7 +295,6 @@ function calculateEMI(globals) {
   /* =========================
      SET VALUES
   ========================= */
-
   if (emiField) {
     globals.functions.setProperty(emiField, {
       value: `₹${emi.toLocaleString('en-IN')}`,

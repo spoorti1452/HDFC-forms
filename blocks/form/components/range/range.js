@@ -53,7 +53,7 @@ function updateUI(input, wrapper, fieldType) {
         value: actual,
       });
 
-      // 🔥 CRITICAL → triggers calculateEMI
+      // 🔥 triggers calculateEMI
       globals.functions.dispatchEvent(fieldModel, 'valueCommit');
     }
   }
@@ -148,6 +148,13 @@ export default function decorate(fieldDiv) {
 
   /* ===== INITIAL RENDER ===== */
   updateUI(input, wrapper, fieldType);
+
+  /* =========================
+     🔥 AUTO TRIGGER EMI ON LOAD
+  ========================= */
+  setTimeout(() => {
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }, 200);
 
   return fieldDiv;
 }
