@@ -57,6 +57,10 @@ function formatActualValue(actualValue, fieldType) {
   return actualValue;
 }
 
+/**
+ * 🔥 CRITICAL FUNCTION (FIXED)
+ * Syncs slider → AEM field → triggers rules
+ */
 function updateBubbleText(input, wrapper, fieldType) {
   const config = rangeConfigs[fieldType];
   const bubble = wrapper.querySelector('.range-bubble');
@@ -66,8 +70,18 @@ function updateBubbleText(input, wrapper, fieldType) {
   const rawActualValue = getActualValueFromSlider(input, config);
   const actualValue = formatActualValue(rawActualValue, fieldType);
 
+  // UI update
   input.dataset.actualValue = actualValue;
   bubble.innerText = config.formatBubble(actualValue);
+
+  // 🔥 IMPORTANT: Update AEM field value
+  const fieldDiv = input.closest('[data-aem-field]');
+  if (fieldDiv && fieldDiv._field) {
+    fieldDiv._field.value = actualValue;
+
+    // trigger rule editor
+    fieldDiv._field.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 }
 
 function addCustomTicks(wrapper, input, fieldType) {
@@ -84,6 +98,8 @@ function addCustomTicks(wrapper, input, fieldType) {
 
     tick.addEventListener('click', () => {
       input.value = index;
+
+      // 🔥 trigger both input + change
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
@@ -114,7 +130,13 @@ function enhanceRangeField(field, fieldType) {
     field.dataset.rangeEnhanced = 'true';
   }
 
+  // initial render
   updateBubbleText(input, wrapper, fieldType);
+
+  // 🔥 IMPORTANT: listen to slider movement
+  input.addEventListener('input', () => {
+    updateBubbleText(input, wrapper, fieldType);
+  });
 }
 
 export function initRangeEnhancer(fieldDiv) {
