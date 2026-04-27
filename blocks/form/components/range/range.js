@@ -4,7 +4,7 @@
 const rangeConfigs = {
   loanAmount: {
     ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-    defaultIndex: 3, // 600000
+    defaultValue: 600000,
     formatBubble: (value) =>
       `₹${Number(value).toLocaleString('en-IN')}`,
     formatTick: (value) =>
@@ -13,33 +13,67 @@ const rangeConfigs = {
 
   loanTenure: {
     ticks: [12, 24, 36, 48, 60, 72, 84],
-    defaultIndex: 3, // 48
+    defaultValue: 48,
     formatBubble: (value) => `${value} months`,
     formatTick: (value) => `${value}m`,
   },
 };
 
 /* =========================
-   UPDATE UI + AEM FIELD
+   VALUE HELPERS
+========================= */
+function getActualFromSlider(value, config) {
+  const lower = Math.floor(value);
+  const upper = Math.ceil(value);
+
+  if (lower === upper) return config.ticks[lower];
+
+  const percent = value - lower;
+
+  return (
+    config.ticks[lower] +
+    (config.ticks[upper] - config.ticks[lower]) * percent
+  );
+}
+
+function getSliderFromActual(actual, config) {
+  const ticks = config.ticks;
+
+  for (let i = 0; i < ticks.length - 1; i++) {
+    if (actual >= ticks[i] && actual <= ticks[i + 1]) {
+      const percent =
+        (actual - ticks[i]) / (ticks[i + 1] - ticks[i]);
+      return i + percent;
+    }
+  }
+
+  return 0;
+}
+
+/* =========================
+   UPDATE UI + AEM
 ========================= */
 function updateUI(input, wrapper, fieldType) {
   const config = rangeConfigs[fieldType];
   if (!config) return;
 
   const bubble = wrapper.querySelector('.range-bubble');
-  const index = Number(input.value);
-  const actual = config.ticks[index];
 
-  /* ===== UPDATE CSS PROGRESS ===== */
-  wrapper.style.setProperty('--current-steps', index);
+  const sliderValue = Number(input.value);
+  const actual = Math.round(getActualFromSlider(sliderValue, config));
+
+  /* ===== CSS PROGRESS ===== */
+  wrapper.style.setProperty('--current-steps', sliderValue);
   wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
-  /* ===== UPDATE BUBBLE ===== */
+  /* ===== BUBBLE ===== */
   if (bubble) {
     bubble.innerText = config.formatBubble(actual);
   }
 
-  /* ===== UPDATE AEM FIELD ===== */
+  input.dataset.actualValue = actual;
+
+  /* ===== AEM FIELD ===== */
   const fieldWrapper = input.closest('.field-wrapper');
   const fieldModel = fieldWrapper?.model;
 
@@ -53,18 +87,16 @@ function updateUI(input, wrapper, fieldType) {
         value: actual,
       });
 
-      // 🔥 CRITICAL → triggers calculateEMI
       globals.functions.dispatchEvent(fieldModel, 'valueCommit');
     }
   }
 }
 
 /* =========================
-   ADD CUSTOM TICKS
+   ADD TICKS
 ========================= */
 function addTicks(wrapper, input, fieldType) {
   const config = rangeConfigs[fieldType];
-  if (!config) return;
 
   config.ticks.forEach((val, idx) => {
     const tick = document.createElement('span');
@@ -73,19 +105,17 @@ function addTicks(wrapper, input, fieldType) {
 
     tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
 
-    tick.addEventListener('click', () => {
+    tick.onclick = () => {
       input.value = idx;
-
       input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+    };
 
     wrapper.appendChild(tick);
   });
 }
 
 /* =========================
-   MAIN DECORATE
+   MAIN
 ========================= */
 export default function decorate(fieldDiv) {
   const input = fieldDiv.querySelector('input');
@@ -93,7 +123,6 @@ export default function decorate(fieldDiv) {
 
   input.type = 'range';
 
-  /* ===== CREATE WRAPPER ===== */
   const wrapper = document.createElement('div');
   wrapper.className = 'range-widget-wrapper decorated';
 
@@ -105,9 +134,7 @@ export default function decorate(fieldDiv) {
   wrapper.appendChild(bubble);
   wrapper.appendChild(input);
 
-  /* =========================
-     IDENTIFY FIELD TYPE
-  ========================= */
+  /* FIELD TYPE */
   let fieldType = null;
 
   if (fieldDiv.classList.contains('field-loanamount')) {
@@ -122,32 +149,38 @@ export default function decorate(fieldDiv) {
 
   const config = rangeConfigs[fieldType];
 
-  /* ===== SET RANGE ===== */
+  /* RANGE SETTINGS */
   input.min = 0;
   input.max = config.ticks.length - 1;
-  input.step = 1;
+  input.step = 0.01; // 🔥 smooth movement
 
-  /* ===== DEFAULT POSITION ===== */
-  input.value = config.defaultIndex;
+  /* DEFAULT */
+  const defaultSlider = getSliderFromActual(
+    config.defaultValue,
+    config
+  );
 
-  /* ===== INITIAL CSS ===== */
+  input.value = defaultSlider;
+
+  /* CSS INIT */
   wrapper.style.setProperty('--current-steps', input.value);
   wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
-  /* ===== ADD TICKS ===== */
+  /* TICKS */
   addTicks(wrapper, input, fieldType);
 
-  /* ===== EVENTS ===== */
+  /* EVENTS */
   input.addEventListener('input', () => {
     updateUI(input, wrapper, fieldType);
   });
 
-  input.addEventListener('change', () => {
-    updateUI(input, wrapper, fieldType);
-  });
-
-  /* ===== INITIAL RENDER ===== */
+  /* INITIAL */
   updateUI(input, wrapper, fieldType);
+
+  /* AUTO TRIGGER EMI */
+  setTimeout(() => {
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  }, 200);
 
   return fieldDiv;
 }
