@@ -39,10 +39,8 @@ function updateBubbleAndField(input, wrapper, fieldType) {
   const raw = getActualValueFromSlider(input, config);
   const actual = formatActualValue(raw, fieldType);
 
-  // ✅ UI update
   bubble.innerText = config.formatBubble(actual);
 
-  // 🔥 CRITICAL FIX (AEM binding)
   input.value = actual;
 
   // Trigger AEM update
