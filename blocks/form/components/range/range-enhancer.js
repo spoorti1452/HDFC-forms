@@ -82,12 +82,15 @@ function enhance(fieldDiv, type) {
 
   addTicks(wrapper, input, type);
 
-  // 🔥 ON SLIDE
   input.addEventListener('input', () => {
     updateBubbleAndField(input, wrapper, type);
   });
 
-  // initial
+  input.addEventListener('change', () => {
+    updateBubbleAndField(input, wrapper, type);
+  });
+
+  // initial sync
   updateBubbleAndField(input, wrapper, type);
 }
 
