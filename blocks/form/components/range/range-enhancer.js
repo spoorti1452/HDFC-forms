@@ -39,11 +39,13 @@ function updateBubbleAndField(input, wrapper, fieldType) {
   const raw = getActualValueFromSlider(input, config);
   const actual = formatActualValue(raw, fieldType);
 
+  // ✅ UI
   bubble.innerText = config.formatBubble(actual);
 
-  input.value = actual;
+  // ✅ Store actual value safely
+  input.dataset.actualValue = actual;
 
-  // Trigger AEM update
+  // ✅ Trigger AEM (VERY IMPORTANT)
   input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
@@ -78,7 +80,7 @@ function enhance(fieldDiv, type) {
 
   input.min = 0;
   input.max = config.ticks.length - 1;
-  input.step = 0.01;
+  input.step = 1; // ✅ FIXED
 
   addTicks(wrapper, input, type);
 
@@ -86,11 +88,6 @@ function enhance(fieldDiv, type) {
     updateBubbleAndField(input, wrapper, type);
   });
 
-  input.addEventListener('change', () => {
-    updateBubbleAndField(input, wrapper, type);
-  });
-
-  // initial sync
   updateBubbleAndField(input, wrapper, type);
 }
 
