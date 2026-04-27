@@ -20,20 +20,14 @@ const rangeConfigs = {
 };
 
 /* =========================
-   VALUE HELPERS
+   HELPERS
 ========================= */
-function getActualFromSlider(value, config) {
-  const lower = Math.floor(value);
-  const upper = Math.ceil(value);
+function getNearestIndex(value) {
+  return Math.round(value);
+}
 
-  if (lower === upper) return config.ticks[lower];
-
-  const percent = value - lower;
-
-  return (
-    config.ticks[lower] +
-    (config.ticks[upper] - config.ticks[lower]) * percent
-  );
+function getActualValue(index, config) {
+  return config.ticks[index];
 }
 
 function getSliderFromActual(actual, config) {
@@ -46,7 +40,6 @@ function getSliderFromActual(actual, config) {
       return i + percent;
     }
   }
-
   return 0;
 }
 
@@ -58,14 +51,13 @@ function updateUI(input, wrapper, fieldType) {
   if (!config) return;
 
   const bubble = wrapper.querySelector('.range-bubble');
-  const index = Math.round(Number(input.value)); // 🔥 snap index
-  const actual = config.ticks[index];
 
-  /* ===== FORCE SNAP ===== */
-  input.value = index;
+  const rawValue = Number(input.value);
+  const index = getNearestIndex(rawValue);
+  const actual = getActualValue(index, config);
 
   /* ===== CSS ===== */
-  wrapper.style.setProperty('--current-steps', index);
+  wrapper.style.setProperty('--current-steps', rawValue);
   wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
   /* ===== BUBBLE ===== */
@@ -93,6 +85,7 @@ function updateUI(input, wrapper, fieldType) {
     }
   }
 }
+
 /* =========================
    ADD TICKS
 ========================= */
@@ -108,7 +101,9 @@ function addTicks(wrapper, input, fieldType) {
 
     tick.onclick = () => {
       input.value = idx;
+
       input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     };
 
     wrapper.appendChild(tick);
@@ -153,7 +148,9 @@ export default function decorate(fieldDiv) {
   /* RANGE SETTINGS */
   input.min = 0;
   input.max = config.ticks.length - 1;
-  input.step = 0.01; // 🔥 smooth movement
+
+  // 🔥 smooth movement
+  input.step = 0.01;
 
   /* DEFAULT */
   const defaultSlider = getSliderFromActual(
