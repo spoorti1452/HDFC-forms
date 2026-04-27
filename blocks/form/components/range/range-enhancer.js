@@ -39,15 +39,14 @@ function updateBubbleAndField(input, wrapper, fieldType) {
   const raw = getActualValueFromSlider(input, config);
   const actual = formatActualValue(raw, fieldType);
 
-  // UI
+  // ✅ UI update
   bubble.innerText = config.formatBubble(actual);
 
-  // 🔥 CRITICAL: update AEM model
-  const fieldModel = input.closest('[data-aem-field]')?.model;
+  // 🔥 CRITICAL FIX (AEM binding)
+  input.value = actual;
 
-  if (fieldModel) {
-    fieldModel.value = actual;
-  }
+  // Trigger AEM update
+  input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 function addTicks(wrapper, input, fieldType) {
