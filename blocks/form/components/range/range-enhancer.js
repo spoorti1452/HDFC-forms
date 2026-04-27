@@ -14,139 +14,92 @@ const rangeConfigs = {
 };
 
 function getActualValueFromSlider(input, config) {
-  const sliderValue = Number(input.value);
-  const lowerIndex = Math.floor(sliderValue);
-  const upperIndex = Math.ceil(sliderValue);
+  const val = Number(input.value);
+  const i = Math.floor(val);
+  const j = Math.ceil(val);
 
-  if (lowerIndex === upperIndex) {
-    return config.ticks[lowerIndex];
-  }
+  if (i === j) return config.ticks[i];
 
-  const lowerValue = config.ticks[lowerIndex];
-  const upperValue = config.ticks[upperIndex];
-  const percentage = sliderValue - lowerIndex;
-
-  return lowerValue + ((upperValue - lowerValue) * percentage);
+  const low = config.ticks[i];
+  const high = config.ticks[j];
+  return low + (high - low) * (val - i);
 }
 
-function getSliderValueFromActual(actualValue, config) {
-  const ticks = config.ticks;
-
-  if (actualValue <= ticks[0]) return 0;
-  if (actualValue >= ticks[ticks.length - 1]) return ticks.length - 1;
-
-  for (let i = 0; i < ticks.length - 1; i += 1) {
-    if (actualValue >= ticks[i] && actualValue <= ticks[i + 1]) {
-      const percentage = (actualValue - ticks[i]) / (ticks[i + 1] - ticks[i]);
-      return i + percentage;
-    }
-  }
-
-  return 0;
+function formatActualValue(value, type) {
+  if (type === 'loanAmount') return Math.round(value / 1000) * 1000;
+  if (type === 'loanTenure') return Math.round(value);
+  return value;
 }
 
-function formatActualValue(actualValue, fieldType) {
-  if (fieldType === 'loanAmount') {
-    return Math.round(actualValue / 1000) * 1000;
-  }
-
-  if (fieldType === 'loanTenure') {
-    return Math.round(actualValue);
-  }
-
-  return actualValue;
-}
-
-/**
- * 🔥 CRITICAL FUNCTION (FIXED)
- * Syncs slider → AEM field → triggers rules
- */
-function updateBubbleText(input, wrapper, fieldType) {
+function updateBubbleAndField(input, wrapper, fieldType) {
   const config = rangeConfigs[fieldType];
   const bubble = wrapper.querySelector('.range-bubble');
-
   if (!config || !bubble) return;
 
-  const rawActualValue = getActualValueFromSlider(input, config);
-  const actualValue = formatActualValue(rawActualValue, fieldType);
+  const raw = getActualValueFromSlider(input, config);
+  const actual = formatActualValue(raw, fieldType);
 
-  // UI update
-  input.dataset.actualValue = actualValue;
-  bubble.innerText = config.formatBubble(actualValue);
+  // UI
+  bubble.innerText = config.formatBubble(actual);
 
-  // 🔥 IMPORTANT: Update AEM field value
-  const fieldDiv = input.closest('[data-aem-field]');
-  if (fieldDiv && fieldDiv._field) {
-    fieldDiv._field.value = actualValue;
+  // 🔥 CRITICAL: update AEM model
+  const fieldModel = input.closest('[data-aem-field]')?.model;
 
-    // trigger rule editor
-    fieldDiv._field.dispatchEvent(new Event('change', { bubbles: true }));
+  if (fieldModel) {
+    fieldModel.value = actual;
   }
 }
 
-function addCustomTicks(wrapper, input, fieldType) {
+function addTicks(wrapper, input, fieldType) {
   const config = rangeConfigs[fieldType];
   if (!config) return;
 
-  wrapper.querySelectorAll('.custom-range-tick').forEach((el) => el.remove());
+  wrapper.querySelectorAll('.custom-range-tick').forEach(el => el.remove());
 
-  config.ticks.forEach((tickValue, index) => {
+  config.ticks.forEach((val, idx) => {
     const tick = document.createElement('span');
     tick.className = 'custom-range-tick';
-    tick.innerText = config.formatTick(tickValue);
-    tick.style.left = `${(index / (config.ticks.length - 1)) * 100}%`;
+    tick.innerText = config.formatTick(val);
+    tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
 
-    tick.addEventListener('click', () => {
-      input.value = index;
-
-      // 🔥 trigger both input + change
+    tick.onclick = () => {
+      input.value = idx;
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+    };
 
     wrapper.appendChild(tick);
   });
 }
 
-function enhanceRangeField(field, fieldType) {
-  if (!field) return;
-
-  const input = field.querySelector('input[type="range"]');
-  const wrapper = field.querySelector('.range-widget-wrapper');
-  const config = rangeConfigs[fieldType];
+function enhance(fieldDiv, type) {
+  const input = fieldDiv.querySelector('input[type="range"]');
+  const wrapper = fieldDiv.querySelector('.range-widget-wrapper');
+  const config = rangeConfigs[type];
 
   if (!input || !wrapper || !config) return;
 
-  if (field.dataset.rangeEnhanced !== 'true') {
-    const originalActualValue = Number(input.value || config.defaultValue);
-    const sliderValue = getSliderValueFromActual(originalActualValue, config);
+  input.min = 0;
+  input.max = config.ticks.length - 1;
+  input.step = 0.01;
 
-    input.min = 0;
-    input.max = config.ticks.length - 1;
-    input.step = 0.01;
-    input.value = sliderValue;
+  addTicks(wrapper, input, type);
 
-    addCustomTicks(wrapper, input, fieldType);
-    field.dataset.rangeEnhanced = 'true';
-  }
-
-  // initial render
-  updateBubbleText(input, wrapper, fieldType);
-
-  // 🔥 IMPORTANT: listen to slider movement
+  // 🔥 ON SLIDE
   input.addEventListener('input', () => {
-    updateBubbleText(input, wrapper, fieldType);
+    updateBubbleAndField(input, wrapper, type);
   });
+
+  // initial
+  updateBubbleAndField(input, wrapper, type);
 }
 
 export function initRangeEnhancer(fieldDiv) {
-  if (!fieldDiv) return;
-
   if (fieldDiv.classList.contains('field-loanamount')) {
-    enhanceRangeField(fieldDiv, 'loanAmount');
+    enhance(fieldDiv, 'loanAmount');
   }
 
   if (fieldDiv.classList.contains('field-loantenure')) {
-    enhanceRangeField(fieldDiv, 'loanTenure');
+    enhance(fieldDiv, 'loanTenure');
   }
 }
