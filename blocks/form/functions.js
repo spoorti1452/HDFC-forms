@@ -459,6 +459,7 @@ function getActualValue(field) {
   return Number(input.dataset.actualValue || input.value);
 }
 
+console.log("FORM STRUCTURE:", globals.form);
 function calculateEMI(globals) {
   const loanAmountField = globals.form.offer_panel.loanAmount;
   const tenureField = globals.form.offer_panel.loanTenure;
