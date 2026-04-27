@@ -1,119 +1,28 @@
-/* =========================
-   CONFIG
-========================= */
-const rangeConfigs = {
-  loanAmount: {
-    ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-    defaultValue: 600000,
-    formatBubble: (value) =>
-      `₹${Number(value).toLocaleString('en-IN')}`,
-    formatTick: (value) =>
-      value === 50000 ? '50K' : `${value / 100000}L`,
-  },
+import { initRangeEnhancer } from './range-enhancer.js';
 
-  loanTenure: {
-    ticks: [12, 24, 36, 48, 60, 72, 84],
-    defaultValue: 48,
-    formatBubble: (value) => `${value} months`,
-    formatTick: (value) => `${value}m`,
-  },
-};
+function updateBubble(input, element) {
+  const step = Number(input.step) || 1;
+  const max = Number(input.max) || 0;
+  const min = Number(input.min) || 0;
+  const value = Number(input.value) || 0;
 
-/* =========================
-   HELPERS
-========================= */
-function getNearestIndex(value) {
-  return Math.round(value);
+  const current = (value - min) / step;
+  const total = (max - min) / step;
+
+  const bubble = element.querySelector('.range-bubble');
+  if (!bubble) return;
+
+  const bubbleWidth = bubble.getBoundingClientRect().width || 31;
+
+  const left = `${(current / total) * 100}% - ${(current / total) * bubbleWidth}px`;
+
+  bubble.style.left = `calc(${left})`;
+
+  element.style.setProperty('--total-steps', total);
+  element.style.setProperty('--current-steps', current);
 }
 
-function getActualValue(index, config) {
-  return config.ticks[index];
-}
-
-function getSliderFromActual(actual, config) {
-  const ticks = config.ticks;
-
-  for (let i = 0; i < ticks.length - 1; i++) {
-    if (actual >= ticks[i] && actual <= ticks[i + 1]) {
-      const percent =
-        (actual - ticks[i]) / (ticks[i + 1] - ticks[i]);
-      return i + percent;
-    }
-  }
-  return 0;
-}
-
-/* =========================
-   UPDATE UI + AEM
-========================= */
-function updateUI(input, wrapper, fieldType) {
-  const config = rangeConfigs[fieldType];
-  if (!config) return;
-
-  const bubble = wrapper.querySelector('.range-bubble');
-
-  const rawValue = Number(input.value);
-  const index = getNearestIndex(rawValue);
-  const actual = getActualValue(index, config);
-
-  /* ===== CSS ===== */
-  wrapper.style.setProperty('--current-steps', rawValue);
-  wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
-
-  /* ===== BUBBLE ===== */
-  if (bubble) {
-    bubble.innerText = config.formatBubble(actual);
-  }
-
-  input.dataset.actualValue = actual;
-
-  /* ===== AEM UPDATE ===== */
-  const fieldWrapper = input.closest('.field-wrapper');
-  const fieldModel = fieldWrapper?.model;
-
-  if (fieldModel) {
-    const globals =
-      fieldModel?.form?.context ||
-      fieldModel?._form?.context;
-
-    if (globals?.functions) {
-      globals.functions.setProperty(fieldModel, {
-        value: actual,
-      });
-
-      globals.functions.dispatchEvent(fieldModel, 'valueCommit');
-    }
-  }
-}
-
-/* =========================
-   ADD TICKS
-========================= */
-function addTicks(wrapper, input, fieldType) {
-  const config = rangeConfigs[fieldType];
-
-  config.ticks.forEach((val, idx) => {
-    const tick = document.createElement('span');
-    tick.className = 'custom-range-tick';
-    tick.innerText = config.formatTick(val);
-
-    tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
-
-    tick.onclick = () => {
-      input.value = idx;
-
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    };
-
-    wrapper.appendChild(tick);
-  });
-}
-
-/* =========================
-   MAIN
-========================= */
-export default function decorate(fieldDiv) {
+export default async function decorate(fieldDiv, fieldJson) {
   const input = fieldDiv.querySelector('input');
   if (!input) return fieldDiv;
 
@@ -127,58 +36,27 @@ export default function decorate(fieldDiv) {
   const bubble = document.createElement('span');
   bubble.className = 'range-bubble';
 
+  const minEl = document.createElement('span');
+  minEl.className = 'range-min';
+
+  const maxEl = document.createElement('span');
+  maxEl.className = 'range-max';
+
   wrapper.appendChild(bubble);
   wrapper.appendChild(input);
+  wrapper.appendChild(minEl);
+  wrapper.appendChild(maxEl);
 
-  /* FIELD TYPE */
-  let fieldType = null;
+  // 🔥 INIT ONLY ONCE
+  initRangeEnhancer(fieldDiv);
 
-  if (fieldDiv.classList.contains('field-loanamount')) {
-    fieldType = 'loanAmount';
-  }
-
-  if (fieldDiv.classList.contains('field-loantenure')) {
-    fieldType = 'loanTenure';
-  }
-
-  if (!fieldType) return fieldDiv;
-
-  const config = rangeConfigs[fieldType];
-
-  /* RANGE SETTINGS */
-  input.min = 0;
-  input.max = config.ticks.length - 1;
-
-  // 🔥 smooth movement
-  input.step = 0.01;
-
-  /* DEFAULT */
-  const defaultSlider = getSliderFromActual(
-    config.defaultValue,
-    config
-  );
-
-  input.value = defaultSlider;
-
-  /* CSS INIT */
-  wrapper.style.setProperty('--current-steps', input.value);
-  wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
-
-  /* TICKS */
-  addTicks(wrapper, input, fieldType);
-
-  /* EVENTS */
+  // 🔥 ON SLIDE (ONLY UPDATE UI)
   input.addEventListener('input', () => {
-    updateUI(input, wrapper, fieldType);
+    updateBubble(input, wrapper);
   });
 
-  /* INITIAL */
-  updateUI(input, wrapper, fieldType);
-
-  /* AUTO TRIGGER EMI */
-  setTimeout(() => {
-    input.dispatchEvent(new Event('input', { bubbles: true }));
-  }, 200);
+  // initial render
+  updateBubble(input, wrapper);
 
   return fieldDiv;
 }
