@@ -250,46 +250,81 @@ function getActualValue(field) {
 /**
  * Clean EMI function for your form
  */
+/**
+ * @param {scope} globals
+ * @returns {string}
+ */
 function calculateEMI(globals = {}) {
-  if (!globals?.form || !globals?.functions) return '';
+  /* =========================
+     SAFETY CHECK
+  ========================= */
+  if (!globals?.form || !globals?.functions) {
+    console.log("❌ Globals not available");
+    return '';
+  }
 
-  /* ===== CORRECT FIELD PATHS (BASED ON YOUR DOM) ===== */
+  /* =========================
+     🔍 DEBUG START
+  ========================= */
+  console.log("===== DEBUG START =====");
 
-  const loanField =
-    globals.form?.offer_Panel?.loanAmount;
+  console.log("FORM KEYS:", Object.keys(globals.form));
 
-  const tenureField =
-    globals.form?.offer_Panel?.loanTenure;
+  console.log("offer_Panel:", globals.form.offer_Panel);
+  console.log("loanAmount field:", globals.form.offer_Panel?.loanAmount);
+  console.log("loanTenure field:", globals.form.offer_Panel?.loanTenure);
+
+  console.log("loan_offer:", globals.form.loan_offer);
+  console.log("summary:", globals.form.loan_offer?.loan_offer_summary);
+  console.log(
+    "grid:",
+    globals.form.loan_offer?.loan_offer_summary?.offer_details_grid
+  );
+  console.log(
+    "emi field:",
+    globals.form.loan_offer?.loan_offer_summary?.offer_details_grid?.emi_Amount
+  );
+
+  console.log("===== DEBUG END =====");
+
+  /* =========================
+     GET FIELD REFERENCES
+  ========================= */
+  const loanField = globals.form.offer_Panel?.loanAmount;
+  const tenureField = globals.form.offer_Panel?.loanTenure;
 
   const emiField =
-    globals.form?.loan_offer
+    globals.form.loan_offer
       ?.loan_offer_summary
       ?.offer_details_grid
       ?.emi_Amount;
 
-  const loanDisplayField =
-    globals.form?.loan_offer
-      ?.loan_offer_summary
-      ?.avail_XPRESS_Personal_Loan_of;
-
   const roiField =
-    globals.form?.loan_offer
+    globals.form.loan_offer
       ?.loan_offer_summary
       ?.offer_details_grid
       ?.rate_of_Interest;
 
   const taxField =
-    globals.form?.loan_offer
+    globals.form.loan_offer
       ?.loan_offer_summary
       ?.offer_details_grid
       ?.taxes;
 
-  /* ===== GET VALUE FROM SLIDER ===== */
+  const loanDisplayField =
+    globals.form.loan_offer
+      ?.loan_offer_summary
+      ?.avail_XPRESS_Personal_Loan_of;
+
+  /* =========================
+     VALUE GETTER (IMPORTANT)
+  ========================= */
   function getValue(field) {
     if (!field) return 0;
 
     const input = field.element?.querySelector('input');
 
+    // 🔥 take value from slider dataset
     if (input && input.dataset.actualValue) {
       return Number(input.dataset.actualValue);
     }
@@ -297,7 +332,34 @@ function calculateEMI(globals = {}) {
     return Number(field.value) || 0;
   }
 
-  /* ===== SET VALUE ===== */
+  const P = getValue(loanField);
+  const n = getValue(tenureField);
+
+  console.log("Loan Value:", P);
+  console.log("Tenure Value:", n);
+
+  if (!P || !n) {
+    console.log("❌ Missing values");
+    return '';
+  }
+
+  /* =========================
+     EMI CALCULATION
+  ========================= */
+  const annualRate = 10.97;
+  const r = annualRate / (12 * 100);
+
+  const emi =
+    (P * r * Math.pow(1 + r, n)) /
+    (Math.pow(1 + r, n) - 1);
+
+  const emiRounded = Math.round(emi);
+
+  console.log("EMI:", emiRounded);
+
+  /* =========================
+     SET VALUES
+  ========================= */
   function setValue(field, value) {
     if (!field) return;
 
@@ -306,24 +368,10 @@ function calculateEMI(globals = {}) {
     });
   }
 
-  const P = getValue(loanField);
-  const n = getValue(tenureField);
-
-  if (!P || !n) return '';
-
-  const r = 10.97 / (12 * 100);
-
-  const emi =
-    (P * r * Math.pow(1 + r, n)) /
-    (Math.pow(1 + r, n) - 1);
-
-  const emiRounded = Math.round(emi);
-
-  /* ===== UPDATE UI ===== */
   setValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
-  setValue(loanDisplayField, `₹${P.toLocaleString('en-IN')}`);
-  setValue(roiField, '10.97%');
+  setValue(roiField, `${annualRate}%`);
   setValue(taxField, '₹4,000');
+  setValue(loanDisplayField, `₹${P.toLocaleString('en-IN')}`);
 
   return '';
 }

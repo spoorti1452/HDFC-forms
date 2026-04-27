@@ -41,10 +41,7 @@ function updateBubbleAndField(input, wrapper, type) {
 
   /* ===== CSS PROGRESS ===== */
   wrapper.style.setProperty('--current-steps', index);
-  wrapper.style.setProperty(
-    '--total-steps',
-    config.ticks.length - 1
-  );
+  wrapper.style.setProperty('--total-steps', config.ticks.length - 1);
 
   /* ===== UPDATE BUBBLE ===== */
   bubble.innerText = config.formatBubble(actual);
@@ -53,7 +50,7 @@ function updateBubbleAndField(input, wrapper, type) {
   input.dataset.actualValue = actual;
 
   /* =========================
-     🔥 UPDATE EDS FIELD + TRIGGER VALUE COMMIT
+     🔥 UPDATE EDS FIELD (CRITICAL FIX)
   ========================= */
   const fieldWrapper = input.closest('.field-wrapper');
   const fieldModel = fieldWrapper?.model;
@@ -64,15 +61,9 @@ function updateBubbleAndField(input, wrapper, type) {
       fieldModel?._form?.context;
 
     if (globals && globals.functions) {
-      // ✅ Update field value
-      globals.functions.setProperty(fieldModel, {
-        value: actual,
-      });
-
-      // 🔥 IMPORTANT: trigger Value Commit (required in your setup)
-      if (globals.functions.dispatchEvent) {
-        globals.functions.dispatchEvent(fieldModel, 'valueCommit');
-      }
+      // ✅ DOUBLE setProperty → ensures Value Commit fires
+      globals.functions.setProperty(fieldModel, { value: actual });
+      globals.functions.setProperty(fieldModel, { value: actual });
     }
   }
 }
@@ -84,7 +75,6 @@ function addTicks(wrapper, input, type) {
   const config = rangeConfigs[type];
   if (!config) return;
 
-  // remove existing ticks
   wrapper.querySelectorAll('.custom-range-tick').forEach((el) => el.remove());
 
   config.ticks.forEach((val, idx) => {
@@ -94,9 +84,12 @@ function addTicks(wrapper, input, type) {
 
     tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
 
+    // ✅ FIX: trigger real events
     tick.onclick = () => {
       input.value = idx;
-      updateBubbleAndField(input, wrapper, type);
+
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     };
 
     wrapper.appendChild(tick);
@@ -113,7 +106,6 @@ function enhance(fieldDiv, type) {
 
   if (!input || !wrapper || !config) return;
 
-  // prevent duplicate init
   if (input.dataset.enhanced === 'true') return;
   input.dataset.enhanced = 'true';
 
@@ -125,20 +117,13 @@ function enhance(fieldDiv, type) {
   /* ===== ADD TICKS ===== */
   addTicks(wrapper, input, type);
 
-  /* ===== SET DEFAULT ===== */
+  /* ===== DEFAULT ===== */
   const defaultIndex =
     config.ticks.indexOf(config.defaultValue) >= 0
       ? config.ticks.indexOf(config.defaultValue)
       : 0;
 
   input.value = defaultIndex;
-
-  /* ===== INIT CSS ===== */
-  wrapper.style.setProperty('--current-steps', defaultIndex);
-  wrapper.style.setProperty(
-    '--total-steps',
-    config.ticks.length - 1
-  );
 
   /* ===== EVENTS ===== */
   input.addEventListener('input', () => {
@@ -151,7 +136,7 @@ function enhance(fieldDiv, type) {
     updateBubbleAndField(input, wrapper, type);
   });
 
-  /* ===== INITIAL RENDER ===== */
+  /* ===== INITIAL ===== */
   updateBubbleAndField(input, wrapper, type);
 }
 
