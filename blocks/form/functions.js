@@ -476,8 +476,13 @@ function calculateEMI(globals) {
     return "";
   }
 
-  const P = Number(loanAmountField.value);
-  const n = Number(tenureField.value);
+  const P = Number(
+  loanAmountField?.element?.querySelector('input')?.dataset?.actualValue
+);
+
+const n = Number(
+  tenureField?.element?.querySelector('input')?.dataset?.actualValue
+);
 
   if (!P || !n) return "";
 
