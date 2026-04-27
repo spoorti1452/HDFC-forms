@@ -247,17 +247,19 @@ function getActualValue(field) {
 
   return Number(field.value) || 0;
 }
-
+/**
+ * Clean EMI function for your form
+ */
 function calculateEMI() {
   const globals = this;
 
-  const loanAmountField = globals.form?.offer_panel?.loanAmount;
+  const loanField = globals.form?.offer_panel?.loanAmount;
   const tenureField = globals.form?.offer_panel?.loanTenure;
 
   const emiField =
     globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.emi_Amount;
 
-  const totalLoanField =
+  const loanDisplayField =
     globals.form?.loan_offer?.loan_offer_summary?.avail_XPRESS_Personal_Loan_of;
 
   const roiField =
@@ -266,10 +268,11 @@ function calculateEMI() {
   const taxField =
     globals.form?.loan_offer?.loan_offer_summary?.offer_details_grid?.taxes;
 
-  function getActualValue(field) {
+  function getValue(field) {
     if (!field) return 0;
 
     const input = field.element?.querySelector('input');
+
     if (input && input.dataset.actualValue) {
       return Number(input.dataset.actualValue);
     }
@@ -277,7 +280,7 @@ function calculateEMI() {
     return Number(field.value) || 0;
   }
 
-  function setFieldValue(field, value) {
+  function setValue(field, value) {
     if (!field) return;
 
     globals.functions.setProperty(field, {
@@ -285,8 +288,8 @@ function calculateEMI() {
     });
   }
 
-  const P = getActualValue(loanAmountField);
-  const n = getActualValue(tenureField);
+  const P = getValue(loanField);
+  const n = getValue(tenureField);
 
   if (!P || !n) return '';
 
@@ -298,10 +301,10 @@ function calculateEMI() {
 
   const emiRounded = Math.round(emi);
 
-  setFieldValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
-  setFieldValue(totalLoanField, `₹${P.toLocaleString('en-IN')}`);
-  setFieldValue(roiField, '10.97%');
-  setFieldValue(taxField, '₹4,000');
+  setValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`);
+  setValue(loanDisplayField, `₹${P.toLocaleString('en-IN')}`);
+  setValue(roiField, '10.97%');
+  setValue(taxField, '₹4,000');
 
   return '';
 }
