@@ -4,7 +4,7 @@
 const rangeConfigs = {
   loanAmount: {
     ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-    defaultValue: 800000,
+    defaultValue: 400000,
     formatBubble: (value) =>
       `₹${Number(value).toLocaleString('en-IN')}`,
     formatTick: (value) =>
@@ -13,7 +13,7 @@ const rangeConfigs = {
 
   loanTenure: {
     ticks: [12, 24, 36, 48, 60, 72, 84],
-    defaultValue: 48,
+    defaultValue: 36,
     formatBubble: (value) => `${value} months`,
     formatTick: (value) => `${value}m`,
   },
@@ -27,7 +27,7 @@ function getActualValue(index, config) {
 }
 
 /* =========================
-   UPDATE UI + AEM MODEL
+   UPDATE UI + EDS MODEL
 ========================= */
 function updateBubbleAndField(input, wrapper, type) {
   const config = rangeConfigs[type];
@@ -39,21 +39,29 @@ function updateBubbleAndField(input, wrapper, type) {
   const index = Number(input.value);
   const actual = getActualValue(index, config);
 
-  /* ===== UI ===== */
+  /* ===== CSS PROGRESS ===== */
+  wrapper.style.setProperty('--current-steps', index);
+  wrapper.style.setProperty(
+    '--total-steps',
+    config.ticks.length - 1
+  );
+
+  /* ===== BUBBLE ===== */
   bubble.innerText = config.formatBubble(actual);
 
-  /* ===== STORE ACTUAL VALUE ===== */
+  /* ===== STORE VALUE ===== */
   input.dataset.actualValue = actual;
 
-  /* ===== UPDATE AEM MODEL ===== */
+  /* ===== 🔥 UPDATE EDS FIELD (IMPORTANT) ===== */
   const fieldWrapper = input.closest('.field-wrapper');
   const fieldModel = fieldWrapper?.model;
 
-  if (fieldModel) {
-    fieldModel.value = actual;
+  if (fieldModel && fieldModel._form?.context) {
+    const globals = fieldModel._form.context;
 
-    // 🔥 IMPORTANT: trigger rules (EMI)
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    globals.functions.setProperty(fieldModel, {
+      value: actual
+    });
   }
 }
 
@@ -64,8 +72,7 @@ function addTicks(wrapper, input, type) {
   const config = rangeConfigs[type];
   if (!config) return;
 
-  // remove old ticks
-  wrapper.querySelectorAll('.custom-range-tick').forEach((el) => el.remove());
+  wrapper.querySelectorAll('.custom-range-tick').forEach(el => el.remove());
 
   config.ticks.forEach((val, idx) => {
     const tick = document.createElement('span');
@@ -76,9 +83,7 @@ function addTicks(wrapper, input, type) {
 
     tick.onclick = () => {
       input.value = idx;
-
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      input.dispatchEvent(new Event('change', { bubbles: true }));
+      updateBubbleAndField(input, wrapper, type);
     };
 
     wrapper.appendChild(tick);
@@ -86,7 +91,7 @@ function addTicks(wrapper, input, type) {
 }
 
 /* =========================
-   MAIN ENHANCER
+   MAIN
 ========================= */
 function enhance(fieldDiv, type) {
   const input = fieldDiv.querySelector('input[type="range"]');
@@ -95,19 +100,15 @@ function enhance(fieldDiv, type) {
 
   if (!input || !wrapper || !config) return;
 
-  // 🔥 PREVENT MULTIPLE INIT
   if (input.dataset.enhanced === 'true') return;
   input.dataset.enhanced = 'true';
 
-  /* ===== SET RANGE ===== */
   input.min = 0;
   input.max = config.ticks.length - 1;
-  input.step = 1; // 🔥 IMPORTANT FIX
+  input.step = 1;
 
-  /* ===== ADD TICKS ===== */
   addTicks(wrapper, input, type);
 
-  /* ===== SET DEFAULT ===== */
   const defaultIndex =
     config.ticks.indexOf(config.defaultValue) >= 0
       ? config.ticks.indexOf(config.defaultValue)
@@ -115,12 +116,25 @@ function enhance(fieldDiv, type) {
 
   input.value = defaultIndex;
 
-  /* ===== ON SLIDE ===== */
+  /* INIT CSS */
+  wrapper.style.setProperty('--current-steps', defaultIndex);
+  wrapper.style.setProperty(
+    '--total-steps',
+    config.ticks.length - 1
+  );
+
+  /* EVENTS */
   input.addEventListener('input', () => {
+    requestAnimationFrame(() => {
+      updateBubbleAndField(input, wrapper, type);
+    });
+  });
+
+  input.addEventListener('change', () => {
     updateBubbleAndField(input, wrapper, type);
   });
 
-  /* ===== INITIAL RENDER ===== */
+  /* INIT */
   updateBubbleAndField(input, wrapper, type);
 }
 

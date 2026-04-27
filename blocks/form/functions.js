@@ -223,16 +223,29 @@ function handleOtpInvalid(globals) {
 }
 
 /* =========================
-   EMI CALCULATION (FIXED)
+   EMI CALCULATION (EDS FIXED)
 ========================= */
+
+/* helper to safely set field value */
+function setFieldValue(field, value, globals) {
+  if (!field) return;
+
+  globals.functions.setProperty(field, {
+    value: value,
+  });
+}
+
+/* get actual slider value (important for range slider) */
 function getActualValue(field) {
   if (!field) return 0;
 
   const input = field.element?.querySelector('input');
 
-  if (!input) return Number(field.value) || 0;
+  if (input && input.dataset.actualValue) {
+    return Number(input.dataset.actualValue);
+  }
 
-  return Number(input.dataset.actualValue || input.value);
+  return Number(field.value) || 0;
 }
 
 function calculateEMI(globals) {
@@ -264,25 +277,14 @@ function calculateEMI(globals) {
 
   const emiRounded = Math.round(emi);
 
-  globals.functions.setProperty(emiField, {
-    value: `₹${emiRounded.toLocaleString('en-IN')}`,
-  });
-
-  globals.functions.setProperty(totalLoanField, {
-    value: `₹${P.toLocaleString('en-IN')}`,
-  });
-
-  globals.functions.setProperty(roiField, {
-    value: '10.97%',
-  });
-
-  globals.functions.setProperty(taxField, {
-    value: '₹4,000',
-  });
+  /* ✅ set values using helper */
+  setFieldValue(emiField, `₹${emiRounded.toLocaleString('en-IN')}`, globals);
+  setFieldValue(totalLoanField, `₹${P.toLocaleString('en-IN')}`, globals);
+  setFieldValue(roiField, '10.97%', globals);
+  setFieldValue(taxField, '₹4,000', globals);
 
   return '';
 }
-
 /* =========================
    EXPORTS
 ========================= */
