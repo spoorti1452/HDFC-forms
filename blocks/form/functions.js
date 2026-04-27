@@ -455,23 +455,34 @@ function handleOtpInvalid(globals) {
  * @returns {string}
  */
 function calculateEMI(globals) {
-  const loanAmountField = globals.form.offer_panel.loanAmount;
-  const tenureField = globals.form.offer_panel.loanTenure;
+  const loanAmountField = globals.form.offer_Panel.loanAmount;
+  const tenureField = globals.form.offer_Panel.loanTenure;
 
-  const emiField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount;
-  const totalLoanField = globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of;
-  const roiField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest;
-  const taxField = globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes;
+  const emiField =
+    globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount;
 
-  if (!loanAmountField || !tenureField) return "";
+  const totalLoanField =
+    globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of;
 
-  const P = Number(loanAmountField.value); // Loan Amount
-  const n = Number(tenureField.value);     // Tenure in months
+  const roiField =
+    globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest;
 
-  const annualRate = 10.97;
-  const r = annualRate / (12 * 100); // Monthly rate
+  const taxField =
+    globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes;
+
+  // 🔴 safety check (VERY IMPORTANT)
+  if (!loanAmountField || !tenureField) {
+    console.log("Fields not found");
+    return "";
+  }
+
+  const P = Number(loanAmountField.value);
+  const n = Number(tenureField.value);
 
   if (!P || !n) return "";
+
+  const annualRate = 10.97;
+  const r = annualRate / (12 * 100);
 
   const emi =
     (P * r * Math.pow(1 + r, n)) /
@@ -479,23 +490,20 @@ function calculateEMI(globals) {
 
   const emiRounded = Math.round(emi);
 
-  // ✅ Update EMI
   globals.functions.setProperty(emiField, {
-    value: `₹${emiRounded.toLocaleString()}`
+    value: `₹${emiRounded.toLocaleString("en-IN")}`,
   });
 
-  // ✅ Update Loan Amount (right panel)
   globals.functions.setProperty(totalLoanField, {
-    value: `₹${P.toLocaleString()}`
+    value: `₹${P.toLocaleString("en-IN")}`,
   });
 
-  // ✅ Static values (as per your design)
   globals.functions.setProperty(roiField, {
-    value: "10.97%"
+    value: "10.97%",
   });
 
   globals.functions.setProperty(taxField, {
-    value: "₹4,000"
+    value: "₹4,000",
   });
 
   return "";
