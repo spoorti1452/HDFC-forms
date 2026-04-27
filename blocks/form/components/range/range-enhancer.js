@@ -1,62 +1,93 @@
+/* =========================
+   CONFIG
+========================= */
 const rangeConfigs = {
   loanAmount: {
     ticks: [50000, 200000, 400000, 600000, 800000, 1000000, 1500000],
-    formatBubble: (v) => `₹${Number(v).toLocaleString('en-IN')}`,
-    formatTick: (v) => (v === 50000 ? '50K' : `${v / 100000}L`),
+    defaultValue: 800000,
+    formatBubble: (value) =>
+      `₹${Number(value).toLocaleString('en-IN')}`,
+    formatTick: (value) =>
+      value === 50000 ? '50K' : `${value / 100000}L`,
   },
+
   loanTenure: {
     ticks: [12, 24, 36, 48, 60, 72, 84],
-    formatBubble: (v) => `${Math.round(v)} months`,
-    formatTick: (v) => `${v}m`,
+    defaultValue: 48,
+    formatBubble: (value) => `${value} months`,
+    formatTick: (value) => `${value}m`,
   },
 };
 
-// ✅ Convert slider index → actual value
-function getActualValue(input, config) {
-  const index = Number(input.value);
+/* =========================
+   HELPERS
+========================= */
+function getActualValue(index, config) {
   return config.ticks[index] || config.ticks[0];
 }
 
-// ✅ Update UI + store actual value
-function updateUI(input, wrapper, type) {
+/* =========================
+   UPDATE UI + AEM MODEL
+========================= */
+function updateBubbleAndField(input, wrapper, type) {
   const config = rangeConfigs[type];
+  if (!config) return;
+
   const bubble = wrapper.querySelector('.range-bubble');
+  if (!bubble) return;
 
-  if (!config || !bubble) return;
+  const index = Number(input.value);
+  const actual = getActualValue(index, config);
 
-  const actual = getActualValue(input, config);
-
-  // UI bubble
+  /* ===== UI ===== */
   bubble.innerText = config.formatBubble(actual);
 
-  // 🔥 store actual value (IMPORTANT)
+  /* ===== STORE ACTUAL VALUE ===== */
   input.dataset.actualValue = actual;
 
-  // 🔥 trigger AEM rules
-  input.dispatchEvent(new Event('change', { bubbles: true }));
+  /* ===== UPDATE AEM MODEL ===== */
+  const fieldWrapper = input.closest('.field-wrapper');
+  const fieldModel = fieldWrapper?.model;
+
+  if (fieldModel) {
+    fieldModel.value = actual;
+
+    // 🔥 IMPORTANT: trigger rules (EMI)
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
 }
 
-// ✅ Add tick labels
-function addTicks(wrapper, config) {
-  wrapper.querySelectorAll('.custom-range-tick').forEach(el => el.remove());
+/* =========================
+   ADD TICKS
+========================= */
+function addTicks(wrapper, input, type) {
+  const config = rangeConfigs[type];
+  if (!config) return;
+
+  // remove old ticks
+  wrapper.querySelectorAll('.custom-range-tick').forEach((el) => el.remove());
 
   config.ticks.forEach((val, idx) => {
     const tick = document.createElement('span');
     tick.className = 'custom-range-tick';
     tick.innerText = config.formatTick(val);
+
     tick.style.left = `${(idx / (config.ticks.length - 1)) * 100}%`;
 
     tick.onclick = () => {
-      const input = wrapper.querySelector('input[type="range"]');
       input.value = idx;
+
       input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     };
 
     wrapper.appendChild(tick);
   });
 }
 
-// ✅ Main enhancer
+/* =========================
+   MAIN ENHANCER
+========================= */
 function enhance(fieldDiv, type) {
   const input = fieldDiv.querySelector('input[type="range"]');
   const wrapper = fieldDiv.querySelector('.range-widget-wrapper');
@@ -64,26 +95,39 @@ function enhance(fieldDiv, type) {
 
   if (!input || !wrapper || !config) return;
 
-  // ✅ correct slider setup
+  // 🔥 PREVENT MULTIPLE INIT
+  if (input.dataset.enhanced === 'true') return;
+  input.dataset.enhanced = 'true';
+
+  /* ===== SET RANGE ===== */
   input.min = 0;
   input.max = config.ticks.length - 1;
-  input.step = 1;
+  input.step = 1; // 🔥 IMPORTANT FIX
 
-  addTicks(wrapper, config);
+  /* ===== ADD TICKS ===== */
+  addTicks(wrapper, input, type);
 
-  // on slide
+  /* ===== SET DEFAULT ===== */
+  const defaultIndex =
+    config.ticks.indexOf(config.defaultValue) >= 0
+      ? config.ticks.indexOf(config.defaultValue)
+      : 0;
+
+  input.value = defaultIndex;
+
+  /* ===== ON SLIDE ===== */
   input.addEventListener('input', () => {
-    updateUI(input, wrapper, type);
+    updateBubbleAndField(input, wrapper, type);
   });
 
-  // initial render
-  updateUI(input, wrapper, type);
+  /* ===== INITIAL RENDER ===== */
+  updateBubbleAndField(input, wrapper, type);
 }
 
-// ✅ entry point
+/* =========================
+   ENTRY
+========================= */
 export function initRangeEnhancer(fieldDiv) {
-  if (!fieldDiv) return;
-
   if (fieldDiv.classList.contains('field-loanamount')) {
     enhance(fieldDiv, 'loanAmount');
   }
