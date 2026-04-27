@@ -460,8 +460,8 @@ function getActualValue(field) {
 }
 
 function calculateEMI(globals) {
-  const loanAmountField = globals.form.offer_Panel.loanAmount;
-  const tenureField = globals.form.offer_Panel.loanTenure;
+  const loanAmountField = globals.form.offer_panel.loanAmount;
+  const tenureField = globals.form.offer_panel.loanTenure;
 
   const emiField =
     globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount;
