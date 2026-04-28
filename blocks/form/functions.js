@@ -230,100 +230,56 @@ function handleOtpInvalid(globals) {
  * @returns {string}
  */
 function calculateEMI(globals) {
- 
+
   const loanTicks = [50000, 200000, 400000, 600000, 800000, 1000000, 1500000];
   const tenureTicks = [12, 24, 36, 48, 60, 72, 84];
- 
-  function getActualValueFromSlider(sliderValue, ticks) {
-    const value = Number(sliderValue);
- 
-    const lowerIndex = Math.floor(value);
-    const upperIndex = Math.ceil(value);
- 
-    if (lowerIndex === upperIndex) {
-      return ticks[lowerIndex];
-    }
- 
-    const lowerValue = ticks[lowerIndex];
-    const upperValue = ticks[upperIndex];
-    const percentage = value - lowerIndex;
- 
-    return lowerValue + ((upperValue - lowerValue) * percentage);
-  }
- 
-  /* ===== READ SLIDER VALUES ===== */
-const loanRaw =
-  Number(globals.form.offer_Panel.loanAmount.value) || 0;
 
-const tenureRaw =
-  Number(globals.form.offer_Panel.loanTenure.value) || 0;
- 
-  const existing = globals.form.$properties || {};
- 
-  const savedLoanRaw =
-    loanRaw > 0 ? loanRaw : Number(existing.loanRaw || 0);
- 
-  const savedTenureRaw =
-    tenureRaw > 0 ? tenureRaw : Number(existing.tenureRaw || 0);
- 
-  /* ===== STORE STATE ===== */
-  globals.functions.setProperty(globals.form, {
-    properties: {
-      ...existing,
-      loanRaw: savedLoanRaw,
-      tenureRaw: savedTenureRaw,
-    },
-  });
- 
-  if (!savedLoanRaw || !savedTenureRaw) {
-    return '';
+  function getActualValue(value, ticks) {
+    const lower = Math.floor(value);
+    const upper = Math.ceil(value);
+
+    if (lower === upper) return ticks[lower];
+
+    return ticks[lower] + (ticks[upper] - ticks[lower]) * (value - lower);
   }
- 
-  /* ===== CALCULATE ACTUAL VALUES ===== */
+
+  const loanRaw =
+    Number(globals.form.offer_Panel.loanAmount.value) || 0;
+
+  const tenureRaw =
+    Number(globals.form.offer_Panel.loanTenure.value) || 0;
+
+  if (!loanRaw || !tenureRaw) return '';
+
   const loanAmt =
-    Math.round(
-      getActualValueFromSlider(savedLoanRaw, loanTicks) / 1000
-    ) * 1000;
- 
-  const tenure = Math.round(
-    getActualValueFromSlider(savedTenureRaw, tenureTicks)
-  );
- 
-  /* ===== EMI FORMULA ===== */
-  const annualRate = 10.97; // fixed
+    Math.round(getActualValue(loanRaw, loanTicks) / 1000) * 1000;
+
+  const tenure =
+    Math.round(getActualValue(tenureRaw, tenureTicks));
+
+  const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
- 
+
   const factor = Math.pow(1 + monthlyRate, tenure);
- 
+
   const emi = Math.round(
     (loanAmt * monthlyRate * factor) / (factor - 1)
   );
- 
-  /* ===== FORMAT ===== */
-  const formattedLoan =
-    "₹" + Number(loanAmt).toLocaleString('en-IN');
- 
-  const formattedEMI =
-    "₹" + Number(emi).toLocaleString('en-IN');
- 
-  /* ===== UPDATE UI ===== */
- 
-  // Loan summary (₹15,00,000)
+
   globals.functions.setProperty(
     globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of,
     {
-      value: formattedLoan,
+      value: "₹" + loanAmt.toLocaleString("en-IN"),
     }
   );
- 
-  // EMI (₹23,476)
+
   globals.functions.setProperty(
     globals.form.loan_offer.offer_details_grid.emi_Amount,
     {
-      value: formattedEMI,
+      value: "₹" + emi.toLocaleString("en-IN"),
     }
   );
- 
+
   return '';
 }
 /* =========================
