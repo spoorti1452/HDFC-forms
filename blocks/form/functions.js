@@ -231,15 +231,11 @@ function handleOtpInvalid(globals) {
  */
 function calculateEMI(globals) {
 
-  /* ===== GET VALUES FROM FORM ===== */
   const loanAmount = Number(globals.form.offer_Panel.loanAmount.value) || 0;
   const loanTenure = Number(globals.form.offer_Panel.loanTenure.value) || 0;
 
-  if (!loanAmount || !loanTenure) {
-    return '';
-  }
+  if (!loanAmount || !loanTenure) return '';
 
-  /* ===== EMI CALCULATION ===== */
   const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
 
@@ -249,18 +245,16 @@ function calculateEMI(globals) {
     (loanAmount * monthlyRate * factor) / (factor - 1)
   );
 
-  /* ===== FORMAT LOAN DISPLAY ===== */
   const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
 
-  /* ===== UPDATE UI VIA BINDING ===== */
-  globals.functions.setProperty(globals.form, {
-    properties: {
-      emiAmount: emi,
-      loanDisplay: formattedLoan,
-      rateOfInterest: annualRate + "%",
-      taxes: 4000
-    }
-  });
+  /* ===== UPDATE FIELDS DIRECTLY ===== */
+  globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount.value = emi;
+
+  globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of.value = formattedLoan;
+
+  globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest.value = annualRate + "%";
+
+  globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = 4000;
 
   return '';
 }
