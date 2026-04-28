@@ -231,54 +231,36 @@ function handleOtpInvalid(globals) {
  */
 function calculateEMI(globals) {
 
-  const loanTicks = [50000, 200000, 400000, 600000, 800000, 1000000, 1500000];
-  const tenureTicks = [12, 24, 36, 48, 60, 72, 84];
+  /* ===== GET VALUES FROM FORM ===== */
+  const loanAmount = Number(globals.form.offer_Panel.loanAmount.value) || 0;
+  const loanTenure = Number(globals.form.offer_Panel.loanTenure.value) || 0;
 
-  function getActualValue(value, ticks) {
-    const lower = Math.floor(value);
-    const upper = Math.ceil(value);
-
-    if (lower === upper) return ticks[lower];
-
-    return ticks[lower] + (ticks[upper] - ticks[lower]) * (value - lower);
+  if (!loanAmount || !loanTenure) {
+    return '';
   }
 
-  const loanRaw =
-    Number(globals.form.offer_Panel.loanAmount.value) || 0;
-
-  const tenureRaw =
-    Number(globals.form.offer_Panel.loanTenure.value) || 0;
-
-  if (!loanRaw || !tenureRaw) return '';
-
-  const loanAmt =
-    Math.round(getActualValue(loanRaw, loanTicks) / 1000) * 1000;
-
-  const tenure =
-    Math.round(getActualValue(tenureRaw, tenureTicks));
-
+  /* ===== EMI CALCULATION ===== */
   const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
 
-  const factor = Math.pow(1 + monthlyRate, tenure);
+  const factor = Math.pow(1 + monthlyRate, loanTenure);
 
   const emi = Math.round(
-    (loanAmt * monthlyRate * factor) / (factor - 1)
+    (loanAmount * monthlyRate * factor) / (factor - 1)
   );
 
-  globals.functions.setProperty(
-    globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of,
-    {
-      value: "₹" + loanAmt.toLocaleString("en-IN"),
-    }
-  );
+  /* ===== FORMAT LOAN DISPLAY ===== */
+  const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
 
-  globals.functions.setProperty(
-    globals.form.loan_offer.offer_details_grid.emi_Amount,
-    {
-      value: "₹" + emi.toLocaleString("en-IN"),
+  /* ===== UPDATE UI VIA BINDING ===== */
+  globals.functions.setProperty(globals.form, {
+    properties: {
+      emiAmount: emi,
+      loanDisplay: formattedLoan,
+      rateOfInterest: annualRate + "%",
+      taxes: 4000
     }
-  );
+  });
 
   return '';
 }
