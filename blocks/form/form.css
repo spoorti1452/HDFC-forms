@@ -1149,148 +1149,6 @@ main .form form select[multiple] {
   grid-area: taxes !important;
 }
 
-/* cleanup */
-.field-offer-details-grid .field-emi-amount,
-.field-offer-details-grid .field-rate-of-interest,
-.field-offer-details-grid .field-taxes {
-  margin: 0 !important;
-  padding: 4px 0 0 0 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  position: relative !important;
-}
-
-/* labels */
-.field-offer-details-grid .field-emi-amount > .field-label,
-.field-offer-details-grid .field-rate-of-interest > .field-label,
-.field-offer-details-grid .field-taxes > .field-label,
-.field-offer-details-grid .field-emi-amount > label,
-.field-offer-details-grid .field-rate-of-interest > label,
-.field-offer-details-grid .field-taxes > label {
-  position: relative !important;
-  display: block !important;
-  margin: 0 0 4px !important;
-  padding: 0 0 0 12px !important;
-  font-size: 12px !important;
-  line-height: 1.2 !important;
-  font-weight: 600 !important;
-  color: #7f8791 !important;
-  white-space: nowrap !important;
-}
-
-/* orange left line */
-.field-offer-details-grid .field-emi-amount > .field-label::before,
-.field-offer-details-grid .field-rate-of-interest > .field-label::before,
-.field-offer-details-grid .field-taxes > .field-label::before,
-.field-offer-details-grid .field-emi-amount > label::before,
-.field-offer-details-grid .field-rate-of-interest > label::before,
-.field-offer-details-grid .field-taxes > label::before {
-  content: "" !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 0 !important;
-  width: 2px !important;
-  height: 30px !important;
-  background: #f2a126 !important;
-  border-radius: 2px !important;
-}
-
-/* values */
-.field-offer-details-grid .field-emi-amount input,
-.field-offer-details-grid .field-rate-of-interest input,
-.field-offer-details-grid .field-taxes input {
-  display: block !important;
-  width: auto !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 0 0 12px !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  outline: none !important;
-  font-size: 15px !important;
-  line-height: 1.2 !important;
-  font-weight: 800 !important;
-  color: #1b2738 !important;
-}
-
-/* =========================
-   DISCLAIMER
-   ========================= */
-.field-disclaimer,
-.field-offer-disclaimer,
-#text-8ac79973c4,
-#text-8fd04c18e9 {
-  position: relative !important;
-  margin: 0 -18px !important;
-  padding: 12px 16px 12px 40px !important;
-  background: #f2a126 !important;
-  border-radius: 0 0 20px 20px !important;
-  box-sizing: border-box !important;
-  width: calc(100% + 36px) !important;
-}
-
-.field-disclaimer::before,
-.field-offer-disclaimer::before,
-#text-8ac79973c4::before,
-#text-8fd04c18e9::before {
-  content: "i" !important;
-  position: absolute !important;
-  left: 14px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 15px !important;
-  height: 15px !important;
-  border: 1.5px solid #ffd793 !important;
-  border-radius: 50% !important;
-  color: #ffd793 !important;
-  font-size: 10px !important;
-  line-height: 13px !important;
-  font-weight: 700 !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
-}
-
-.field-disclaimer > p,
-.field-disclaimer p,
-.field-disclaimer p p,
-.field-offer-disclaimer > p,
-.field-offer-disclaimer p,
-.field-offer-disclaimer p p,
-#text-8ac79973c4 > p,
-#text-8ac79973c4 p,
-#text-8ac79973c4 p p,
-#text-8fd04c18e9 > p,
-#text-8fd04c18e9 p,
-#text-8fd04c18e9 p p {
-  margin: 0 !important;
-  padding: 0 !important;
-  font-size: 10px !important;
-  line-height: 1.45 !important;
-  font-weight: 600 !important;
-  color: #fff4df !important;
-  text-align: left !important;
-  display: block !important;
-  width: 100% !important;
-}
-
-/* =========================
-   CLEANUP
-   ========================= */
-.panel-wrapper.field-loan-offer-summary,
-.panel-wrapper.field-loan-offer-summary p,
-.panel-wrapper.field-loan-offer-summary b,
-.panel-wrapper.field-loan-offer-summary strong,
-.panel-wrapper.field-loan-offer-summary legend,
-.panel-wrapper.field-loan-offer-summary .field-label {
-  text-decoration: none !important;
-}
-
 .panel-wrapper.field-loan-offer-summary {
   height: auto !important;
   min-height: unset !important;
@@ -1355,4 +1213,76 @@ main .form form select[multiple] {
 .plain-text-wrapper {
   margin: 0 !important;
   padding: 0 !important;
+}
+
+/*================thank you ============================================*/
+/* =========================
+   GRID LAYOUT
+========================= */
+.field-loan-application-number {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  column-gap: 12px;
+  align-items: start;
+}
+
+
+/* =========================
+   LEFT ICON
+========================= */
+.field-loan-application-number::before {
+  content: "";
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #eef2ff url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 2H14L20 8V22H6V2Z' stroke='%236366F1' stroke-width='1.8'/%3E%3Cpath d='M14 2V8H20' stroke='%236366F1' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat center;
+  background-size: 18px;
+
+  grid-row: span 2;
+}
+
+
+/* =========================
+   LABEL
+========================= */
+.field-loan-application-number .field-label {
+  font-size: 15px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+
+/* =========================
+   INPUT (UPDATED)
+========================= */
+/* INPUT */
+.field-loan-application-number input {
+  width: 100%;
+  max-width: 260px;
+  height: auto;                 /* 👈 remove fixed height */
+
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+
+  padding: 0 28px 0 0;          /* tighter space for icon */
+  font-size: 25px !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #111827;
+  background: transparent;
+
+  line-height: 1.2;             /* 👈 important for vertical alignment */
+  display: inline-block;        /* 👈 fix baseline */
+}
+
+
+/* =========================
+   COPY ICON INSIDE INPUT
+========================= */
+.field-loan-application-number input {
+  background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' stroke='%236366F1' stroke-width='1.8'/%3E%3Crect x='2' y='2' width='13' height='13' rx='2' stroke='%236366F1' stroke-width='1.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 18px;
 }

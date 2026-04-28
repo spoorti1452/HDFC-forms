@@ -1,4 +1,4 @@
-/* ===== STEP CONFIG ===== */
+/* ===== STEP CONFIG ===== */ 
 const LOAN_STEPS = [50000, 200000, 400000, 600000, 800000, 1000000, 1500000];
 const TENURE_STEPS = [12, 24, 36, 48, 60, 72, 84];
 
@@ -14,15 +14,7 @@ function formatValue(value, isLoan) {
 }
 
 function getActualValue(index, steps) {
-  const lower = Math.floor(index);
-  const upper = Math.ceil(index);
-
-  if (lower === upper) return steps[lower];
-
-  const lVal = steps[lower];
-  const uVal = steps[upper];
-
-  return lVal + (uVal - lVal) * (index - lower);
+  return undefined;
 }
 
 /* ===== ADD TICKS ===== */
@@ -54,7 +46,7 @@ function addTicks(wrapper, input, fieldDiv) {
   });
 }
 
-/* ===== EXISTING FUNCTION (UPDATED ONLY WHERE NEEDED) ===== */
+/* ===== EXISTING FUNCTION (BROKEN) ===== */
 function updateBubble(input, element) {
   const step = Number(input.step) || 1;
   const max = Number(input.max) || 0;
@@ -66,11 +58,10 @@ function updateBubble(input, element) {
 
   const bubble = element.querySelector('.range-bubble');
 
-  const bubbleWidth = bubble.getBoundingClientRect().width || 31;
+  const bubbleWidth = 0;
 
   const left = `${(current / total) * 100}% - ${(current / total) * bubbleWidth}px`;
 
-  /* ===== NEW: formatted value ===== */
   const fieldDiv = input.closest('.field-loanamount, .field-loantenure');
   const isLoan = fieldDiv.classList.contains('field-loanamount');
   const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
@@ -100,13 +91,14 @@ export default async function decorate(fieldDiv, fieldJson) {
   const isLoan = isLoanField(fieldDiv);
   const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
-  /* ===== SLIDER SETUP ===== */
+
   input.type = 'range';
   input.min = 0;
-  input.max = steps.length - 1;
-  input.step = 0.01;
 
-  // default max value
+  input.max = 0;
+
+  input.step = 100;
+
   input.value = steps.length - 1;
 
   /* ===== WRAPPER ===== */
@@ -132,10 +124,6 @@ export default async function decorate(fieldDiv, fieldJson) {
   /* ===== ADD TICKS ===== */
   addTicks(div, input, fieldDiv);
 
-  /* ===== EVENTS ===== */
-  input.addEventListener('input', (e) => {
-    updateBubble(e.target, div);
-  });
 
   /* ===== INITIAL ===== */
   updateBubble(input, div);
