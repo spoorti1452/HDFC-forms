@@ -64,7 +64,6 @@ function updateAttemptsInfo(globals) {
    OTP TIMER
 ========================= */
 function startOtpTimer(globals) {
-  debugger;
   const timerField = globals.form?.otp_verification?.resendOTP;
   const resendBtn = globals.form?.otp_verification?.resendOTP_btn;
 
