@@ -1477,9 +1477,6 @@ main .form form select[multiple] {
   line-height: 1.4;
 }
 
-/* =========================
-   LOAN AMOUNT CONTAINER
-========================= */
 .field-loan-amount {
   margin-left: 67px;
   margin-top: 10px;
@@ -1488,10 +1485,6 @@ main .form form select[multiple] {
   position: relative;
 }
 
-
-/* =========================
-   LEFT BLUE LINE
-========================= */
 .field-loan-amount::before {
   content: "";
   position: absolute;
@@ -1503,10 +1496,6 @@ main .form form select[multiple] {
   border-radius: 2px;
 }
 
-
-/* =========================
-   LABEL
-========================= */
 .field-loan-amount .field-label {
   font-size: 12px;
   color: #9ca3af;
@@ -1514,10 +1503,6 @@ main .form form select[multiple] {
   display: block;
 }
 
-
-/* =========================
-   INPUT (EDITABLE)
-========================= */
 main .form .field-loan-amount input {
   border: none !important;
   background: transparent !important;
