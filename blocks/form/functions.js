@@ -223,99 +223,6 @@ function handleOtpInvalid(globals) {
 }
 
 /* =========================
-   EMI CALCULATION (EDS FIXED)
-========================= */
-
-/* helper to safely set field value */
-function setFieldValue(field, value, globals) {
-  if (!field) return;
-
-  globals.functions.setProperty(field, {
-    value: value,
-  });
-}
-
-/* get actual slider value (important for range slider) */
-function getActualValue(field) {
-  if (!field) return 0;
-
-  const input = field.element?.querySelector('input');
-
-  if (input && input.dataset.actualValue) {
-    return Number(input.dataset.actualValue);
-  }
-
-  return Number(field.value) || 0;
-}
-/**
- * Clean EMI function for your form
- */
-function calculateEMI(globals) {
-  const form = globals.form;
-
-  const loanAmountField =
-    form?.offer_display_page?.offer_panel?.loanAmount;
-
-  const loanTenureField =
-    form?.offer_display_page?.offer_panel?.loanTenure;
-
-  const emiField =
-    form?.offer_display_page?.offer_panel?.loan_offer
-      ?.loan_offer_summary?.offer_details_grid?.emi_Amount;
-
-  const rateField =
-    form?.offer_display_page?.offer_panel?.loan_offer
-      ?.loan_offer_summary?.offer_details_grid?.rate_of_Interest;
-
-  const taxField =
-    form?.offer_display_page?.offer_panel?.loan_offer
-      ?.loan_offer_summary?.offer_details_grid?.taxes;
-
-  /* =========================
-     DEFAULT VALUES (🔥 IMPORTANT)
-  ========================= */
-  let loanAmount = Number(loanAmountField?.value || 0);
-  let loanTenure = Number(loanTenureField?.value || 0);
-
-  if (!loanAmount) loanAmount = 600000; // default 6L
-  if (!loanTenure) loanTenure = 48;     // default 48 months
-
-  /* =========================
-     EMI CALCULATION
-  ========================= */
-  const annualRate = 10.97;
-  const monthlyRate = annualRate / 12 / 100;
-
-  const factor = Math.pow(1 + monthlyRate, loanTenure);
-
-  const emi = Math.round(
-    (loanAmount * monthlyRate * factor) / (factor - 1)
-  );
-
-  /* =========================
-     SET VALUES
-  ========================= */
-  if (emiField) {
-    globals.functions.setProperty(emiField, {
-      value: `₹${emi.toLocaleString('en-IN')}`,
-    });
-  }
-
-  if (rateField) {
-    globals.functions.setProperty(rateField, {
-      value: `${annualRate}%`,
-    });
-  }
-
-  if (taxField) {
-    globals.functions.setProperty(taxField, {
-      value: '₹4000',
-    });
-  }
-
-  return '';
-}
-/* =========================
    EXPORTS
 ========================= */
 export {
@@ -331,5 +238,4 @@ export {
   handleOtpResentAction,
   handleOtpValidated,
   handleOtpInvalid,
-  calculateEMI,
 };

@@ -76,7 +76,7 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   padding-top: 34px !important;
   padding-bottom: 42px !important;
   overflow: visible !important;
-  --progress: calc((var(--current-steps) / var(--total-steps)) * 100%);
+  --progress: calc(var(--current-steps) / var(--total-steps) * 100%);
 }
 
 /* bubble */
