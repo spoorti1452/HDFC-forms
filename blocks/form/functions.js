@@ -231,8 +231,8 @@ function handleOtpInvalid(globals) {
  */
 function calculateEMI(globals) {
 
-  const loanAmount = Number(globals.form.offer_Panel.loanAmount.value) || 0;
-  const loanTenure = Number(globals.form.offer_Panel.loanTenure.value) || 0;
+  const loanAmount = Number(globals.form.loanAmount?.value) || 0;
+  const loanTenure = Number(globals.form.loanTenure?.value) || 0;
 
   if (!loanAmount || !loanTenure) return '';
 
@@ -256,7 +256,8 @@ function calculateEMI(globals) {
 
   globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = 4000;
 
-  console.log("FULL FORM OBJECT:", globals.form);
+    console.log("loanAmount field:", globals.form.loanAmount);
+  console.log("loanTenure field:", globals.form.loanTenure);
   return '';
 }
 /* =========================
