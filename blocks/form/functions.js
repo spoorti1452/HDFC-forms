@@ -256,7 +256,7 @@ function calculateEMI(globals) {
 
   globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = 4000;
 
-  console.log("FULL FORM OBJECT:", globals.form);iuy
+  console.log("FULL FORM OBJECT:", globals.form);
   return '';
 }
 /* =========================
