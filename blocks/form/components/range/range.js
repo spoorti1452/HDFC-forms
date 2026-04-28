@@ -37,7 +37,6 @@ function addTicks(wrapper, input, fieldDiv) {
       : val + 'm';
 
     tick.appendChild(label);
-
     tick.style.left = `${(i / (steps.length - 1)) * 100}%`;
 
     label.addEventListener('click', (e) => {
@@ -52,38 +51,39 @@ function addTicks(wrapper, input, fieldDiv) {
 
 /* ===== CORE UPDATE ===== */
 function updateBubble(input, element, fieldDiv) {
-  const value = Number(input.value) || 0;
+  const indexValue = Number(input.value) || 0;
 
   const isLoan = isLoanField(fieldDiv);
   const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
-  const actual = getActualValue(value, stepsArr);
+  const actual = getActualValue(indexValue, stepsArr);
 
   const bubble = element.querySelector('.range-bubble');
 
-  /* ===== FORMAT UI ===== */
+  /* ===== UI TEXT ===== */
   bubble.innerText = formatValue(actual, isLoan);
 
   /* ===== POSITION ===== */
-  const percent = (value / (stepsArr.length - 1)) * 100;
+  const percent = (indexValue / (stepsArr.length - 1)) * 100;
   bubble.style.left = `calc(${percent}% - 15px)`;
 
-  element.style.setProperty('--current-steps', value);
+  element.style.setProperty('--current-steps', indexValue);
   element.style.setProperty('--total-steps', stepsArr.length - 1);
 
-  /* ===== 🔥 AEM SYNC (FINAL FIX) ===== */
-  const field = fieldDiv?._field;
+  /* ===== 🔥 CRITICAL FIX: UPDATE REAL INPUT VALUE ===== */
+  const finalValue = isLoan
+    ? Math.round(actual / 1000) * 1000
+    : Math.round(actual);
 
-  if (field) {
-    const finalValue = isLoan
-      ? Math.round(actual / 1000) * 1000
-      : Math.round(actual);
+  // AEM listens to THIS input value
+  const hiddenInput = fieldDiv.querySelector('input[type="number"], input[name]');
 
-    // prevent loop
-    if (field.value !== finalValue) {
-      field.value = finalValue;
+  if (hiddenInput) {
+    if (hiddenInput.value != finalValue) {
+      hiddenInput.value = finalValue;
 
-      field.dispatchEvent(new Event('change', { bubbles: true }));
+      // IMPORTANT: trigger AEM rule engine
+      hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
 }
@@ -101,6 +101,8 @@ export default async function decorate(fieldDiv) {
   input.min = 0;
   input.max = steps.length - 1;
   input.step = 0.01;
+
+  // default position = max
   input.value = steps.length - 1;
 
   /* ===== WRAPPER ===== */
