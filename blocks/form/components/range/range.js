@@ -22,7 +22,7 @@ function getActualValue(index, steps) {
 }
 
 /* ===== ADD TICKS ===== */
-function addTicks(wrapper, input, fieldDiv) {
+function addTicks(wrapper, slider, fieldDiv) {
   const isLoan = isLoanField(fieldDiv);
   const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
@@ -41,8 +41,8 @@ function addTicks(wrapper, input, fieldDiv) {
 
     label.addEventListener('click', (e) => {
       e.stopPropagation();
-      input.value = i;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+      slider.value = i;
+      slider.dispatchEvent(new Event('input', { bubbles: true }));
     });
 
     wrapper.appendChild(tick);
@@ -50,39 +50,34 @@ function addTicks(wrapper, input, fieldDiv) {
 }
 
 /* ===== CORE UPDATE ===== */
-function updateBubble(input, element, fieldDiv) {
-  const indexValue = Number(input.value) || 0;
+function updateBubble(slider, wrapper, fieldDiv, originalInput) {
+  const indexValue = Number(slider.value) || 0;
 
   const isLoan = isLoanField(fieldDiv);
   const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
   const actual = getActualValue(indexValue, stepsArr);
 
-  const bubble = element.querySelector('.range-bubble');
+  const bubble = wrapper.querySelector('.range-bubble');
 
-  /* ===== UI TEXT ===== */
+  /* ===== UI ===== */
   bubble.innerText = formatValue(actual, isLoan);
 
-  /* ===== POSITION ===== */
   const percent = (indexValue / (stepsArr.length - 1)) * 100;
   bubble.style.left = `calc(${percent}% - 15px)`;
 
-  element.style.setProperty('--current-steps', indexValue);
-  element.style.setProperty('--total-steps', stepsArr.length - 1);
+  wrapper.style.setProperty('--current-steps', indexValue);
+  wrapper.style.setProperty('--total-steps', stepsArr.length - 1);
 
-  /* ===== 🔥 CORRECT AEM SYNC ===== */
-  const originalInput = fieldDiv.querySelector(
-    'input[type="number"], input:not([type="range"])'
-  );
-
+  /* ===== 🔥 SYNC TO AEM ===== */
   const finalValue = isLoan
     ? Math.round(actual / 1000) * 1000
     : Math.round(actual);
 
-  if (originalInput && originalInput.value != finalValue) {
+  if (originalInput.value != finalValue) {
     originalInput.value = finalValue;
 
-    // IMPORTANT: this triggers rule engine
+    // IMPORTANT: triggers rule editor
     originalInput.dispatchEvent(new Event('change', { bubbles: true }));
   }
 }
@@ -95,7 +90,7 @@ export default async function decorate(fieldDiv) {
   const isLoan = isLoanField(fieldDiv);
   const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
-  /* ===== CREATE NEW RANGE SLIDER ===== */
+  /* ===== CREATE NEW SLIDER ===== */
   const slider = document.createElement('input');
   slider.type = 'range';
   slider.min = 0;
@@ -129,10 +124,10 @@ export default async function decorate(fieldDiv) {
   addTicks(wrapper, slider, fieldDiv);
 
   slider.addEventListener('input', () => {
-    updateBubble(slider, wrapper, fieldDiv);
+    updateBubble(slider, wrapper, fieldDiv, originalInput);
   });
 
-  updateBubble(slider, wrapper, fieldDiv);
+  updateBubble(slider, wrapper, fieldDiv, originalInput);
 
   return fieldDiv;
 }
