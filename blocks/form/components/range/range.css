@@ -203,8 +203,14 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
   color: #8a93a3 !important;
   white-space: nowrap !important;
   cursor: pointer !important;
-  pointer-events: auto !important;
+  pointer-events: none !important;
   z-index: 5 !important;
+}
+
+
+.custom-range-tick span {
+  pointer-events: auto !important;
+  cursor: pointer;
 }
 
 .field-offer-panel .range-widget-wrapper .custom-range-tick:hover {

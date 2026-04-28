@@ -1,56 +1,63 @@
 import { initRangeEnhancer } from './range-enhancer.js';
 
 function updateBubble(input, element) {
-  const step = input.step || 1;
-  const max = input.max || 0;
-  const min = input.min || 1;
-  const value = input.value || 1;
-  const current = Math.ceil((value - min) / step);
-  const total = Math.ceil((max - min) / step);
+  const step = Number(input.step) || 1;
+  const max = Number(input.max) || 0;
+  const min = Number(input.min) || 0;
+  const value = Number(input.value) || 0;
+
+  const current = (value - min) / step;
+  const total = (max - min) / step;
+
   const bubble = element.querySelector('.range-bubble');
-  // during initial render the width is 0. Hence using a default here.
+  if (!bubble) return;
+
   const bubbleWidth = bubble.getBoundingClientRect().width || 31;
+
   const left = `${(current / total) * 100}% - ${(current / total) * bubbleWidth}px`;
-  bubble.innerText = `${value}`;
-  const steps = {
-    '--total-steps': Math.ceil((max - min) / step),
-    '--current-steps': Math.ceil((value - min) / step),
-  };
-  const style = Object.entries(steps).map(([varName, varValue]) => `${varName}:${varValue}`).join(';');
+
+  // ✅ FIX: don't override enhancer value
+  bubble.innerText = input.dataset.actualValue || value;
+
   bubble.style.left = `calc(${left})`;
-  element.setAttribute('style', style);
+
+  element.style.setProperty('--total-steps', total);
+  element.style.setProperty('--current-steps', current);
 }
+
 export default async function decorate(fieldDiv, fieldJson) {
   const input = fieldDiv.querySelector('input');
-  // modify the type in case it is not range.
-  input.type = 'range';
-  input.min = input.min || 1;
-  input.max = input.max || 100;
-  input.step = fieldJson?.properties?.stepValue || 1;
-  // create a wrapper div to provide the min/max and current value
-  const div = document.createElement('div');
-  div.className = 'range-widget-wrapper decorated';
-  input.after(div);
-  const hover = document.createElement('span');
-  hover.className = 'range-bubble';
-  const rangeMinEl = document.createElement('span');
-  rangeMinEl.className = 'range-min';
-  const rangeMaxEl = document.createElement('span');
-  rangeMaxEl.className = 'range-max';
-  rangeMinEl.innerText = `${input.min || 1}`;
-  rangeMaxEl.innerText = `${input.max}`;
-  div.appendChild(hover);
-  // move the input element within the wrapper div
-  div.appendChild(input);
-  div.appendChild(rangeMinEl);
-  div.appendChild(rangeMaxEl);
+  if (!input) return fieldDiv;
 
-  input.addEventListener('input', (e) => {
-    updateBubble(e.target, div);
-  });
-  updateBubble(input, div);
+  input.type = 'range';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'range-widget-wrapper decorated';
+
+  input.after(wrapper);
+
+  const bubble = document.createElement('span');
+  bubble.className = 'range-bubble';
+
+  const minEl = document.createElement('span');
+  minEl.className = 'range-min';
+
+  const maxEl = document.createElement('span');
+  maxEl.className = 'range-max';
+
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(input);
+  wrapper.appendChild(minEl);
+  wrapper.appendChild(maxEl);
+
+  // ✅ INIT ONLY ONCE (correct place)
   initRangeEnhancer(fieldDiv);
+
+  input.addEventListener('input', () => {
+    updateBubble(input, wrapper);
+  });
+
+  updateBubble(input, wrapper);
+
   return fieldDiv;
 }
- 
- 

@@ -14,14 +14,14 @@ const rangeConfigs = {
 };
 
 /**
- * 🔥 Converts slider position → actual value
- * WITH snapping to nearest tick when close
+ * 🔥 Slider → actual value (with snapping)
  */
 function getActualValueFromSlider(input, config) {
   let sliderValue = Number(input.value);
 
-  // 🔥 SNAP to nearest tick if very close
   const snappedIndex = Math.round(sliderValue);
+
+  // snap if close
   if (Math.abs(sliderValue - snappedIndex) < 0.01) {
     return config.ticks[snappedIndex];
   }
@@ -37,11 +37,11 @@ function getActualValueFromSlider(input, config) {
   const upperValue = config.ticks[upperIndex];
   const percentage = sliderValue - lowerIndex;
 
-  return lowerValue + ((upperValue - lowerValue) * percentage);
+  return lowerValue + (upperValue - lowerValue) * percentage;
 }
 
 /**
- * 🔥 Converts actual value → slider position
+ * 🔥 Actual → slider position
  */
 function getSliderValueFromActual(actualValue, config) {
   const ticks = config.ticks;
@@ -49,7 +49,7 @@ function getSliderValueFromActual(actualValue, config) {
   if (actualValue <= ticks[0]) return 0;
   if (actualValue >= ticks[ticks.length - 1]) return ticks.length - 1;
 
-  for (let i = 0; i < ticks.length - 1; i += 1) {
+  for (let i = 0; i < ticks.length - 1; i++) {
     if (actualValue >= ticks[i] && actualValue <= ticks[i + 1]) {
       const percentage =
         (actualValue - ticks[i]) / (ticks[i + 1] - ticks[i]);
@@ -61,7 +61,7 @@ function getSliderValueFromActual(actualValue, config) {
 }
 
 /**
- * 🔥 Final formatting
+ * 🔥 Formatting
  */
 function formatActualValue(actualValue, fieldType) {
   if (fieldType === 'loanAmount') {
@@ -76,7 +76,7 @@ function formatActualValue(actualValue, fieldType) {
 }
 
 /**
- * 🔥 Sync slider → UI → AEM
+ * 🔥 Sync UI + AEM
  */
 function updateBubbleText(input, wrapper, fieldType) {
   const config = rangeConfigs[fieldType];
@@ -87,15 +87,12 @@ function updateBubbleText(input, wrapper, fieldType) {
   const rawActualValue = getActualValueFromSlider(input, config);
   const actualValue = formatActualValue(rawActualValue, fieldType);
 
-  // UI update
   input.dataset.actualValue = actualValue;
   bubble.innerText = config.formatBubble(actualValue);
 
-  // 🔥 Update AEM field
   const fieldDiv = input.closest('[data-aem-field]');
   if (fieldDiv && fieldDiv._field) {
     fieldDiv._field.value = actualValue;
-
     fieldDiv._field.dispatchEvent(
       new Event('change', { bubbles: true })
     );
@@ -103,7 +100,7 @@ function updateBubbleText(input, wrapper, fieldType) {
 }
 
 /**
- * 🔥 Create clickable ticks
+ * 🔥 Create ticks (FIXED pointer issue)
  */
 function addCustomTicks(wrapper, input, fieldType) {
   const config = rangeConfigs[fieldType];
@@ -116,17 +113,23 @@ function addCustomTicks(wrapper, input, fieldType) {
   config.ticks.forEach((tickValue, index) => {
     const tick = document.createElement('span');
     tick.className = 'custom-range-tick';
-    tick.innerText = config.formatTick(tickValue);
+
+    // 🔥 label inside (clickable)
+    const label = document.createElement('span');
+    label.innerText = config.formatTick(tickValue);
+
+    tick.appendChild(label);
 
     tick.style.left = `${
       (index / (config.ticks.length - 1)) * 100
     }%`;
 
-    tick.addEventListener('click', () => {
-      // 🔥 FORCE exact index (NO interpolation)
+    // 🔥 click only on label (not whole tick)
+    label.addEventListener('click', (e) => {
+      e.stopPropagation();
+
       input.value = index;
 
-      // trigger UI + logic
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
@@ -160,7 +163,7 @@ function enhanceRangeField(field, fieldType) {
     input.min = 0;
     input.max = config.ticks.length - 1;
 
-    // 🔥 keep smooth sliding
+    // keep smooth
     input.step = 0.01;
 
     input.value = sliderValue;
@@ -170,10 +173,8 @@ function enhanceRangeField(field, fieldType) {
     field.dataset.rangeEnhanced = 'true';
   }
 
-  // initial render
   updateBubbleText(input, wrapper, fieldType);
 
-  // 🔥 listen to movement
   input.addEventListener('input', () => {
     updateBubbleText(input, wrapper, fieldType);
   });
