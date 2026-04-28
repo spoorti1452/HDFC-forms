@@ -60,34 +60,44 @@ function updateBubble(input, element) {
   const max = Number(input.max) || 0;
   const min = Number(input.min) || 0;
   const value = Number(input.value) || 0;
- 
+
   const current = (value - min) / step;
   const total = (max - min) / step;
- 
+
   const bubble = element.querySelector('.range-bubble');
- 
   const bubbleWidth = bubble.getBoundingClientRect().width || 31;
- 
+
   const left = `${(current / total) * 100}% - ${(current / total) * bubbleWidth}px`;
- 
-  /* ===== NEW: formatted value ===== */
+
   const fieldDiv = input.closest('.field-loanamount, .field-loantenure');
   const isLoan = fieldDiv.classList.contains('field-loanamount');
   const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
- 
+
   const actual = getActualValue(value, stepsArr);
- 
+
   bubble.innerText = formatValue(actual, isLoan);
- 
+
+  /* ===== 🔥 ADD THIS BLOCK ===== */
+  const fieldWrapper = input.closest('[data-aem-field]');
+  if (fieldWrapper && fieldWrapper._field) {
+    fieldWrapper._field.value = isLoan
+      ? Math.round(actual / 1000) * 1000
+      : Math.round(actual);
+
+    fieldWrapper._field.dispatchEvent(
+      new Event('change', { bubbles: true })
+    );
+  }
+
   const stepsVars = {
     '--total-steps': total,
     '--current-steps': current,
   };
- 
+
   const style = Object.entries(stepsVars)
     .map(([k, v]) => `${k}:${v}`)
     .join(';');
- 
+
   bubble.style.left = `calc(${left})`;
   element.setAttribute('style', style);
 }
