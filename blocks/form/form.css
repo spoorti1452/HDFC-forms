@@ -57,7 +57,7 @@
     --form-wizard-step-legend-padding: 10px;
     --form-wizard-step-legend-font-size: 1.1rem;
     --form-field-gap: 5px;
-    
+   
     /* Card styling variables */
     --form-card-border-color: #e0e0e0;
     --form-card-border-radius: 4px;
@@ -70,66 +70,66 @@
     --form-card-selected-shadow: 0 0 0 1px var(--button-primary-color);
     --form-card-transition: all 0.15s ease-in-out;
 }
-
+ 
 * {
     box-sizing: border-box;
 }
-
+ 
 main .form pre {
     display: none;
 }
-
+ 
 form output {
     display: block;
     font-weight: 700;
     font-size: 1.625rem;
 }
-
+ 
 form:not(.edit-mode) [data-visible="false"] {
     display: none !important;
 }
-
+ 
 main .form-container {
     background-color: var(--form-background-color);
     padding: var(--form-padding);
     width: var(--form-width);
 }
-
+ 
 main .form {
     background-color: var(--form-background-color);
 }
-
+ 
 main .form > div:not(:first-child) {
     display: none;
 }
-
+ 
 main .form form {
     display: grid;
     grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
     gap: var(--form-field-vert-gap) var(--form-field-horz-gap);
 }
-
+ 
 main .form form fieldset {
     border: var(--form-fieldset-border);
     margin: var(--form-fieldset-marign);
     width: 100%;
 }
-
+ 
 main .form form fieldset fieldset {
     padding: 0;
 }
-
+ 
 main .form .field-description {
     color: var(--form-label-color);
     font-size: var(--form-font-size-xs);
 }
-
+ 
 main .form form .field-invalid .field-description {
     color: var(--form-error-color);
     font-weight: 700;
 }
-
-
+ 
+ 
 /**
  * Required field indicator
  */
@@ -138,7 +138,7 @@ main .form form .field-invalid .field-description {
     color: var(--form-error-color);
     padding-inline-start: 5px;
   }
-  
+ 
   /**
    * Required field indicator not required for checkboxes and radio buttons
    */
@@ -146,16 +146,16 @@ main .form form .field-invalid .field-description {
   .checkbox-wrapper > label::after {
       content: none;
   }
-  
+ 
   main .form form .checkbox-wrapper.field-invalid {
       flex-wrap: wrap;
   }
-
+ 
 main .form select {
     padding-top: 0;
     padding-bottom: 0;
   }
-
+ 
 main .form input,
 main .form textarea,
 main .form select {
@@ -171,27 +171,27 @@ main .form select {
     margin-bottom: 1rem;
     border-radius: 0.25rem;
 }
-
+ 
 main .form input:hover, main .form select:hover {
     border-color: rgb(90 92 96);
 }
-
+ 
 main .form input:disabled{
     background-color: var(--form-input-disable-color);
 }
-
+ 
 main .form form .radio-wrapper.field-invalid > input,
 main .form form .checkbox-wrapper.field-invalid > input {
     outline: 1px solid var(--form-error-color);
 }
-
+ 
 main .form input[type='file'] {
     border: none;
     padding-inline-start:0;
     background: unset;
     color: unset;
 }
-
+ 
 main .form input[type='checkbox'],
 main .form input[type='radio'] {
     width: 16px;
@@ -201,11 +201,11 @@ main .form input[type='radio'] {
     position: static;
     z-index: 1;
 }
-
+ 
 main .form textarea {
     min-height: 100px;
 }
-
+ 
 main .form fieldset:not(.checkbox-group-wrapper, .radio-group-wrapper) legend {
     font-weight: var(--form-fieldset-legend-font-weight);
     font-size: var(--form-fieldset-legend-font-size);
@@ -215,7 +215,7 @@ main .form fieldset:not(.checkbox-group-wrapper, .radio-group-wrapper) legend {
     padding: var(--form-fieldset-legend-padding);
     margin-bottom: 10px;
 }
-
+ 
 main .form label,
 main .form fieldset.checkbox-group-wrapper legend,
 main .form fieldset.radio-group-wrapper legend {
@@ -223,28 +223,28 @@ main .form fieldset.radio-group-wrapper legend {
     font-size: var(--form-label-font-size);
     color: var(--form-label-color);
 }
-
+ 
 main .form form .wizard > legend{
     width: 100%;
 }
-
+ 
 main .form form fieldset.checkbox-group-wrapper,
 main .form form fieldset.radio-group-wrapper {
     padding-left: 0;
     margin-left:0;
 }
-
+ 
 main .form form fieldset.checkbox-group-wrapper > legend,
 main .form form fieldset.radio-group-wrapper > legend {
     padding-left: 0;
 }
-
+ 
 main .form label.required::after {
     content: "*";
     color: var(--form-label-color);
     padding-inline-start: 5px;
 }
-
+ 
 main .form form p,
 main .form form .repeat-wrapper,
 main .form form .field-wrapper {
@@ -252,14 +252,14 @@ main .form form .field-wrapper {
     color: var(--form-label-color);
     grid-column: span 12;
 }
-
+ 
 main .form form p {
     font-size: var(--form-paragraph-font-size);
     font-style: var(--form-paragraph-font-style);
     color: var(--form-paragraph-color);
     margin: var(--form-paragraph-margin);
 }
-
+ 
 main .form form .checkbox-wrapper, main .form form .radio-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -267,28 +267,28 @@ main .form form .checkbox-wrapper, main .form form .radio-wrapper {
     margin: 0;
     gap: 8px;
 }
-
+ 
 main .form form fieldset > .radio-wrapper,
 main .form form fieldset > .checkbox-wrapper {
     margin-left: var(--form-field-gap);
 }
-
+ 
 main .form .radio-wrapper  label,
 main .form .checkbox-wrapper label {
     flex-basis: calc(100% - 24px);
 }
-
+ 
 main .form fieldset.link .checkbox-wrapper label {
     flex-basis: unset;
 }
-
+ 
 main .form form fieldset.cards {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 0.5rem;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper,
 main .form form fieldset.cards > .checkbox-wrapper {
     margin: 0;
@@ -297,7 +297,7 @@ main .form form fieldset.cards > .checkbox-wrapper {
     min-width: 180px;
     max-width: 300px;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > label,
 main .form form fieldset.cards > .checkbox-wrapper > label {
     display: flex;
@@ -317,31 +317,31 @@ main .form form fieldset.cards > .checkbox-wrapper > label {
     color: var(--form-label-color);
     font-size: 0.95em;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > label:hover,
 main .form form fieldset.cards > .checkbox-wrapper > label:hover {
     box-shadow: var(--form-card-hover-shadow);
     border-color: #ccc;
     transform: translateY(-1px);
 }
-
+ 
 main .form form fieldset.cards.horizontal {
     flex-direction: row;
     column-gap: 0.75rem;
     column-gap: 0;
 }
-
+ 
 main .form form fieldset.cards.horizontal > .radio-wrapper,
 main .form form fieldset.cards.horizontal > .checkbox-wrapper {
     flex: 0 1 auto;
     max-width: none;
 }
-
+ 
 main .form form fieldset.cards.horizontal > .radio-wrapper > label,
 main .form form fieldset.cards.horizontal > .checkbox-wrapper > label {
-    min-width: -webkit-fill-available; 
+    min-width: -webkit-fill-available;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > input,
 main .form form fieldset.cards > .checkbox-wrapper > input {
     position: absolute;
@@ -349,7 +349,7 @@ main .form form fieldset.cards > .checkbox-wrapper > input {
     width: 0;
     height: 0;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > input:checked ~ label,
 main .form form fieldset.cards > .checkbox-wrapper > input:checked ~ label {
     border: 1px solid var(--form-card-selected-border-color);
@@ -358,7 +358,7 @@ main .form form fieldset.cards > .checkbox-wrapper > input:checked ~ label {
     transform: translateY(0);
     font-weight: 500;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > input:checked ~ label::after,
 main .form form fieldset.cards > .checkbox-wrapper > input:checked ~ label::after {
     content: "";
@@ -369,18 +369,18 @@ main .form form fieldset.cards > .checkbox-wrapper > input:checked ~ label::afte
     border-radius: 50%;
     margin-left: auto;
 }
-
+ 
 main .form form fieldset.cards > .radio-wrapper > input:focus ~ label,
 main .form form fieldset.cards > .checkbox-wrapper > input:focus ~ label {
     outline: none;
     box-shadow: 0 0 0 1px var(--button-primary-color);
 }
-
+ 
 main .form .form-image-wrapper img {
     max-width: 100%;
     height: auto;
   }
-
+ 
 /* For cards with icons or images */
 main .form form fieldset.cards > .radio-wrapper > label > img,
 main .form form fieldset.cards > .checkbox-wrapper > label > img {
@@ -388,31 +388,31 @@ main .form form fieldset.cards > .checkbox-wrapper > label > img {
     max-height: 18px;
     object-fit: contain;
 }
-
+ 
 /* Responsive adjustments for cards */
 @media (width <= 768px) {
     main .form form fieldset.cards > .radio-wrapper,
     main .form form fieldset.cards > .checkbox-wrapper {
         min-width: 100%;
     }
-    
+   
     main .form form fieldset.cards.horizontal {
         flex-wrap: wrap;
     }
-    
+   
     main .form form fieldset.cards.horizontal > .radio-wrapper,
     main .form form fieldset.cards.horizontal > .checkbox-wrapper {
         min-width: 100%;
     }
 }
-
+ 
 input::file-selector-button {
     color: var(--form-upload-color);
     background: var(--form-upload-background-color);
     font-size: var(--form-upload-font-size);
     text-align: center;
 }
-
+ 
 main .form button {
     color: var(--form-button-color);
     background: var(--form-button-background-color);
@@ -422,29 +422,29 @@ main .form button {
     border-radius: unset;
     width: 100%;
 }
-
+ 
 main form .file-wrapper > button{
     display: flex;
 }
-
+ 
 main .form button:hover {
     background: var(--form-button-background-hover-color);
 }
-
+ 
 main .submit-wrapper{
     width: var(--form-submit-width);
 }
-
+ 
 main .form textarea:disabled,
 main .form select:disabled,
 main .form button:disabled {
     background-color: var(--form-input-disable-color);
 }
-
+ 
 main .file-wrapper.decorated input[type="file"] {
     display: none;
 }
-
+ 
 main .file-wrapper .field-dropregion {
     background: rgb(0 0 0 / 2%);
     border: 1px dashed var(--form-input-border-color);
@@ -453,29 +453,29 @@ main .file-wrapper .field-dropregion {
     padding: 32px;
     text-align: center;
 }
-
+ 
 /* Repeatable Styling */
 main .form form .repeat-actions {
     grid-column: span 12;
     order: 2;
 }
-
+ 
 main .form form .item-remove,
 main .form form .item-add {
     overflow: unset;
 }
-
+ 
 main .form form .item-remove {
     justify-self: end;
     grid-column: span 12;
     order: 1;
 }
-
+ 
 main .form form div[data-variant="addDeleteButtons"] .item-add,
 main .form form div[data-variant="addDeleteButtons"] .item-remove {
     display: block;
 }
-
+ 
 /* End of Repeatable Styling */
 main .form .file-description{
   display: flex;
@@ -483,16 +483,16 @@ main .form .file-description{
   align-items: center;
   margin-top: 5px;
 }
-
+ 
 main .form .file-description .file-description-name {
   cursor: pointer;
   text-decoration: underline;
   flex: 1;
 }
-
+ 
 main .file-wrapper .file-description button {
     --form-button-padding: 15px;
-
+ 
     width: 12px;
     height: 12px;
     border: none;
@@ -502,7 +502,7 @@ main .file-wrapper .file-description button {
     position: relative;
     border-radius: 3px;
 }
-
+ 
 main .file-wrapper .file-description button::after{
     content: 'X';
     position: absolute;
@@ -511,27 +511,27 @@ main .file-wrapper .file-description button::after{
     color: var(--background-color-primary);
     transform: translate(-50%, -50%);
 }
-
+ 
 main .form .button-wrapper button {
     cursor:pointer
 }
-
+ 
 main .form .button-wrapper button:hover {
     border: 3px solid var(#fff);
     color: #fff;
     background-color: var(--button-secondary-color);
 }
-
+ 
 main .form .button-wrapper button[disabled] {
     cursor:auto
 }
-
+ 
 main .form .button-wrapper button[disabled]:hover {
     border: 3px solid var(--button-secondary-color);
     color: var(--button-secondary-color);
     background-color: transparent;
 }
-
+ 
 /** Wizard Styling */
 main .form form .wizard  {
   display: grid;
@@ -542,15 +542,15 @@ main .form form .wizard  {
   gap: unset;
   padding: 20px var(--form-wizard-padding);
 }
-
+ 
 main .form form .wizard > fieldset > legend{
     display: none;
 }
-
+ 
 main .form form .wizard > fieldset:not(.current-wizard-step){
     display: none;
 }
-
+ 
 main .form form .wizard .wizard-button-wrapper{
     display: flex;
     justify-content: end;
@@ -559,11 +559,11 @@ main .form form .wizard .wizard-button-wrapper{
     width: 100%;
     grid-column: span 12;
 }
-
+ 
 main .form form .wizard .wizard-button-wrapper .field-wrapper{
     flex: unset;
 }
-
+ 
 .wizard-menu-items{
     display: flex;
     gap: 50px;
@@ -577,11 +577,11 @@ main .form form .wizard .wizard-button-wrapper .field-wrapper{
     padding-bottom: var(--form-wizard-padding);
     grid-column: span 12;
 }
-
+ 
 main .form form .wizard .wizard-menu-item {
   counter-increment: wizard-step-counter;
 }
-
+ 
 main .form form .wizard .wizard-menu-item::before {
   content: counter(wizard-step-counter);
   border: 2px solid var(--form-wizard-number-color);
@@ -594,65 +594,65 @@ main .form form .wizard .wizard-menu-item::before {
   line-height: 2;
   display: inline-block;
 }
-
+ 
 main .form form .wizard .wizard-menu-active-item::before{
   border: 2px solid var(--form-wizard-number-color);
   background: var(--form-wizard-number-color);
   color: var(--background-color-primary);
   font-weight: 600;
 }
-
+ 
 @media (width >= 600px) {
     main .form button {
         width: unset;
     }
 }
-
+ 
 /* wizard title on left */
 main .form form .wizard.left{
   display: flex;
 }
-
+ 
 main .form form .wizard.left .wizard-menu-items{
   flex-direction: column;
   width: 300px;
 }
-
+ 
 main form .panel-wrapper {
   display: flex;
   padding: 0;
   flex-direction: column;
 }
-
+ 
 main .form form .panel-wrapper{
   display: grid;
   grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
   gap: var(--form-field-vert-gap) var(--form-field-horz-gap);
 }
-
+ 
 main .form form .repeat-wrapper{
     display: grid;
     grid-template-columns: repeat(var(--form-columns), minmax(0, 1fr));
     gap: var(--form-field-vert-gap) var(--form-field-horz-gap);
 }
-
+ 
 main .form form .wizard.left .panel-wrapper{
   flex: 1;
 }
-
+ 
 @media (width >= 1200px) {
     main .form form .form-textarea-wrapper,
     main .form form .file-wrapper,
     main .form form .panel-wrapper {
         flex: 1 0 100%;
     }
-
+ 
     main .form form .panel-wrapper {
         flex-flow: row wrap;
         gap: 10px 15px;
     }
 }
-
+ 
 main .form .form-message.success-message {
     color: #0f5132;
     background-color: #d1e7dd;
@@ -661,7 +661,7 @@ main .form .form-message.success-message {
     grid-column: span 12;
     padding: 10px;
 }
-
+ 
 main .form .form-message.error-message {
     color: #842029;
     background-color: #f8d7da;
@@ -670,7 +670,7 @@ main .form .form-message.error-message {
     grid-column: span 12;
     padding: 10px;
 }
-
+ 
 main .form .file-wrapper .file-drag-area {
   border: 1px dashed var(--border-color);
   border-radius: 5px;
@@ -681,118 +681,118 @@ main .form .file-wrapper .file-drag-area {
   justify-content: center;
   align-items: center;
 }
-
+ 
 /* grid css */
 main .form form .field-wrapper .field-description{
   grid-column: span 12;
 }
-
+ 
 main .form form .field-wrapper.col-12 {
     grid-column: span 12;
 }
-
+ 
 main .form form .field-wrapper.col-11 {
     grid-column: span 11;
 }
-
+ 
 main .form form .field-wrapper.col-10 {
   grid-column: span 10;
 }
-
+ 
 main .form form .field-wrapper.col-9 {
     grid-column: span 9;
 }
-
+ 
 main .form form .field-wrapper.col-8 {
     grid-column: span 8;
 }
-
+ 
 main .form form .field-wrapper.col-7 {
     grid-column: span 7;
 }
-
+ 
 main .form form .field-wrapper.col-6 {
       grid-column: span 6;
 }
-
+ 
 main .form form .field-wrapper.col-5 {
       grid-column: span 5;
 }
-
+ 
 main .form form .field-wrapper.col-4 {
       grid-column: span 4;
 }
-
+ 
 main .form form .field-wrapper.col-3 {
       grid-column: span 3;
 }
-
+ 
 main .form form .field-wrapper.col-2 {
       grid-column: span 2;
 }
-
+ 
 main .form form .field-wrapper.col-1 {
     grid-column: span 1;
 }
-
+ 
 main .form form .wizard > .field-description {
     width: 100%;
 }
-  
+ 
 main .form form .checkbox-wrapper.field-invalid > .field-description {
       order: 1;
 }
-
+ 
 main form .wizard > .current-wizard-step.panel-wrapper:first-of-type ~ .wizard-button-wrapper > .wizard-button-prev,
 main form .wizard > .current-wizard-step.panel-wrapper:last-of-type ~ .wizard-button-wrapper > .wizard-button-next {
     display: none;
 }
-
+ 
 main .form form:not(.edit-mode) .captcha-wrapper{
     display: none ;
 }
-
+ 
 main .form form .radio-group-wrapper.horizontal,
 main .form form .checkbox-group-wrapper.horizontal {
     display: flex;
     flex-flow: row wrap;
     gap: inherit;
 }
-
+ 
 main .form form .radio-group-wrapper.horizontal .field-description,
 main .form form .checkbox-group-wrapper.horizontal .field-description {
     width: 100%;
     order: 1;
     margin-top: 0.5rem;
 }
-
+ 
 main div.form-wrapper {
     background: white;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 4px 24px rgb(0 0 0 / 8%);
 }
-
+ 
 /* Responsive adjustments for mobile */
 @media (width <= 599px) {
     :root {
         --form-field-horz-gap: 10px;
     }
-    
+   
     main .form form .wizard  {
         .wizard-menu-items {
             gap: 20px;
         }
-
+ 
         margin: 0;
     }
 }
-
+ 
 /* Expand height for multi-select dropdowns (array types) */
 main .form form select[multiple] {
     height: calc(42px + 50px);
 }
-
+ 
 /*====================================================================================*/
 /* Aadhaar mobile + DOB input base */
 .text-wrapper.field-aadhaar-linked-mobile-number input,
@@ -807,7 +807,7 @@ main .form form select[multiple] {
   background-color: #fff !important;
   outline: none !important;
 }
-
+ 
 /* Placeholder */
 .text-wrapper.field-aadhaar-linked-mobile-number input::placeholder,
 .date-wrapper.field-date-of-birth input::placeholder {
@@ -815,23 +815,23 @@ main .form form select[multiple] {
   color: #7a7a7a !important;
   opacity: 1 !important;
 }
-
+ 
 /* Mobile input with flag + +91 + divider */
 .text-wrapper.field-aadhaar-linked-mobile-number input {
   padding-left: 112px !important;
   padding-right: 16px !important;
-
+ 
   background-color: #fff !important;
   background-image:
     url("https://flagcdn.com/w40/in.png"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='16' viewBox='0 0 36 16'%3E%3Ctext x='0' y='12' font-size='15' font-family='Arial, sans-serif' fill='%23222'%3E%2B91%3C/text%3E%3C/svg%3E"),
     linear-gradient(#d6d6d6, #d6d6d6) !important;
-
+ 
   background-repeat: no-repeat, no-repeat, no-repeat !important;
   background-position: 18px center, 52px center, 98px center !important;
   background-size: 24px 16px, 34px 16px, 1px 30px !important;
 }
-
+ 
 /* DOB input */
 .date-wrapper.field-date-of-birth input {
   padding-left: 16px !important;
@@ -845,30 +845,30 @@ main .form form select[multiple] {
   border-radius: 6px;
   padding: 10px 14px;
   margin-top: 8px;
-
+ 
   display: inline-block;
-  max-width: 300px;   
-  width: auto;       
+  max-width: 300px;  
+  width: auto;      
 }
-
+ 
 .plain-text-wrapper.field-income-note p {
   margin: 0;
   font-size: 12px;
   line-height: 1.4;
   color: #6b5b2c;
 }
-
+ 
 .plain-text-wrapper b{
     color: #035fe6;
 }
-
+ 
 /*=====================================================================*/
 .field-otp-value {
   max-width: 500px;
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
 }
-
+ 
 /* OTP input */
 .field-otp-value input {
   width: 100%;
@@ -879,7 +879,7 @@ main .form form select[multiple] {
   box-sizing: border-box;
   margin-bottom: 0 !important;
 }
-
+ 
 .field-resendotp input,
 .field-attempts input {
   border: none !important;
@@ -889,12 +889,12 @@ main .form form select[multiple] {
   font-size: 12px;
   color: #6b7280;
 }
-
+ 
 .field-resendotp .field-label,
 .field-attempts .field-label {
   display: none;
 }
-
+ 
 .field-resendotp,
 .field-attempts {
   display: inline-block;
@@ -903,15 +903,15 @@ main .form form select[multiple] {
   padding-top: 0 !important;
   margin-bottom: 0 !important;
 }
-
+ 
 .field-resendotp {
   text-align: left;
 }
-
+ 
 .field-attempts {
   text-align: right;
 }
-
+ 
 .field-otp-value.field-wrapper,
 .field-resendotp.field-wrapper,
 .field-attempts.field-wrapper {
@@ -920,16 +920,16 @@ main .form form select[multiple] {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
-
+ 
 .field-otp-value + .field-resendotp,
 .field-otp-value + .field-wrapper.field-resendotp {
   margin-top: 0 !important;
 }
-
+ 
 .field-resendotp + .field-attempts {
   margin-top: 0 !important;
 }
-
+ 
 .plain-text-wrapper{
    font-size: 18px;
   font-weight: 600;
@@ -937,20 +937,20 @@ main .form form select[multiple] {
   line-height: 1.4;
   margin-bottom: 20px;
 }
-
+ 
 /*=========================offer page text=========================================*/
-
+ 
 /* Remove emoji from outer p */
 .field-offer-text > p::before {
   content: none !important;
   display: none !important;
 }
-
+ 
 /* Title text */
 .field-offer-text > p {
   margin: 0 0 18px;
 }
-
+ 
 /* Add emoji only to inner p */
 .field-offer-text > p > p {
   margin: 0;
@@ -958,11 +958,11 @@ main .form form select[multiple] {
   font-weight: 700;
   color: #2f3742;
 }
-
+ 
 .field-offer-text > p > p::before {
   content: "🎉 ";
 }
-
+ 
 /* Loan Offer Card */
 .field-offer-loan {
   position: relative;
@@ -975,7 +975,7 @@ main .form form select[multiple] {
   display: flex;
   align-items: center;
 }
-
+ 
 /* Money icon */
 .field-offer-loan::before {
   content: "💰";
@@ -985,7 +985,7 @@ main .form form select[multiple] {
   transform: translateY(-50%);
   font-size: 35px;
 }
-
+ 
 /* Label */
 .field-offer-loan .field-label {
   display: inline;
@@ -994,7 +994,7 @@ main .form form select[multiple] {
   font-weight: 700;
   color: #0c2742;
 }
-
+ 
 /* Input */
 .field-offer-loan input[name="offer_loan"] {
   display: inline-block;
@@ -1008,7 +1008,7 @@ main .form form select[multiple] {
   font-weight: 700;
   color: #0c2742;
 }
-
+ 
 .field-offer-loan input[name="offer_loan"]:focus {
   border: 0;
   outline: 0;
@@ -1019,12 +1019,12 @@ main .form form select[multiple] {
   display: flex;
   align-items: center;
 }
-
+ 
 /* Fix label alignment */
 .field-offer-loan .field-label {
   line-height: 1.4;
 }
-
+ 
 /* Fix input jumping issue */
 .field-offer-loan input[name="offer_loan"] {
   display: inline-block;
@@ -1036,7 +1036,7 @@ main .form form select[multiple] {
 }
 /*===============================================================================*/
 /*======offer panel ============*/
-
+ 
 .panel-wrapper.field-loan-offer-summary,
 .panel-wrapper.field-loan-offer-summary.field-wrapper {
   width: 292px !important;
@@ -1052,13 +1052,13 @@ main .form form select[multiple] {
   margin: 0 !important;
   align-self: start !important;
 }
-
+ 
 /* hide outer legends */
 .panel-wrapper.field-loan-offer-summary > legend,
 .field-offer-details-grid > legend {
   display: none !important;
 }
-
+ 
 /* =========================
    HEADING + MAIN AMOUNT
    ========================= */
@@ -1072,7 +1072,7 @@ main .form form select[multiple] {
   min-height: 0 !important;
   position: relative !important;
 }
-
+ 
 .field-avail-xpress-personal-loan-of .field-label {
   display: block !important;
   font-size: 16px !important;
@@ -1082,7 +1082,7 @@ main .form form select[multiple] {
   margin: 0 0 10px !important;
   white-space: nowrap !important;
 }
-
+ 
 /* main amount */
 .text-wrapper.field-avail-xpress-personal-loan-of input {
   display: block !important;
@@ -1101,7 +1101,7 @@ main .form form select[multiple] {
   font-weight: 800 !important;
   color: #16263c !important;
 }
-
+ 
 /* remove generic input chrome */
 /* remove chrome ONLY for specific offer inputs */
 .field-offer-loan input,
@@ -1114,7 +1114,7 @@ main .form form select[multiple] {
   border-radius: 0 !important;
   padding: 0 !important;
 }
-
+ 
 /* =========================
    DETAILS GRID
    ========================= */
@@ -1130,38 +1130,180 @@ main .form form select[multiple] {
   margin-top: 0 !important;
   font-size: initial !important;
 }
-
+ 
 /* hide "Offer Details" heading */
 .field-offer-details-grid > .field-label,
 .field-offer-details-grid > legend {
   display: none !important;
 }
-
+ 
 .field-offer-details-grid .field-emi-amount {
   grid-area: emi !important;
 }
-
+ 
 .field-offer-details-grid .field-rate-of-interest {
   grid-area: rate !important;
 }
-
+ 
 .field-offer-details-grid .field-taxes {
   grid-area: taxes !important;
 }
-
+ 
+/* cleanup */
+.field-offer-details-grid .field-emi-amount,
+.field-offer-details-grid .field-rate-of-interest,
+.field-offer-details-grid .field-taxes {
+  margin: 0 !important;
+  padding: 4px 0 0 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  position: relative !important;
+}
+ 
+/* labels */
+.field-offer-details-grid .field-emi-amount > .field-label,
+.field-offer-details-grid .field-rate-of-interest > .field-label,
+.field-offer-details-grid .field-taxes > .field-label,
+.field-offer-details-grid .field-emi-amount > label,
+.field-offer-details-grid .field-rate-of-interest > label,
+.field-offer-details-grid .field-taxes > label {
+  position: relative !important;
+  display: block !important;
+  margin: 0 0 4px !important;
+  padding: 0 0 0 12px !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  color: #7f8791 !important;
+  white-space: nowrap !important;
+}
+ 
+/* orange left line */
+.field-offer-details-grid .field-emi-amount > .field-label::before,
+.field-offer-details-grid .field-rate-of-interest > .field-label::before,
+.field-offer-details-grid .field-taxes > .field-label::before,
+.field-offer-details-grid .field-emi-amount > label::before,
+.field-offer-details-grid .field-rate-of-interest > label::before,
+.field-offer-details-grid .field-taxes > label::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 2px !important;
+  height: 30px !important;
+  background: #f2a126 !important;
+  border-radius: 2px !important;
+}
+ 
+/* values */
+.field-offer-details-grid .field-emi-amount input,
+.field-offer-details-grid .field-rate-of-interest input,
+.field-offer-details-grid .field-taxes input {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 0 0 12px !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 15px !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  color: #1b2738 !important;
+}
+ 
+/* =========================
+   DISCLAIMER
+   ========================= */
+.field-disclaimer,
+.field-offer-disclaimer,
+#text-8ac79973c4,
+#text-8fd04c18e9 {
+  position: relative !important;
+  margin: 0 -18px !important;
+  padding: 12px 16px 12px 40px !important;
+  background: #f2a126 !important;
+  border-radius: 0 0 20px 20px !important;
+  box-sizing: border-box !important;
+  width: calc(100% + 36px) !important;
+}
+ 
+.field-disclaimer::before,
+.field-offer-disclaimer::before,
+#text-8ac79973c4::before,
+#text-8fd04c18e9::before {
+  content: "i" !important;
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 15px !important;
+  height: 15px !important;
+  border: 1.5px solid #ffd793 !important;
+  border-radius: 50% !important;
+  color: #ffd793 !important;
+  font-size: 10px !important;
+  line-height: 13px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+ 
+.field-disclaimer > p,
+.field-disclaimer p,
+.field-disclaimer p p,
+.field-offer-disclaimer > p,
+.field-offer-disclaimer p,
+.field-offer-disclaimer p p,
+#text-8ac79973c4 > p,
+#text-8ac79973c4 p,
+#text-8ac79973c4 p p,
+#text-8fd04c18e9 > p,
+#text-8fd04c18e9 p,
+#text-8fd04c18e9 p p {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.45 !important;
+  font-weight: 600 !important;
+  color: #fff4df !important;
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+}
+ 
+/* =========================
+   CLEANUP
+   ========================= */
+.panel-wrapper.field-loan-offer-summary,
+.panel-wrapper.field-loan-offer-summary p,
+.panel-wrapper.field-loan-offer-summary b,
+.panel-wrapper.field-loan-offer-summary strong,
+.panel-wrapper.field-loan-offer-summary legend,
+.panel-wrapper.field-loan-offer-summary .field-label {
+  text-decoration: none !important;
+}
+ 
 .panel-wrapper.field-loan-offer-summary {
   height: auto !important;
   min-height: unset !important;
   padding-bottom: 0 !important;
 }
-
+ 
 /*=============btn===========================*/
 /* Wrapper: align left */
 .button-wrapper.field-proceed {
-  text-align: left;   
+  text-align: left;  
   margin-top: 20px;
 }
-
+ 
 /* Button styling */
 .button-wrapper.field-proceed .button {
   background: linear-gradient(90deg, #1f4ed8, #2d5bff);
@@ -1177,13 +1319,13 @@ main .form form select[multiple] {
   gap: 7px;
   min-width: 140px;
 }
-
+ 
 /* Arrow */
 .button-wrapper.field-proceed .button::after {
   content: "›";
   font-size: 16px;
 }
-
+ 
 /*============= review text =========================================*/
 /* Remove spacing from wrapper */
 .field-review,
@@ -1191,7 +1333,7 @@ main .form form select[multiple] {
   margin: 0 !important;
   padding: 0 !important;
 }
-
+ 
 /* Title */
 .field-review p {
   font-size: 25px !important;
@@ -1199,7 +1341,7 @@ main .form form select[multiple] {
   color: #000;
   margin: 0 !important;   /* remove bottom gap */
 }
-
+ 
 /* Subtitle */
 .field-please-check p {
   font-size: 13px;
@@ -1208,28 +1350,61 @@ main .form form select[multiple] {
   margin: 0 !important;   /* remove top gap */
   line-height: 1.4;
 }
-
+ 
 /* Also ensure no spacing from parent wrapper */
 .plain-text-wrapper {
   margin: 0 !important;
   padding: 0 !important;
 }
-
+ 
 /*================thank you ============================================*/
 /* =========================
-   GRID LAYOUT
+   MAIN CARD WRAPPER
 ========================= */
-.field-loan-application-number {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  column-gap: 12px;
-  align-items: start;
+.field-thankyou-panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px 20px 32px;   /* 👈 added left spacing */
+  max-width: 720px;
+
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 
 /* =========================
-   LEFT ICON
+   "WE MAY CALL" TEXT
 ========================= */
+.field-we-may-call {
+  margin-top: 6px;
+  margin-left: 67px;
+
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #e5e7eb;  /* 👈 grey dashed line */
+}
+
+.field-we-may-call p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+
+/* =========================
+   SECTION SPACING AFTER LINE
+========================= */
+.field-xpress-loan {
+  margin-top: 14px;
+  margin-left: 67px;
+}
+
+.field-loan-application-number {
+  display: grid;
+  grid-template-columns: 55px 1fr; /* 👈 match icon width */
+  column-gap: 16px;  
+  align-items: start;
+}
+ 
 .field-loan-application-number::before {
   content: "";
   width: 55px;
@@ -1237,52 +1412,135 @@ main .form form select[multiple] {
   border-radius: 50%;
   background: #eef2ff url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 2H14L20 8V22H6V2Z' stroke='%236366F1' stroke-width='1.8'/%3E%3Cpath d='M14 2V8H20' stroke='%236366F1' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat center;
   background-size: 18px;
-
+ 
   grid-row: span 2;
 }
 
-
-/* =========================
-   LABEL
-========================= */
 .field-loan-application-number .field-label {
   font-size: 15px;
   color: #9ca3af;
   margin-bottom: 4px;
 }
-
-
-/* =========================
-   INPUT (UPDATED)
-========================= */
-/* INPUT */
+ 
 .field-loan-application-number input {
   width: 100%;
   max-width: 260px;
   height: auto;                 /* 👈 remove fixed height */
-
+ 
   border: none !important;
   box-shadow: none !important;
   outline: none;
-
+ 
   padding: 0 28px 0 0;          /* tighter space for icon */
   font-size: 25px !important;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: #111827;
   background: transparent;
-
+ 
   line-height: 1.2;             /* 👈 important for vertical alignment */
   display: inline-block;        /* 👈 fix baseline */
 }
-
-
-/* =========================
-   COPY ICON INSIDE INPUT
-========================= */
+ 
 .field-loan-application-number input {
   background-image: url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' stroke='%236366F1' stroke-width='1.8'/%3E%3Crect x='2' y='2' width='13' height='13' rx='2' stroke='%236366F1' stroke-width='1.8'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 18px;
+}
+
+/* Wrapper */
+.field-we-may-call {
+  margin-top: 6px;
+}
+
+/* Text */
+.field-we-may-call p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;     /* soft grey like design */
+  line-height: 1.4;
+  font-weight: 400;
+}
+/* Wrapper spacing */
+.field-xpress-loan {
+  margin-top: 12px;
+  margin-left: 67px;   /* align with text after icon */
+}
+
+/* Text styling */
+.field-xpress-loan p {
+  margin: 0;
+  font-size: 18px !important;
+  font-weight: 700;
+  color: #2f3742 !important;      /* dark grey (not pure black) */
+  line-height: 1.4;
+}
+
+/* =========================
+   LOAN AMOUNT CONTAINER
+========================= */
+.field-loan-amount {
+  margin-left: 67px;
+  margin-top: 10px;
+
+  padding-left: 12px;   /* space after blue line */
+  position: relative;
+}
+
+
+/* =========================
+   LEFT BLUE LINE
+========================= */
+.field-loan-amount::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  background: #3b82f6;
+  border-radius: 2px;
+}
+
+
+/* =========================
+   LABEL
+========================= */
+.field-loan-amount .field-label {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+/* =========================
+   INPUT (EDITABLE)
+========================= */
+main .form .field-loan-amount input {
+  border: none !important;
+  background: transparent !important;
+
+  padding: 0;
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+
+  outline: none;
+  box-shadow: none;
+
+  width: auto;           /* 👈 no full width */
+  min-width: 120px;
+}
+
+
+/* =========================
+   FOCUS (optional subtle)
+========================= */
+main .form .field-loan-amount input:focus {
+  outline: none;
+  border-bottom: 1px solid #3b82f6; /* subtle edit indicator */
 }
