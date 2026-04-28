@@ -1,7 +1,12 @@
-
+/* =========================
+   GLOBAL STATE (WORKER SAFE)
+========================= */
 let otpTimerInterval = null;
 let otpResendAttemptsLeft = 3;
-
+ 
+/* =========================
+   UTILS
+========================= */
 function getFullName(firstname, lastname) {
   return `${firstname} ${lastname}`.trim();
 }
@@ -30,6 +35,9 @@ function maskMobileNumber(mobileNumber) {
   return `${'*'.repeat(5)}${value.substring(5)}`;
 }
  
+/* =========================
+   OTP HELPERS
+========================= */
 function enableSubmitButton(globals) {
   const btn = globals.form?.otp_verification?.submit_otp;
   if (btn) {
@@ -51,7 +59,10 @@ function updateAttemptsInfo(globals) {
  
   return '';
 }
-
+ 
+/* =========================
+   OTP TIMER
+========================= */
 function startOtpTimer(globals) {
   const timerField = globals.form?.otp_verification?.resendOTP;
   const resendBtn = globals.form?.otp_verification?.resendOTP_btn;
@@ -108,7 +119,9 @@ function stopOtpTimer() {
   return '';
 }
  
-
+/* =========================
+   OTP FLOW
+========================= */
 function handleOtpGenerated(globals) {
   otpResendAttemptsLeft = 3;
  
@@ -209,6 +222,9 @@ function handleOtpInvalid(globals) {
   return '';
 }
  
+/* =========================
+   EMI + LOAN SUMMARY UPDATE
+========================= */
 /**
  * @param {scope} globals
  * @returns {string}
@@ -328,4 +344,3 @@ export {
   handleOtpInvalid,
   calculateEMI,
 };
- 
