@@ -237,13 +237,7 @@ function calculateEMI(globals) {
   const loanTenure =
     Number(globals.form.offer_Panel?.loanTenure?.value) || 0;
 
-  console.log("loanAmount:", loanAmount);
-  console.log("loanTenure:", loanTenure);
-
-  /* 🔥 FIX: wait until both values exist */
-  if (loanAmount === 0 || loanTenure === 0) {
-    return '';
-  }
+  if (loanAmount === 0 || loanTenure === 0) return '';
 
   const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
@@ -254,24 +248,7 @@ function calculateEMI(globals) {
     (loanAmount * monthlyRate * factor) / (factor - 1)
   );
 
-  const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
-
-  const summary = globals.form.loan_offer?.loan_offer_summary;
-  const grid = summary?.offer_details_grid;
-
-  if (grid?.emi_Amount)
-    grid.emi_Amount.value = "₹" + emi.toLocaleString("en-IN");
-
-  if (summary?.avail_XPRESS_Personal_Loan_of)
-    summary.avail_XPRESS_Personal_Loan_of.value = formattedLoan;
-
-  if (grid?.rate_of_Interest)
-    grid.rate_of_Interest.value = annualRate + "%";
-
-  if (grid?.taxes)
-    grid.taxes.value = "₹4000";
-
-  return emi;
+  return "₹" + emi.toLocaleString("en-IN");
 }
 /* =========================
    EXPORTS
