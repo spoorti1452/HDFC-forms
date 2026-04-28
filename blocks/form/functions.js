@@ -231,8 +231,9 @@ function handleOtpInvalid(globals) {
  */
 function calculateEMI(globals) {
 
-  const loanAmount = Number(globals.form.offer_Panel.loanAmount.value) || 0;
-  const loanTenure = Number(globals.form.offer_Panel.loanTenure.value) || 0;
+  /* ✅ CORRECT PATH (NO offer_Panel) */
+  const loanAmount = Number(globals.form.loanAmount?.value) || 0;
+  const loanTenure = Number(globals.form.loanTenure?.value) || 0;
 
   if (!loanAmount || !loanTenure) return '';
 
@@ -247,18 +248,17 @@ function calculateEMI(globals) {
 
   const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
 
-  /* ===== UPDATE FIELDS DIRECTLY ===== */
+  /* ✅ OUTPUT PATHS (these ARE correct from your DOM) */
   globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount.value = emi;
 
   globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of.value = formattedLoan;
 
   globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest.value = annualRate + "%";
 
-  globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = 4000;
+  globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = "₹4000";
 
   return '';
-}
-/* =========================
+}=========
    EXPORTS
 ========================= */
 export {
