@@ -104,75 +104,62 @@ function updateAttemptsInfo(globals) {
 function startOtpTimer(globals) {
   const timerField = globals.form.otp_verification.resendOTP;
   const resendBtn = globals.form.otp_verification.resendOTP_btn;
- 
+
   let seconds = 5;
- 
-  if (!timerField) {
-    return '';
-  }
- 
+
+  if (!timerField) return '';
+
   updateAttemptsInfo(globals);
- 
+
+  // Clear existing timer
   if (window.otpTimerInterval) {
     clearInterval(window.otpTimerInterval);
     window.otpTimerInterval = null;
   }
- 
+
+  // Disable resend button initially
   if (resendBtn) {
     globals.functions.setProperty(resendBtn, {
       enabled: false,
     });
   }
- 
+
   enableSubmitButton(globals);
- 
+
+  // ✅ MATCH 1st CODE UI
   globals.functions.setProperty(timerField, {
-    value: `${seconds} secs`,
+    value: `Resend OTP in : ${seconds} secs`,
   });
- 
+
   window.otpTimerInterval = setInterval(() => {
-    seconds -= 1;
- 
+    seconds--;
+
     if (seconds >= 0) {
       globals.functions.setProperty(timerField, {
-        value: `${seconds} secs`,
+        value: `Resend OTP in : ${seconds} secs`,
       });
     }
- 
+
     if (seconds <= 0) {
       clearInterval(window.otpTimerInterval);
       window.otpTimerInterval = null;
- 
+
+      // ✅ MATCH 1st CODE END TEXT
       globals.functions.setProperty(timerField, {
-        value: 'Time expired',
+        value: 'Resend OTP',
       });
- 
-      enableSubmitButton(globals);
- 
+
+      // Enable resend only if attempts left
       if (resendBtn && window.otpResendAttemptsLeft > 0) {
         globals.functions.setProperty(resendBtn, {
           enabled: true,
         });
-      } else {
-        globals.functions.setProperty(resendBtn, {
-          enabled: false,
-        });
- 
-        globals.functions.setProperty(
-          globals.form.otp_verification.attempts,
-          { value: '0/3 attempts left' }
-        );
- 
-        setTimeout(() => {
-          resetOtpFlow(globals);
-        }, 1500);
       }
     }
   }, 1000);
- 
+
   return '';
 }
- 
 /**
  * Stop timer manually
  * @returns {string}
