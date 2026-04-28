@@ -223,34 +223,6 @@ function handleOtpInvalid(globals) {
 }
  
 /* =========================
-   EMI + LOAN SUMMARY UPDATE
-========================= */
-/**
- * @param {scope} globals
- * @returns {string}
- */
-function calculateEMI(globals) {
-
-  const loanAmount =
-    Number(globals.form.offer_Panel?.loanAmount?.value) || 0;
-
-  const loanTenure =
-    Number(globals.form.offer_Panel?.loanTenure?.value) || 0;
-
-  if (loanAmount === 0 || loanTenure === 0) return '';
-
-  const annualRate = 10.97;
-  const monthlyRate = annualRate / 12 / 100;
-
-  const factor = Math.pow(1 + monthlyRate, loanTenure);
-
-  const emi = Math.round(
-    (loanAmount * monthlyRate * factor) / (factor - 1)
-  );
-
-  return "₹" + emi.toLocaleString("en-IN");
-}
-/* =========================
    EXPORTS
 ========================= */
 export {
@@ -266,5 +238,4 @@ export {
   handleOtpResentAction,
   handleOtpValidated,
   handleOtpInvalid,
-  calculateEMI,
 };

@@ -59,7 +59,6 @@ function updateBubble(slider, wrapper, fieldDiv) {
   const actual = getActualValue(indexValue, stepsArr);
 
   const bubble = wrapper.querySelector('.range-bubble');
-
   bubble.innerText = formatValue(actual, isLoan);
 
   const percent = (indexValue / (stepsArr.length - 1)) * 100;
@@ -68,7 +67,7 @@ function updateBubble(slider, wrapper, fieldDiv) {
   wrapper.style.setProperty('--current-steps', indexValue);
   wrapper.style.setProperty('--total-steps', stepsArr.length - 1);
 
-  /* ===== 🔥 REAL FIX: USE AEM FIELD ===== */
+  /* ===== 🔥 FIX: TRIGGER VALUE COMMIT ===== */
   const field = fieldDiv._field;
 
   if (field) {
@@ -79,7 +78,10 @@ function updateBubble(slider, wrapper, fieldDiv) {
     if (field.value !== finalValue) {
       field.value = finalValue;
 
-      // IMPORTANT: triggers rule engine
+      // 🔥 IMPORTANT: triggers Rule Editor (Value Commit)
+      field.dispatchEvent(new Event('valueCommit', { bubbles: true }));
+
+      // (Optional fallback)
       field.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
@@ -87,7 +89,6 @@ function updateBubble(slider, wrapper, fieldDiv) {
 
 /* ===== MAIN ===== */
 export default async function decorate(fieldDiv) {
-
   const originalInput = fieldDiv.querySelector('input');
   if (!originalInput) return fieldDiv;
 
@@ -131,7 +132,10 @@ export default async function decorate(fieldDiv) {
     updateBubble(slider, wrapper, fieldDiv);
   });
 
-  updateBubble(slider, wrapper, fieldDiv);
+  // 🔥 ALSO trigger once on load
+  setTimeout(() => {
+    updateBubble(slider, wrapper, fieldDiv);
+  }, 0);
 
   return fieldDiv;
 }
