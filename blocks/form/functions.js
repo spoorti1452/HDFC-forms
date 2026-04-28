@@ -252,11 +252,11 @@ function calculateEMI(globals) {
   }
  
   /* ===== READ SLIDER VALUES ===== */
-  const loanRaw =
-    Number(globals.form.offer_Panel.loanAmount.valueOf()) || 0;
- 
-  const tenureRaw =
-    Number(globals.form.offer_Panel.loanTenure.valueOf()) || 0;
+const loanRaw =
+  Number(globals.form.offer_Panel.loanAmount.value) || 0;
+
+const tenureRaw =
+  Number(globals.form.offer_Panel.loanTenure.value) || 0;
  
   const existing = globals.form.$properties || {};
  
