@@ -223,6 +223,59 @@ function handleOtpInvalid(globals) {
 }
 
 /* =========================
+   EMI + LOAN SUMMARY UPDATE
+========================= */
+function updateLoanSummary(globals) {
+  try {
+    /* ===== INPUTS ===== */
+    const loanAmount =
+      Number(globals.form?.offer_Panel?.loanAmount?.value) || 0;
+
+    const tenure =
+      Number(globals.form?.offer_Panel?.loanTenure?.value) || 0;
+
+    /* ===== CONSTANTS ===== */
+    const annualRate = 10.97; // fixed
+    const monthlyRate = annualRate / 12 / 100;
+
+    if (!loanAmount || !tenure) return '';
+
+    /* ===== EMI FORMULA ===== */
+    const emi =
+      (loanAmount *
+        monthlyRate *
+        Math.pow(1 + monthlyRate, tenure)) /
+      (Math.pow(1 + monthlyRate, tenure) - 1);
+
+    const roundedEMI = Math.round(emi);
+
+    /* ===== FORMAT ===== */
+    const formattedEMI = roundedEMI.toLocaleString('en-IN');
+    const formattedLoan = loanAmount.toLocaleString('en-IN');
+
+    /* ===== UPDATE EMI ===== */
+    globals.functions.setProperty(
+      globals.form.loan_offer.offer_details_grid.emi_Amount,
+      {
+        value: `₹${formattedEMI}`,
+      }
+    );
+
+    /* ===== UPDATE LOAN SUMMARY ===== */
+    globals.functions.setProperty(
+      globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of,
+      {
+        value: `₹${formattedLoan}`,
+      }
+    );
+
+  } catch (e) {
+    console.error('Loan calculation error', e);
+  }
+
+  return '';
+}
+/* =========================
    EXPORTS
 ========================= */
 export {
@@ -238,4 +291,5 @@ export {
   handleOtpResentAction,
   handleOtpValidated,
   handleOtpInvalid,
+  updateLoanSummary,
 };
