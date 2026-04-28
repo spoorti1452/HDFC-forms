@@ -877,7 +877,19 @@ main .form form select[multiple] {
   letter-spacing: 18px;
   padding: 0 12px;
   box-sizing: border-box;
+
+  border: 1px solid #cbd5e1;   /* 👈 add this */
+  border-radius: 6px;
+  background-color: #fff;
+
   margin-bottom: 0 !important;
+  outline: none;
+}
+
+/* Focus state (important for UI like your 3rd image) */
+.field-otp-value input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 .field-resendotp input,
@@ -1323,4 +1335,35 @@ main .form form select[multiple] {
 .button-wrapper.field-proceed .button::after {
   content: "›";
   font-size: 16px;
+}
+
+/*============= review text =========================================*/
+/* Remove spacing from wrapper */
+.field-review,
+.field-please-check {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Title */
+.field-review p {
+  font-size: 25px !important;
+  font-weight: 700;
+  color: #000;
+  margin: 0 !important;   /* remove bottom gap */
+}
+
+/* Subtitle */
+.field-please-check p {
+  font-size: 13px;
+  font-weight: 400;
+  color: #8a97a6;
+  margin: 0 !important;   /* remove top gap */
+  line-height: 1.4;
+}
+
+/* Also ensure no spacing from parent wrapper */
+.plain-text-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
 }
