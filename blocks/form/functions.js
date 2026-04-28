@@ -253,26 +253,14 @@ function calculateEMI(globals) {
 
   const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
 
-  /* ===== SAFE UPDATE (NO CRASH) ===== */
-
   const summary = globals.form.loan_offer?.loan_offer_summary;
+  const grid = summary?.offer_details_grid;
 
-  if (!summary) {
-    console.error("loan_offer_summary not found");
-    return '';
-  }
-
-  const grid = summary.offer_details_grid;
-
-  if (grid?.emi_Amount)
-    grid.emi_Amount.value = emi;
-
-  if (summary.avail_XPRESS_Personal_Loan_of)
+  if (grid?.emi_Amount) grid.emi_Amount.value = emi;
+  if (summary?.avail_XPRESS_Personal_Loan_of)
     summary.avail_XPRESS_Personal_Loan_of.value = formattedLoan;
-
   if (grid?.rate_of_Interest)
     grid.rate_of_Interest.value = annualRate + "%";
-
   if (grid?.taxes)
     grid.taxes.value = "₹4000";
 

@@ -70,46 +70,47 @@ function updateBubble(input, element, fieldDiv) {
   element.style.setProperty('--current-steps', indexValue);
   element.style.setProperty('--total-steps', stepsArr.length - 1);
 
-  /* ===== 🔥 CRITICAL FIX: UPDATE REAL INPUT VALUE ===== */
+  /* ===== 🔥 CORRECT AEM SYNC ===== */
+  const originalInput = fieldDiv.querySelector(
+    'input[type="number"], input:not([type="range"])'
+  );
+
   const finalValue = isLoan
     ? Math.round(actual / 1000) * 1000
     : Math.round(actual);
 
-  // AEM listens to THIS input value
-  const hiddenInput = fieldDiv.querySelector('input[type="number"], input[name]');
+  if (originalInput && originalInput.value != finalValue) {
+    originalInput.value = finalValue;
 
-  if (hiddenInput) {
-    if (hiddenInput.value != finalValue) {
-      hiddenInput.value = finalValue;
-
-      // IMPORTANT: trigger AEM rule engine
-      hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    // IMPORTANT: this triggers rule engine
+    originalInput.dispatchEvent(new Event('change', { bubbles: true }));
   }
 }
 
 /* ===== MAIN ===== */
 export default async function decorate(fieldDiv) {
-  const input = fieldDiv.querySelector('input');
-  if (!input) return fieldDiv;
+  const originalInput = fieldDiv.querySelector('input');
+  if (!originalInput) return fieldDiv;
 
   const isLoan = isLoanField(fieldDiv);
   const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
-  /* ===== SLIDER SETUP ===== */
-  input.type = 'range';
-  input.min = 0;
-  input.max = steps.length - 1;
-  input.step = 0.01;
+  /* ===== CREATE NEW RANGE SLIDER ===== */
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = 0;
+  slider.max = steps.length - 1;
+  slider.step = 0.01;
+  slider.value = steps.length - 1;
 
-  // default position = max
-  input.value = steps.length - 1;
+  /* ===== HIDE ORIGINAL INPUT ===== */
+  originalInput.style.display = 'none';
 
   /* ===== WRAPPER ===== */
   const wrapper = document.createElement('div');
   wrapper.className = 'range-widget-wrapper decorated';
 
-  input.after(wrapper);
+  originalInput.after(wrapper);
 
   const bubble = document.createElement('span');
   bubble.className = 'range-bubble';
@@ -121,20 +122,17 @@ export default async function decorate(fieldDiv) {
   maxEl.className = 'range-max';
 
   wrapper.appendChild(bubble);
-  wrapper.appendChild(input);
+  wrapper.appendChild(slider);
   wrapper.appendChild(minEl);
   wrapper.appendChild(maxEl);
 
-  /* ===== ADD TICKS ===== */
-  addTicks(wrapper, input, fieldDiv);
+  addTicks(wrapper, slider, fieldDiv);
 
-  /* ===== EVENTS ===== */
-  input.addEventListener('input', () => {
-    updateBubble(input, wrapper, fieldDiv);
+  slider.addEventListener('input', () => {
+    updateBubble(slider, wrapper, fieldDiv);
   });
 
-  /* ===== INITIAL ===== */
-  updateBubble(input, wrapper, fieldDiv);
+  updateBubble(slider, wrapper, fieldDiv);
 
   return fieldDiv;
 }
