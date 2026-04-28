@@ -231,18 +231,16 @@ function handleOtpInvalid(globals) {
  */
 function calculateEMI(globals) {
 
-  console.log("FORM STRUCTURE:", globals.form);
+  const loanAmountField = globals.form.getField("loanAmount");
+  const loanTenureField = globals.form.getField("loanTenure");
 
-  const loanAmount = Number(globals.form.loanAmount?.value);
-  const loanTenure = Number(globals.form.loanTenure?.value);
+  const loanAmount = Number(loanAmountField?.value) || 0;
+  const loanTenure = Number(loanTenureField?.value) || 0;
 
   console.log("loanAmount:", loanAmount);
   console.log("loanTenure:", loanTenure);
 
-  /* ✅ DO NOT EXIT EARLY */
-  if (!loanAmount || !loanTenure) {
-    return '';
-  }
+  if (!loanAmount || !loanTenure) return '';
 
   const annualRate = 10.97;
   const monthlyRate = annualRate / 12 / 100;
@@ -255,20 +253,18 @@ function calculateEMI(globals) {
 
   const formattedLoan = "₹" + loanAmount.toLocaleString("en-IN");
 
-  try {
-    globals.form.loan_offer.loan_offer_summary.offer_details_grid.emi_Amount.value = emi;
+  /* ===== OUTPUT FIELDS ===== */
+  const emiField = globals.form.getField("emi_Amount");
+  const loanDisplayField = globals.form.getField("avail_XPRESS_Personal_Loan_of");
+  const rateField = globals.form.getField("rate_of_Interest");
+  const taxField = globals.form.getField("taxes");
 
-    globals.form.loan_offer.loan_offer_summary.avail_XPRESS_Personal_Loan_of.value = formattedLoan;
-
-    globals.form.loan_offer.loan_offer_summary.offer_details_grid.rate_of_Interest.value = annualRate + "%";
-
-    globals.form.loan_offer.loan_offer_summary.offer_details_grid.taxes.value = "₹4000";
-  } catch (e) {
-    console.log("OUTPUT PATH ERROR:", e);
-  }
+  if (emiField) emiField.value = emi;
+  if (loanDisplayField) loanDisplayField.value = formattedLoan;
+  if (rateField) rateField.value = annualRate + "%";
+  if (taxField) taxField.value = "₹4000";
 
   return '';
-
 }
 /* =========================
    EXPORTS
