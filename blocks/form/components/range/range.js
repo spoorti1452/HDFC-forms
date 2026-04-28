@@ -78,16 +78,18 @@ function updateBubble(input, element) {
   bubble.innerText = formatValue(actual, isLoan);
 
   /* ===== 🔥 ADD THIS BLOCK ===== */
-  const fieldWrapper = input.closest('[data-aem-field]');
-  if (fieldWrapper && fieldWrapper._field) {
-    fieldWrapper._field.value = isLoan
-      ? Math.round(actual / 1000) * 1000
-      : Math.round(actual);
+/* ===== 🔥 FIXED AEM SYNC ===== */
+const fieldWrapper = input.closest('.cmp-adaptiveform-container, [class*="field-"]');
 
-    fieldWrapper._field.dispatchEvent(
-      new Event('change', { bubbles: true })
-    );
-  }
+const field = fieldWrapper?._field || fieldDiv?._field;
+
+if (field) {
+  field.value = isLoan
+    ? Math.round(actual / 1000) * 1000
+    : Math.round(actual);
+
+  field.dispatchEvent(new Event('change', { bubbles: true }));
+}
 
   const stepsVars = {
     '--total-steps': total,
