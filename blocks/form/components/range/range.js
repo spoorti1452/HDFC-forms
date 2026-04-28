@@ -9,16 +9,7 @@ function isLoanField(fieldDiv) {
 function formatValue(value, isLoan) {
   return isLoan
     ? "₹" + Number(value).toLocaleString("en-IN")
-    : Math.round(value) + " months";
-}
-
-function getActualValue(index, steps) {
-  const lower = Math.floor(index);
-  const upper = Math.ceil(index);
-
-  if (lower === upper) return steps[lower];
-
-  return steps[lower] + (steps[upper] - steps[lower]) * (index - lower);
+    : value + " months";
 }
 
 /* ===== ADD TICKS ===== */
@@ -31,6 +22,7 @@ function addTicks(wrapper, slider, fieldDiv) {
     tick.className = 'custom-range-tick';
 
     const label = document.createElement('span');
+
     label.innerText = isLoan
       ? (val === 50000 ? '50K' : val / 100000 + 'L')
       : val + 'm';
@@ -50,30 +42,26 @@ function addTicks(wrapper, slider, fieldDiv) {
 
 /* ===== CORE UPDATE ===== */
 function updateBubble(slider, wrapper, fieldDiv) {
-  const indexValue = Number(slider.value) || 0;
+  const index = parseInt(slider.value, 10); // ✅ FIXED (no decimals)
 
   const isLoan = isLoanField(fieldDiv);
-  const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
+  const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
 
-  const actual = getActualValue(indexValue, stepsArr);
+  const actual = steps[index]; // ✅ DIRECT mapping (no interpolation)
 
   const bubble = wrapper.querySelector('.range-bubble');
   bubble.innerText = formatValue(actual, isLoan);
 
-  const percent = (indexValue / (stepsArr.length - 1)) * 100;
+  const percent = (index / (steps.length - 1)) * 100;
   bubble.style.left = `calc(${percent}% - 15px)`;
 
   const field = fieldDiv._field;
 
-  if (field) {
-    const finalValue = Math.round(actual); // ✅ FIXED (no scaling bug)
+  if (field && field.value !== actual) {
+    field.value = actual;
 
-    if (field.value !== finalValue) {
-      field.value = finalValue;
-
-      // ✅ IMPORTANT
-      field.dispatchEvent(new Event('valueCommit', { bubbles: true }));
-    }
+    // 🔥 CRITICAL: triggers AEM Rule Editor
+    field.dispatchEvent(new Event('valueCommit', { bubbles: true }));
   }
 }
 
@@ -89,9 +77,10 @@ export default async function decorate(fieldDiv) {
   slider.type = 'range';
   slider.min = 0;
   slider.max = steps.length - 1;
-  slider.step = 0.01;
+  slider.step = 1; // ✅ FIXED (integer only)
   slider.value = steps.length - 1;
 
+  // hide original field
   originalInput.style.display = 'none';
 
   const wrapper = document.createElement('div');
@@ -111,6 +100,7 @@ export default async function decorate(fieldDiv) {
     updateBubble(slider, wrapper, fieldDiv);
   });
 
+  // initial trigger
   setTimeout(() => {
     updateBubble(slider, wrapper, fieldDiv);
   }, 0);
