@@ -1,116 +1,139 @@
 /* ===== STEP CONFIG ===== */
 const LOAN_STEPS = [50000, 200000, 400000, 600000, 800000, 1000000, 1500000];
 const TENURE_STEPS = [12, 24, 36, 48, 60, 72, 84];
-
-/* ===== DEBOUNCE ===== */
-function debounce(fn, delay = 400) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
-
-/* ===== HELPERS ===== */
+ 
 function isLoanField(fieldDiv) {
   return fieldDiv.classList.contains('field-loanamount');
 }
-
+ 
 function formatValue(value, isLoan) {
   return isLoan
     ? "₹" + Number(value).toLocaleString("en-IN")
     : Math.round(value) + " months";
 }
-
-/* ===== MAIN ===== */
-export default function decorate(fieldDiv) {
-  const input = fieldDiv.querySelector("input");
-  if (!input) return fieldDiv;
-
-  const originalName = input.getAttribute("name");
-
+ 
+function getActualValue(index, steps) {
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+ 
+  if (lower === upper) return steps[lower];
+ 
+  return steps[lower] + (steps[upper] - steps[lower]) * (index - lower);
+}
+ 
+/* ===== ADD TICKS ===== */
+function addTicks(wrapper, input, fieldDiv) {
   const isLoan = isLoanField(fieldDiv);
   const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
-
-  /* ===== CREATE SLIDER ===== */
-  input.type = "range";
-  input.min = 0;
-  input.max = steps.length - 1;
-  input.step = 1; // ✅ IMPORTANT (no decimals)
-  input.value = steps.length - 1;
-
-  /* ===== HIDDEN INPUT (AEM FIX) ===== */
-  const hidden = document.createElement("input");
-  hidden.type = "hidden";
-  hidden.name = originalName;
-
-  input.removeAttribute("name");
-
-  /* ===== WRAPPER ===== */
-  const wrapper = document.createElement("div");
-  wrapper.className = "range-widget-wrapper decorated";
-
-  input.after(wrapper);
-
-  const bubble = document.createElement("span");
-  bubble.className = "range-bubble";
-
-  wrapper.appendChild(bubble);
-  wrapper.appendChild(input);
-  wrapper.appendChild(hidden);
-
-  /* ===== TICKS ===== */
+ 
   steps.forEach((val, i) => {
-    const tick = document.createElement("span");
-    tick.className = "custom-range-tick";
-
-    const label = document.createElement("span");
-
+    const tick = document.createElement('span');
+    tick.className = 'custom-range-tick';
+ 
+    const label = document.createElement('span');
+ 
     label.innerText = isLoan
-      ? (val === 50000 ? "50K" : val / 100000 + "L")
-      : val + "m";
-
+      ? (val === 50000 ? '50K' : val / 100000 + 'L')
+      : val + 'm';
+ 
     tick.appendChild(label);
+ 
     tick.style.left = `${(i / (steps.length - 1)) * 100}%`;
-
-    label.addEventListener("click", () => {
+ 
+    label.addEventListener('click', (e) => {
+      e.stopPropagation();
       input.value = i;
-      update(); // immediate UI update
-      triggerAPI(); // debounced API call
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-
+ 
     wrapper.appendChild(tick);
   });
-
-  /* ===== UPDATE UI + VALUE ===== */
-  function update() {
-    const index = Number(input.value);
-    const actual = steps[index];
-
-    const percent = (index / (steps.length - 1)) * 100;
-
-    wrapper.style.setProperty("--progress", percent + "%");
-
-    bubble.innerText = formatValue(actual, isLoan);
-
-    // ✅ AEM value fix
-    hidden.value = actual;
-    input.value = actual; // 🔥 CRITICAL
+}
+ 
+/* ===== CORE UPDATE ===== */
+function updateBubble(input, element, fieldDiv) {
+  const value = Number(input.value) || 0;
+ 
+  const isLoan = isLoanField(fieldDiv);
+  const stepsArr = isLoan ? LOAN_STEPS : TENURE_STEPS;
+ 
+  const actual = getActualValue(value, stepsArr);
+ 
+  const bubble = element.querySelector('.range-bubble');
+ 
+  /* ===== FORMAT UI ===== */
+  bubble.innerText = formatValue(actual, isLoan);
+ 
+  /* ===== POSITION ===== */
+  const percent = (value / (stepsArr.length - 1)) * 100;
+  bubble.style.left = `calc(${percent}% - 15px)`;
+ 
+  element.style.setProperty('--current-steps', value);
+  element.style.setProperty('--total-steps', stepsArr.length - 1);
+ 
+  /* ===== 🔥 AEM SYNC (FINAL FIX) ===== */
+  const field = fieldDiv?._field;
+ 
+  if (field) {
+    const finalValue = isLoan
+      ? Math.round(actual / 1000) * 1000
+      : Math.round(actual);
+ 
+    // prevent loop
+    if (field.value !== finalValue) {
+      field.value = finalValue;
+ 
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   }
-
-  /* ===== API TRIGGER (DEBOUNCED) ===== */
-  const triggerAPI = debounce(() => {
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  }, 400);
-
+}
+ 
+/* ===== MAIN ===== */
+export default async function decorate(fieldDiv) {
+  const input = fieldDiv.querySelector('input');
+  if (!input) return fieldDiv;
+ 
+  const isLoan = isLoanField(fieldDiv);
+  const steps = isLoan ? LOAN_STEPS : TENURE_STEPS;
+ 
+  /* ===== SLIDER SETUP ===== */
+  input.type = 'range';
+  input.min = 0;
+  input.max = steps.length - 1;
+  input.step = 0.01;
+  input.value = steps.length - 1;
+ 
+  /* ===== WRAPPER ===== */
+  const wrapper = document.createElement('div');
+  wrapper.className = 'range-widget-wrapper decorated';
+ 
+  input.after(wrapper);
+ 
+  const bubble = document.createElement('span');
+  bubble.className = 'range-bubble';
+ 
+  const minEl = document.createElement('span');
+  const maxEl = document.createElement('span');
+ 
+  minEl.className = 'range-min';
+  maxEl.className = 'range-max';
+ 
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(input);
+  wrapper.appendChild(minEl);
+  wrapper.appendChild(maxEl);
+ 
+  /* ===== ADD TICKS ===== */
+  addTicks(wrapper, input, fieldDiv);
+ 
   /* ===== EVENTS ===== */
-  input.addEventListener("input", () => {
-    update();
-    triggerAPI(); // debounced call
+  input.addEventListener('input', () => {
+    updateBubble(input, wrapper, fieldDiv);
   });
-
-  /* ===== INIT ===== */
-  update();
-
+ 
+  /* ===== INITIAL ===== */
+  updateBubble(input, wrapper, fieldDiv);
+ 
   return fieldDiv;
 }
+ 
