@@ -91,22 +91,27 @@ export default function decorate(fieldDiv) {
   });
 
   /* ===== UPDATE ===== */
-  function update() {
-    const index = Number(descriptor.get.call(input));
-    const actual = steps[index];
+ function update() {
+  const index = Number(descriptor.get.call(input));
+  const actual = steps[index];
 
-    const percent = (index / (steps.length - 1)) * 100;
+  const percent = (index / (steps.length - 1)) * 100;
 
-    bubble.innerText = format(actual, loan);
-    bubble.style.left = `calc(${percent}% - 15px)`;
+  // ✅ FIX: sync CSS variables
+  wrapper.style.setProperty("--current-steps", index);
+  wrapper.style.setProperty("--total-steps", steps.length - 1);
+  wrapper.style.setProperty("--progress", percent + "%");
 
-    // 🔥 CRITICAL
-    input._actualValue = actual;
-    hidden.value = actual;
+  // UI
+  bubble.innerText = format(actual, loan);
+  bubble.style.left = `calc(${percent}% - 15px)`;
 
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  }
+  // AEM sync
+  input._actualValue = actual;
+  hidden.value = actual;
 
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+}
   input.addEventListener("input", update);
 
   /* ===== INIT ===== */
