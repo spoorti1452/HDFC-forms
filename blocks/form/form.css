@@ -978,12 +978,16 @@ main .form form select[multiple] {
  
 /* Money icon */
 .field-offer-loan::before {
-  content: "💰";
+  content: "";
   position: absolute;
-  left: 28px;
+  left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 35px;
+  width: 42px;
+  height: 42px;
+
+  background: url("https://cdn-icons-png.flaticon.com/512/3135/3135706.png") no-repeat center;
+  background-size: contain;
 }
  
 /* Label */
