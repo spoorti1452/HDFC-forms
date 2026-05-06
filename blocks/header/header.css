@@ -266,3 +266,89 @@ header nav .nav-sections ul > li > ul > li {
 header nav .nav-tools {
   grid-area: tools;
 }
+
+/*==========================================================*/ 
+
+/* ================= HEADER WRAPPER ================= */
+ 
+header.header-wrapper {
+  position: relative;
+  width: 100%;
+  background: #071d49;
+  min-height: 70px;
+  z-index: 99;
+}
+ 
+/* ================= MAIN HEADER ================= */
+ 
+header.header-wrapper .header.block {
+  position: relative;
+  max-width: 1200px;
+  margin: 8px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+ 
+/* ================= LEFT LOGO ================= */
+ 
+header.header-wrapper .header.block::before {
+  content: "";
+  display: block;
+  width: 142px;
+  height: 38px;
+ 
+  background-image: url("https://author-p96753-e1523920.adobeaemcloud.com/content/dam/s_hdfc_capstone/hdfc-logo.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: contain;
+}
+ 
+/* ================= RIGHT SAFE & SECURE IMAGE ================= */
+ 
+header.header-wrapper .header.block::after {
+  content: "";
+  position: absolute;
+  left: 1008px;
+  top: 50%;
+  transform: translateY(-50%);
+ 
+  width: 180px;   /* adjust if needed */
+  height: 40px;
+ 
+  background-image: url("https://author-p96753-e1523920.adobeaemcloud.com/content/dam/s_hdfc_capstone/header-img-icon.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+ 
+/* ================= MOBILE RESPONSIVE ================= */
+ 
+@media (max-width: 767px) {
+ 
+  header.header-wrapper {
+    min-height: 64px;
+  }
+ 
+  header.header-wrapper .header.block {
+    min-height: 64px;
+    padding: 0 16px;
+  }
+ 
+  /* smaller logo */
+  header.header-wrapper .header.block::before {
+    width: 110px;
+    height: 30px;
+  }
+ 
+  /* smaller badge */
+  header.header-wrapper .header.block::after {
+    width: 110px;
+    height: 28px;
+    right: 16px;
+  }
+}
+AEM Sign In
+ 
