@@ -221,6 +221,38 @@ function handleOtpInvalid(globals) {
  
   return '';
 }
+
+function generateLoanDetails(globals) {
+  try {
+    // 1. Generate Loan Application Number (8-digit random)
+    const loanAppNumber = Math.floor(10000000 + Math.random() * 90000000);
+
+    // 2. Get Loan Amount from nested structure
+    const loanAmount =
+      globals.form?.offer_display_panel?.offer_panel?.loanAmount?.value || '';
+
+    // 3. Set Loan Application Number in thankYou_panel
+    if (globals.form?.thankYou_panel?.loan_Application_Number) {
+      globals.functions.setProperty(
+        globals.form.thankYou_panel.loan_Application_Number,
+        { value: String(loanAppNumber) }
+      );
+    }
+
+    // 4. Set Loan Amount in thankYou_panel
+    if (globals.form?.thankYou_panel?.loan_Amount) {
+      globals.functions.setProperty(
+        globals.form.thankYou_panel.loan_Amount,
+        { value: loanAmount }
+      );
+    }
+
+    return '';
+  } catch (error) {
+    console.error('Error in generateLoanDetails:', error);
+    return '';
+  }
+}
  
 /* =========================
    EXPORTS
@@ -238,4 +270,5 @@ export {
   handleOtpResentAction,
   handleOtpValidated,
   handleOtpInvalid,
+  generateLoanDetails
 };
