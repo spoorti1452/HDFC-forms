@@ -1,5 +1,7 @@
 const LOAN_STEPS = [50000, 200000, 400000, 600000, 800000, 1000000, 1500000];
 const TENURE_STEPS = [12, 24, 36, 48, 60, 72, 84];
+let slidersInitialized = 0;
+const TOTAL_SLIDERS = 2;
 
 function isLoan(fieldDiv) {
   return fieldDiv.classList.contains("field-loanamount");
@@ -91,26 +93,24 @@ export default function decorate(fieldDiv) {
   });
 
   /* ===== UPDATE ===== */
- function update() {
+function update() {
   const index = Number(descriptor.get.call(input));
   const actual = steps[index];
 
   const percent = (index / (steps.length - 1)) * 100;
 
-  // ✅ FIX: sync CSS variables
   wrapper.style.setProperty("--current-steps", index);
   wrapper.style.setProperty("--total-steps", steps.length - 1);
   wrapper.style.setProperty("--progress", percent + "%");
 
-  // UI
   bubble.innerText = format(actual, loan);
   bubble.style.left = `calc(${percent}% - 15px)`;
 
-  // AEM sync
   input._actualValue = actual;
   hidden.value = actual;
 
-  input.dispatchEvent(new Event("change", { bubbles: true }));
+  // IMPORTANT
+  hidden.dispatchEvent(new Event("change", { bubbles: true }));
 }
   input.addEventListener("input", update);
 
