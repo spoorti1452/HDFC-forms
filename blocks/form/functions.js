@@ -222,6 +222,10 @@ function handleOtpInvalid(globals) {
   return '';
 }
 
+/**
+ * generate loan application number
+ * @param {scope} globals
+ */
 function generateLoanDetails(globals) {
   try {
     // 1. Generate Loan Application Number (8-digit random)
