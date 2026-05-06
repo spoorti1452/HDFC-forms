@@ -1301,19 +1301,19 @@ main .form form select[multiple] {
    FIX DISCLAIMER POSITION
    ========================= */
 
-/* Make parent behave like vertical flow */
 .panel-wrapper.field-loan-offer-summary {
   display: flex !important;
   flex-direction: column !important;
+  justify-content: space-between !important; /* 👈 KEY FIX */
 }
 
-/* Push disclaimer to bottom */
+/* push disclaimer to bottom */
 .plain-text-wrapper.field-disclaimer,
 .field-disclaimer,
 .field-offer-disclaimer,
 #text-8ac79973c4,
 #text-8fd04c18e9 {
-  margin-top: auto !important;
+  margin-top: 12px !important; /* small spacing instead of auto */
 }
 /*=============btn===========================*/
 /* Wrapper: align left */
