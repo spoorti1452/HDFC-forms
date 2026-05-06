@@ -1297,6 +1297,24 @@ main .form form select[multiple] {
   padding-bottom: 0 !important;
 }
  
+/* =========================
+   FIX DISCLAIMER POSITION
+   ========================= */
+
+/* Make parent behave like vertical flow */
+.panel-wrapper.field-loan-offer-summary {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Push disclaimer to bottom */
+.plain-text-wrapper.field-disclaimer,
+.field-disclaimer,
+.field-offer-disclaimer,
+#text-8ac79973c4,
+#text-8fd04c18e9 {
+  margin-top: auto !important;
+}
 /*=============btn===========================*/
 /* Wrapper: align left */
 .button-wrapper.field-proceed {
